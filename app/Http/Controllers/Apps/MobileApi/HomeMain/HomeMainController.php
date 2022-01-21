@@ -139,4 +139,12 @@ class HomeMainController extends BaseController
 
         return $this->sendResponse(array('success' => 1, 'count' => $dataCount), 'Note Berhasil Dihapus');
     }
+
+    // if (isset($image['file'])) {
+    //     $file = $image['file'];
+    //     $imageName = storeImages('public/images/room-type/'.$roomType->id.'/', $file);
+    //     $dataImage['url'] = URL::to('storage/images/room-type/'.$roomType->id.'/'.$imageName);
+    // } else {
+    //     $dataImage['url'] = $image->url;
+    // }
 }
