@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Monolog\Handler\IFTTTHandler;
 
 class HomeMainController extends BaseController
-{   
+{
     public $companySetting, $noteEmployee;
 
     public function __construct(CompanySettingInterface $companySetting, EmployeeNoteInterface $noteEmployee)
@@ -26,9 +26,9 @@ class HomeMainController extends BaseController
 
     /**
      * GET WORKING HOURS OF COMPANY
-     * 
+     *
      * @return \Illuminate\Http\Response
-    */
+     */
     public function workingHours()
     {
         $data = array();
@@ -40,9 +40,9 @@ class HomeMainController extends BaseController
 
     /**
      * GET EVENT DATE OF EMPLOYEE
-     * 
+     *
      * @return \Illuminate\Http\Response
-    */
+     */
     public function getEventDate()
     {
         $data = array();
@@ -56,14 +56,14 @@ class HomeMainController extends BaseController
             array_push($data, $res);
         }
         // $noteDateData = $this->noteEmployee
-        return $this->sendResponse($data, 'Data Fetched Successfully');    
+        return $this->sendResponse($data, 'Data Fetched Successfully');
     }
 
     /**
      * GET NOTE OF EMPLOYEE BY DATE
      * @param \Illuminate\Http\Request1
      * @return \Illuminate\Http\Response
-    */
+     */
     public function employeeNote(Request $request)
     {
         return $this->sendResponse($this->noteEmployee->listEmployeeNoteByDate(Auth::user()->id, $request->date), 'Data Fetched Successfuly');
@@ -73,7 +73,7 @@ class HomeMainController extends BaseController
      * CREATE NEW NOTE IN SPESIFIC DAYS AND TIME OF EMPLOYEE
      * @param \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
-    */
+     */
     public function createNote(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -83,7 +83,7 @@ class HomeMainController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendBadRequest('Validation Error',$validator->errors());
+            return $this->sendBadRequest('Validation Error', $validator->errors());
         }
 
         DB::beginTransaction();
@@ -110,7 +110,7 @@ class HomeMainController extends BaseController
             return $this->sendResponse($response, 'Note Berhasil Dibuat');
         } catch (\Exception $err) {
             DB::rollBack();
-            return $this->sendError('Internal Server Error',$err->getMessage().' '. $err->getLine());
+            return $this->sendError('Internal Server Error', $err->getMessage() . ' ' . $err->getLine());
         }
     }
 
@@ -118,7 +118,7 @@ class HomeMainController extends BaseController
      * CREATE NEW NOTE IN SPESIFIC DAYS AND TIME OF EMPLOYEE
      * @param \App\Models\UserNotedData $id
      * @return \Illuminate\Http\Response
-    */
+     */
     public function deleteEmployeeNote($id)
     {
         /* GET NOTE DATA FIRST TO CHECK THE NUMBER OF DATA RECORDS ON A RELATED DATE */
@@ -139,12 +139,4 @@ class HomeMainController extends BaseController
 
         return $this->sendResponse(array('success' => 1, 'count' => $dataCount), 'Note Berhasil Dihapus');
     }
-
-    // if (isset($image['file'])) {
-    //     $file = $image['file'];
-    //     $imageName = storeImages('public/images/room-type/'.$roomType->id.'/', $file);
-    //     $dataImage['url'] = URL::to('storage/images/room-type/'.$roomType->id.'/'.$imageName);
-    // } else {
-    //     $dataImage['url'] = $image->url;
-    // }
 }
