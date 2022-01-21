@@ -20,19 +20,19 @@ class UserWithDivisionSeeder extends Seeder
      * @return void
      */
     public function run()
-    {   
+    {
         DB::beginTransaction();
         try {
             $superAdminRole = Role::create([
                 'name' => 'superadmin',
-                'guard_name' => 'auth:sanctum', 
+                'guard_name' => 'auth:sanctum',
                 'created_at'    => Date::now(),
                 'updated_at'    => Date::now(),
             ]);
 
             $hrdRole = Role::create([
                 'name' => 'HR',
-                'guard_name' => 'auth:sanctum', 
+                'guard_name' => 'auth:sanctum',
                 'created_at'    => Date::now(),
                 'updated_at'    => Date::now(),
             ]);
@@ -68,6 +68,7 @@ class UserWithDivisionSeeder extends Seeder
             ]);
 
             $assignHr = UserDivisionAssign::create([
+                'id'            => 1,
                 'uuid'          => (string)Str::uuid(),
                 'user_id'       => $hr->id,
                 'division_id'   => $division->id,
@@ -78,11 +79,11 @@ class UserWithDivisionSeeder extends Seeder
 
             $assignHr->assignRole($hrdRole);
 
-            
+
             DB::commit();
         } catch (\Exception $err) {
             DB::rollBack();
-            dd($err->getMessage());
+            dd($err->getMessage() . ' ' . $err->getLine());
         }
     }
 }

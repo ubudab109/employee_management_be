@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Models\User;
 use App\Models\UserDivisionAssign;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 
 class UserController extends BaseController
 {
@@ -24,12 +25,19 @@ class UserController extends BaseController
             $userRole = $userDivisionAssign->roles()->first()->name;
         }
 
+        if ($user->profile_picture == null) {
+            $image = URL::to('profile_default/user_default.png');
+        } else {
+            $image = $user->profile_picture;
+        }
+
         return $this->sendResponse([
             'fullname'      => $user->name,
             'nip'           => $user->nip,
             'phone_number'  => $user->phone_number,
             'role'          => $userRole,
             'email'         => $user->email,
-        ],'Login Successfully');
+            'picture'       => $image,
+        ], 'Login Successfully');
     }
 }
