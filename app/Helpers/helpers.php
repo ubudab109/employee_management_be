@@ -62,3 +62,27 @@ use App\Models\CompanySetting;
     $setting = CompanySetting::where('setting_key', $keys)->first();
     return empty($setting) ? false : $setting->value;
  }
+
+ /**
+  * Generate image name
+  * @param String $extension
+  * @return preg_replace random name
+  */
+ function generateImageName($extension) {
+  return preg_replace('/(0)\.(\d+) (\d+)/', '$3$1$2', microtime()).'.'.$extension;
+ }
+
+ /**
+  * Storing images to strage
+  * @param Path to store
+  * @param File
+  * @return String file name
+  */
+ function storeImages($path, $file) {
+  $extension = $file->getClientOriginalExtension();
+  $imageName = generateImageName($extension);
+  $file->storeAs(
+      $path, $imageName
+  );
+  return $imageName;
+}

@@ -29,6 +29,7 @@ class UserController extends BaseController
             'nip'           => $user->nip,
             'phone_number'  => $user->phone_number,
             'role'          => $userRole,
+            'email'         => $user->email,
         ],'Login Successfully');
     }
 }
