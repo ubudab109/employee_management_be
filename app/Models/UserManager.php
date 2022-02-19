@@ -11,9 +11,10 @@ use Illuminate\Support\Str;
 use Laravolt\Avatar\Avatar;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail
+class UserManager extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    protected $table = 'user_manager';
     protected $guard_name = 'auth:sanctum';
     /**
      * The attributes that are mass assignable.
@@ -25,9 +26,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'nip',
         'profile_picture',
-        'phone_number',
         'email_verified_at',
+        'phone_number',
         'password',
+        'invited_status'
     ];
 
     /**
@@ -38,6 +40,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'profile_picture'
     ];
 
     /**
@@ -49,9 +52,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
+    
     protected $appends = [
         'avatar',
+        'role',
     ];
+
 
     protected static function boot()
     {
@@ -67,30 +73,21 @@ class User extends Authenticatable implements MustVerifyEmail
 
         if ($this->profile_picture === NULL) {
             $avatar = new Avatar();
-            $image = $avatar->create($this->name[0])->setBackground('#F79E1B')->toBase64();
+            $image = $avatar->create(ucfirst($this->name[0]))->setBackground('#F79E1B')->setDimension(400, 400)->setFontSize(170)->toBase64();
         } else {
             $image = $this->profile_picture;
         }
         return $image;
     }
-    
-    public function division()
-    {
-        return $this->belongsToMany(CompanyDivision::class, 'user_division_assign', 'user_id', 'division_id')->using(UserDivisionAssign::class)->withPivot('id', 'user_id', 'division_id', 'status', 'employment_type');
-    }
 
-    public function userDivision()
-    {
-        return $this->belongsTo(UserDivisionAssign::class, 'user_id', 'id');
-    }
-
-    public function noted()
-    {
-        return $this->hasMany(UserNoted::class, 'user_id', 'id');
+    public function getRoleAttribute()
+    {   
+        return ucfirst($this->roles[0]->name);
     }
 
     public function verification()
     {
         return $this->morphMany(UserVerification::class, 'model');
     }
+
 }

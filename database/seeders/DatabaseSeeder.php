@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserWithDivisionSeeder::class,
             CompanySettingSeeder::class,
+            PermissionSeeder::class,
         ]);
     }
 }

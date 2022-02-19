@@ -6,6 +6,7 @@ use App\Models\CompanyDivision;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserDivisionAssign;
+use App\Models\UserManager;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -23,21 +24,19 @@ class UserWithDivisionSeeder extends Seeder
     {
         DB::beginTransaction();
         try {
+
+            /** USER MANAGER */
             $superAdminRole = Role::create([
                 'name' => 'superadmin',
                 'guard_name' => 'auth:sanctum',
+                'is_role_manager' => true,
                 'created_at'    => Date::now(),
                 'updated_at'    => Date::now(),
             ]);
 
-            $hrdRole = Role::create([
-                'name' => 'HR',
-                'guard_name' => 'auth:sanctum',
-                'created_at'    => Date::now(),
-                'updated_at'    => Date::now(),
-            ]);
+            
 
-            $superadmin = User::create([
+            $superadmin = UserManager::create([
                 'name' => 'owner',
                 'email' => 'owner@tdi.com',
                 'nip'   => '234534534',
@@ -46,8 +45,19 @@ class UserWithDivisionSeeder extends Seeder
                 'email_verified_at' => Date::now(),
                 'created_at'    => Date::now(),
                 'updated_at'    => Date::now(),
+                'invited_status' => 1,
             ]);
             $superadmin->assignRole($superAdminRole);
+            /** END USER MANAGER */
+
+            /** EMPLOYEE */
+            $hrdRole = Role::create([
+                'name' => 'hr',
+                'is_role_manager' => false,
+                'guard_name' => 'auth:sanctum',
+                'created_at'    => Date::now(),
+                'updated_at'    => Date::now(),
+            ]);
 
             $hr = User::create([
                 'name' => 'HR',
@@ -78,7 +88,7 @@ class UserWithDivisionSeeder extends Seeder
             ]);
 
             $assignHr->assignRole($hrdRole);
-
+            /** END EMPLOYEE */
 
             DB::commit();
         } catch (\Exception $err) {

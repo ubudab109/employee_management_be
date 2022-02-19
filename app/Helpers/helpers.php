@@ -1,7 +1,4 @@
 <?php
-
-use App\Models\CompanySetting;
-
 /**
  * HELPERS SERVICE APPLICATION
  * DEVELOPER: MUHAMMAD RIZKY FIRDAUS
@@ -9,11 +6,32 @@ use App\Models\CompanySetting;
  *
  * MODIFY WITH YOUR OWN RISK
  * YOU CAN ADD MORE HELPERS FUNCTION IN HERE
+*/
+
+use App\Models\CompanySetting;
+
+
+
+ /**
+ * Generate random string for random password
+ * @return String
  */
+function randomPassword()
+{
+    $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+    $pass = array(); //remember to declare $pass as an array
+    $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+    for ($i = 0; $i < 8; $i++) {
+        $n = rand(0, $alphaLength);
+        $pass[] = $alphabet[$n];
+    }
+    return implode($pass); //turn the array into a string
+}
 
 /**
  * Get All Company Setting
  * @param array $array
+ * @return Boolean
  */
 function allCompanySetting($array = null)
 {
@@ -21,7 +39,7 @@ function allCompanySetting($array = null)
         $allSettings = CompanySetting::get();
         if ($allSettings) {
             $output = [];
-            foreach ($$allSettings as $setting) {
+            foreach ($allSettings as $setting) {
                 $output[$setting->key] = [
                     'setting_name'  => $setting->setting_name,
                     'setting_value' => $setting->value
@@ -56,6 +74,7 @@ function allCompanySetting($array = null)
 /**
  * Get One Company Setting
  * @param string $keys
+ * @return Boolean or String
  */
 function settings($keys)
 {
@@ -88,4 +107,31 @@ function storeImages($path, $file)
         $imageName
     );
     return $imageName;
+}
+
+/**
+ * Count Data From Array
+ * @param array $array
+ * @param Any $key from array
+ * @param Any $value from array
+ * @return int
+ */
+function arrFilterCount(array $array, $key, $value)
+{
+    $cnt = count(array_filter($array,function($element) use ($key, $value) {
+        return $element[$key] == $value;
+    }));
+
+    return $cnt;
+}
+
+/**
+ * Generate Verification Key
+ * @return String
+ */
+function generate_email_verification_key()
+{
+  $pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+  return substr(str_shuffle(str_repeat($pool, 5)), 0, 30);
 }

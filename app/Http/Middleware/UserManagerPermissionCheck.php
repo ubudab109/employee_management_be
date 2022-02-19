@@ -2,16 +2,15 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\UserDivisionAssign;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 
-class UserPermissionCheck
+class UserManagerPermissionCheck
 {
     /**
-     * Handle to check permission user in current division.
+     * Handle to check permission user manager role
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
@@ -21,12 +20,11 @@ class UserPermissionCheck
      */
     public function handle(Request $request, Closure $next, $permission, $guard_name = 'auth:sanctum')
     {
-        if (app('auth')->guard($guard_name)->guest()) throw UnauthorizedException::notLoggedIn();
+        if (auth('sanctum')->guest()) throw UnauthorizedException::notLoggedIn();
         $permissions = is_array($permission) ? $permission : explode('|', $permission);
-        $toManage = Auth::user()->division()->find(Request::header("Division-Selected"));
-        $roles = UserDivisionAssign::find($toManage->pivot->id);
+        $toManage = Auth::user()->roles[0];
         foreach ($permissions as $perm) {
-            if ($roles->hasPermissionTo($perm)) {
+            if ($toManage->hasPermissionTo($perm)) {
                 return $next($request);
             }
         }
