@@ -87,6 +87,7 @@ class UserManagementController extends BaseController
                 'name'              => $user->name,
                 'email'             => $user->email,
                 'nip'               => $user->nip,
+                'gender'            => $user->gender,
                 'phone_number'      => $user->phone_number,
                 'password'          => Hash::make($password),
             ];

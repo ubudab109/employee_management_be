@@ -61,7 +61,7 @@ class BaseController extends Controller
     }
 
     /**
-     * return unauthorized response.
+     * return bad request response.
      *
      * @return \Illuminate\Http\Response
      */

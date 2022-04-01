@@ -6,6 +6,8 @@ use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -114,6 +116,12 @@ class RolePermissionController extends BaseController
             ];
             
             $role = $this->rolePermission->createRolePermission($dataRole, $request->permissions);
+            DB::table('user_manager_activities')->insert([
+                'user_manager_id'       => Auth::user()->id,
+                'activities'             => CREATE_ROLE_PERMISSION,
+                'date'                  => Date::now(),
+                'time'                  => date('H:i'),
+            ]);
             DB::commit();
             return $this->sendResponse($role, 'Data Created Successfully');
         } catch (\Exception $err) {

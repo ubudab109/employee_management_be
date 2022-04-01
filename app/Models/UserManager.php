@@ -25,6 +25,7 @@ class UserManager extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'nip',
+        'gender',
         'profile_picture',
         'email_verified_at',
         'phone_number',

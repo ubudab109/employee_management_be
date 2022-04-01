@@ -5,6 +5,7 @@ use App\Http\Controllers\Apps\MobileApi\HomeMain\HomeMainController;
 use App\Http\Controllers\Apps\MobileApi\Profile\ProfileController;
 use App\Http\Controllers\Apps\MobileApi\UserController;
 use App\Http\Controllers\Web\Auth\AuthController as WebAuthController;
+use App\Http\Controllers\Web\Dashboard\DashboardController;
 use App\Http\Controllers\Web\Dataset\DatasetController;
 use App\Http\Controllers\Web\Profile\ProfileController as ProfileProfileController;
 use App\Http\Controllers\Web\RolePermission\RolePermissionController;
@@ -55,6 +56,11 @@ Route::group(['middleware' => 'cors'], function() {
                 Route::post('validate', [WebAuthController::class, 'validateToken']);
                 Route::post('logout', [WebAuthController::class, 'logout']);
 
+                Route::group(['prefix' => 'dashboard'], function () {
+                    Route::get('activities', [DashboardController::class , 'logActivities']);
+                    Route::get('chart-employee', [DashboardController::class, 'getChartEmployee']);
+                });
+                
                 Route::group(['prefix' => 'role'], function() {
                     Route::get('', [RolePermissionController::class, 'listRole']);
                     Route::get('permissions', [RolePermissionController::class, 'listPermissions']);
