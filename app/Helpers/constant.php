@@ -27,3 +27,16 @@ const DELETE_ROLE_PERMISSION = 'Delete Role Permission';
 const INVITE_NEW_USER = 'Invite New User Manager';
 const CHANGE_ROLE_USER = 'Change Role User Manager';
 const CANCEL_OR_REMOVE_USER = 'Cancel Or Remove Invite User Manager';
+
+/* WORKSPLACE CONSTANT */
+const OFFICE_PLACE = '0';
+const REMOTE = '1';
+
+/* ABSENT STATUS */
+const ON_TIME = '0';
+const LATE = '1';
+const ABSENT = '2';
+
+/* CLOCK TYPE */
+const CLOCK_IN = '0';
+const CLOCK_OUT = '1';

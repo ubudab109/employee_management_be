@@ -278,6 +278,22 @@ class PermissionSeeder extends Seeder
                     'created_at'        => Date::now(),
                     'updated_at'        => Date::now(),
                 ],
+                [
+                    'scope_id'          => 2,
+                    'name'              => 'attendance-management-list',
+                    'display_name'      => 'List Attendance',
+                    'guard_name'        => 'auth:sanctum',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 2,
+                    'name'              => 'attendance-management-detail',
+                    'display_name'      => 'Detail Attendance',
+                    'guard_name'        => 'auth:sanctum',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
             ];
     
             Permission::insert($dataPermissionsManager);

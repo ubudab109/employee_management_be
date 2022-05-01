@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Repositories\CompanySetting\CompanySettingInterface;
 use App\Repositories\CompanySetting\CompanySettingRepository;
+use App\Repositories\EmployeeAttendance\EmployeeAttendanceInterface;
+use App\Repositories\EmployeeAttendance\EmployeeAttendanceRepository;
 use App\Repositories\EmployeeNote\EmployeeNoteInterface;
 use App\Repositories\EmployeeNote\EmployeeNoteRepository;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
@@ -29,6 +31,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(RolePermissionManagerInterface::class, RolePermissionManagerRepository::class);
         $this->app->bind(UserManagementInterface::class, UserManagementRepository::class);
         $this->app->bind(UserVerificationInterface::class, UserVerificationRepository::class);
+        $this->app->bind(EmployeeAttendanceInterface::class, EmployeeAttendanceRepository::class);
     }
 
     /**

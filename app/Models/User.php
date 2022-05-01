@@ -51,7 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     protected $appends = [
-        'avatar',
+        'avatar', 'roles_name', 'division_name'
     ];
 
     protected static function boot()
@@ -61,6 +61,17 @@ class User extends Authenticatable implements MustVerifyEmail
         self::creating(function ($model) {
             $model->uuid = (string)Str::uuid();
         });
+    }
+
+    public function getDivisionNameAttribute()
+    {
+        return $this->division()->first()->division_name;
+    }
+
+
+    public function getRolesNameAttribute()
+    {
+        return ucfirst($this->userDivision()->first()->roles[0]->name);
     }
 
     public function getAvatarAttribute()
@@ -82,7 +93,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function userDivision()
     {
-        return $this->belongsTo(UserDivisionAssign::class, 'user_id', 'id');
+        return $this->hasOne(UserDivisionAssign::class, 'user_id', 'id');
     }
 
     public function noted()
@@ -93,5 +104,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function verification()
     {
         return $this->morphMany(UserVerification::class, 'model');
+    }
+
+    public function attendance()
+    {
+        return $this->hasMany(EmployeeAttendance::class, 'employee_id','id');
     }
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\Apps\Auth\AuthController;
 use App\Http\Controllers\Apps\MobileApi\HomeMain\HomeMainController;
 use App\Http\Controllers\Apps\MobileApi\Profile\ProfileController;
 use App\Http\Controllers\Apps\MobileApi\UserController;
+use App\Http\Controllers\Web\Attendance\AttendanceController;
 use App\Http\Controllers\Web\Auth\AuthController as WebAuthController;
 use App\Http\Controllers\Web\Dashboard\DashboardController;
 use App\Http\Controllers\Web\Dataset\DatasetController;
@@ -56,6 +57,7 @@ Route::group(['middleware' => 'cors'], function() {
                 Route::post('validate', [WebAuthController::class, 'validateToken']);
                 Route::post('logout', [WebAuthController::class, 'logout']);
 
+                /* DASHBOARD */
                 Route::group(['prefix' => 'dashboard'], function () {
                     Route::get('activities', [DashboardController::class , 'logActivities']);
                     Route::get('chart-employee', [DashboardController::class, 'getChartEmployee']);
@@ -88,6 +90,11 @@ Route::group(['middleware' => 'cors'], function() {
                     Route::get('employee', [DatasetController::class, 'employee']);
                     Route::get('employee/{id}', [DatasetController::class, 'detailEmployee']);
                     Route::get('role-manager', [DatasetController::class, 'roleManager']);
+                });
+
+                Route::group(['prefix' => 'attendance'], function() {
+                    Route::get('', [AttendanceController::class, 'index']);
+                    Route::get('{id}', [AttendanceController::class, 'detail']);
                 });
             });
 
