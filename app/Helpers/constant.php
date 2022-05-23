@@ -40,3 +40,8 @@ const ABSENT = '2';
 /* CLOCK TYPE */
 const CLOCK_IN = '0';
 const CLOCK_OUT = '1';
+
+/* EMPLOYEE STATUS */
+const EMPLOYEE_INACTIVE = '0';
+const EMPLOYEE_ACTIVE = '1';
+const EMPLOYEE_PENDING_INVITE = '2';

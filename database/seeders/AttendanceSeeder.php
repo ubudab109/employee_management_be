@@ -34,25 +34,38 @@ class AttendanceSeeder extends Seeder
 
             for ($i = 2; $i < 600; $i++) {
                 if ($i % 2 === 0 || $i % 3 === 0) {
-                    EmployeeAttendanceLocation::create([
+                    $clokcIn = EmployeeAttendanceLocation::create([
                         'employee_attendance_id'    => $i,
                         'latitude'      => '-6.287104587796341',
                         'longitude'     => '106.82131682466287',
                         'clock_type'    =>  '0',
                         'location'      => 'Rumah Sakit Kemang, Jl. Ampera Raya'
                     ]);
+                    if ($clokcIn->employeeAttendance->work_places == '1') {
+                        $clokcIn->files()->create([
+                            'files' => 'https://farm4.staticflickr.com/3511/3244469731_3cdbb1192d.jpg',
+                            'type'  => 'images',
+                        ]);
+                    }
                 }
             }
 
             for ($i = 2; $i < 600; $i++) {
                 if ($i % 2 === 0 || $i % 3 === 0) {
-                    EmployeeAttendanceLocation::create([
+                    $clockOut = EmployeeAttendanceLocation::create([
                         'employee_attendance_id'    => $i,
                         'latitude'      => '-6.287104587796341',
                         'longitude'     => '106.82131682466287',
                         'clock_type'    =>  '1',
                         'location'      => 'Rumah Sakit Kemang, Jl. Ampera Raya'
                     ]);
+
+                    if ($clockOut->employeeAttendance->work_places == '1') {
+                        $clockOut->files()->create([
+                            'files' => 'https://farm4.staticflickr.com/3511/3244469731_3cdbb1192d.jpg',
+                            'type'  => 'images',
+                        ]);
+                    }
                 }
             }
 

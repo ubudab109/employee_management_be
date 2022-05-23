@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Repositories\CompanyBranch\CompanyBranchInterface;
+use App\Repositories\CompanyBranch\CompanyBranchRepository;
+use App\Repositories\CompanyDivision\CompanyDivisionInterface;
+use App\Repositories\CompanyDivision\CompanyDivisionRepository;
+use App\Repositories\CompanyJobStatus\CompanyJobStatusInterface;
+use App\Repositories\CompanyJobStatus\CompanyJobStatusRepository;
 use App\Repositories\CompanySetting\CompanySettingInterface;
 use App\Repositories\CompanySetting\CompanySettingRepository;
 use App\Repositories\EmployeeAttendance\EmployeeAttendanceInterface;
@@ -32,6 +38,10 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(UserManagementInterface::class, UserManagementRepository::class);
         $this->app->bind(UserVerificationInterface::class, UserVerificationRepository::class);
         $this->app->bind(EmployeeAttendanceInterface::class, EmployeeAttendanceRepository::class);
+        $this->app->bind(CompanyDivisionInterface::class, CompanyDivisionRepository::class);
+        $this->app->bind(CompanyJobStatusInterface::class, CompanyJobStatusRepository::class);
+        $this->app->bind(CompanyBranchInterface::class, CompanyBranchRepository::class);
+
     }
 
     /**

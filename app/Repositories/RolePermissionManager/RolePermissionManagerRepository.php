@@ -5,9 +5,9 @@ namespace App\Repositories\RolePermissionManager;
 use App\Models\Permission;
 use App\Models\PermissionScope;
 use App\Models\Role;
-use App\Repositories\BaseRepository;
 
-class RolePermissionManagerRepository extends BaseRepository implements RolePermissionManagerInterface
+
+class RolePermissionManagerRepository implements RolePermissionManagerInterface
 {
     /**
     * @var App\Models\Role

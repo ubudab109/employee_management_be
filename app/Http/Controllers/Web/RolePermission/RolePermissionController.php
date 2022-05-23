@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\RolePermission;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
+use App\Repositories\CompanyBranch\CompanyBranchInterface;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,11 +14,12 @@ use Illuminate\Support\Facades\Validator;
 
 class RolePermissionController extends BaseController
 {
-    public $rolePermission;
+    public $rolePermission, $companyBranchInterface;
 
-    public function __construct(RolePermissionManagerInterface $rolePermission)
+    public function __construct(RolePermissionManagerInterface $rolePermission, CompanyBranchInterface $companyBranchInterface)
     {
         $this->rolePermission = $rolePermission;
+        $this->companyBranchInterface = $companyBranchInterface;
         $this->middleware('userpermissionmanager:role-permission-list',['only' => 'listRole']);
         $this->middleware('userpermissionmanager:role-permission-detail',['only' => 'detailRoleWithPermissions']);
         $this->middleware('userpermissionmanager:role-permission-create',['only' => 'createRolePermissions']);
@@ -109,10 +111,21 @@ class RolePermissionController extends BaseController
 
         DB::beginTransaction();
         try {
+            $branch = Auth::guard('sanctum:manager')->user()->branch()->first();
+
+            if ($branch == null) {
+                $branchSelected = $this->companyBranchInterface->getFirstBranchByCondition([
+                    'is_centered' => 1,
+                ])->id;
+            } else {
+                $branchSelected = branchManagerSelected('manager')->pivot->branch_id;
+            }
+
             $dataRole = [
                 'name'              => $request->name,
                 'is_role_manager'   => true,
-                'guard_name'        => 'auth:sanctum'
+                'guard_name'        => 'sanctum:manager',
+                'branch_id'         => $branchSelected,
             ];
             
             $role = $this->rolePermission->createRolePermission($dataRole, $request->permissions);

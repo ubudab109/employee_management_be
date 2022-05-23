@@ -71,4 +71,14 @@ class EmployeeAttendance extends Model
     {
         return $this->hasMany(EmployeeAttendanceLocation::class, 'employee_attendance_id', 'id');
     }
+
+    public function clockIn()
+    {
+        return $this->attendanceLocation()->where('clock_type','0')->with('files:id,files')->first();
+    }
+
+    public function clockOut()
+    {
+        return $this->attendanceLocation()->where('clock_type','0')->with('files:id,files')->first();
+    }
 }

@@ -4,8 +4,8 @@ namespace App\Http\Middleware;
 
 use App\Models\UserDivisionAssign;
 use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 
 class UserPermissionCheck
@@ -19,7 +19,7 @@ class UserPermissionCheck
      * @param  Auth::guard('api')
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next, $permission, $guard_name = 'auth:sanctum')
+    public function handle(Request $request, Closure $next, $permission, $guard_name = 'auth:employee')
     {
         if (app('auth')->guard($guard_name)->guest()) throw UnauthorizedException::notLoggedIn();
         $permissions = is_array($permission) ? $permission : explode('|', $permission);

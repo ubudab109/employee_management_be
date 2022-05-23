@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Web\Attendance;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\PaginationResource;
 use App\Repositories\EmployeeAttendance\EmployeeAttendanceInterface;
-use App\Services\MapServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 
@@ -56,7 +55,7 @@ class AttendanceController extends BaseController
      * @param App\Models\EmployeeAttendance $id
      * @return Illuminate\Http\Response
     */
-    public function detail($id)
+    public function show($id)
     {
         $data = $this->employeeAttendance->detailEmployeeAttendance($id);
         return $this->sendResponse([

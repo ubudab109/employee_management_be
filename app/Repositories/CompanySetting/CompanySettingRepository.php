@@ -3,9 +3,8 @@
 namespace App\Repositories\CompanySetting;
 
 use App\Models\CompanySetting;
-use App\Repositories\BaseRepository;
 
-class CompanySettingRepository extends BaseRepository implements CompanySettingInterface
+class CompanySettingRepository implements CompanySettingInterface
 {
     /**
     * @var ModelName

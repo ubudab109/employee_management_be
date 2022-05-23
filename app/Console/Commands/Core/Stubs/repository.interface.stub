@@ -2,9 +2,8 @@
 
 namespace DummyNamespace;
 use DummyInterfaceNamespace;
-use App\Repositories\BaseRepository;
 
-class DummyClass extends BaseRepository implements DummyInterface
+class DummyClass implements DummyInterface
 {
     /**
     * @var ModelName

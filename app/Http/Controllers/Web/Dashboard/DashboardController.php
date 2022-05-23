@@ -43,4 +43,14 @@ class DashboardController extends BaseController
         ], 'Data Fetched Successfully');
     }
 
+    public function getChartWorkplacesEmployee()
+    {
+        $totalOffice = DB::table('employee_attendance')->where('work_places', OFFICE_PLACE)->count();
+        $totalRemote = DB::table('employee_attendance')->where('work_places', REMOTE)->count();
+        return $this->sendResponse([
+            $totalOffice,
+            $totalRemote
+        ], 'Data Fetched Successfully');
+    }
+
 }

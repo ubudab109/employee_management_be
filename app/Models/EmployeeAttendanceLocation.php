@@ -22,4 +22,9 @@ class EmployeeAttendanceLocation extends Model
     {
         return $this->belongsTo(EmployeeAttendance::class, 'employee_attendance_id', 'id');
     }
+
+    public function files()
+    {
+        return $this->morphOne(Files::class, 'source');
+    }
 }

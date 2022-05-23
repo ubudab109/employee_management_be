@@ -14,6 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
+
     protected $guard_name = 'auth:sanctum';
     /**
      * The attributes that are mass assignable.
@@ -27,6 +28,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'gender',
         'profile_picture',
         'phone_number',
+        'religion',
+        'address',
+        'job_status_id',
         'email_verified_at',
         'password',
     ];
@@ -71,7 +75,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getRolesNameAttribute()
     {
-        return ucfirst($this->userDivision()->first()->roles[0]->name);
+        return ucfirst($this->branchAssign()->first()->pivot->roles()->first()->name);
     }
 
     public function getAvatarAttribute()
@@ -86,9 +90,25 @@ class User extends Authenticatable implements MustVerifyEmail
         return $image;
     }
     
+    public function jobStatus()
+    {
+        return $this->belongsTo(CompanyJobStatus::class, 'job_status_id', 'id');
+    }
+
     public function division()
     {
         return $this->belongsToMany(CompanyDivision::class, 'user_division_assign', 'user_id', 'division_id')->using(UserDivisionAssign::class)->withPivot('id', 'user_id', 'division_id', 'status', 'employment_type');
+    }
+
+    public function branch()
+    {
+        return $this->hasOne(UserDivisionAssign::class, 'user_id', 'id');
+    }
+    
+    public function branchAssign()
+    {
+        return $this->belongsToMany(CompanyBranch::class, 'user_division_assign', 'user_id', 'branch_id')->using(UserDivisionAssign::class)
+        ->withPivot('id', 'user_id', 'division_id', 'branch_id','status', 'employment_type');
     }
 
     public function userDivision()
@@ -110,4 +130,6 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(EmployeeAttendance::class, 'employee_id','id');
     }
+
+    
 }

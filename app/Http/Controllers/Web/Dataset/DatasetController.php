@@ -3,17 +3,26 @@
 namespace App\Http\Controllers\Web\Dataset;
 
 use App\Http\Controllers\BaseController;
+use App\Repositories\CompanyDivision\CompanyDivisionInterface;
+use App\Repositories\CompanyJobStatus\CompanyJobStatusInterface;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DatasetController extends BaseController
 {
 
-    public $roleManager;
+    public $roleManager, $companyDivision, $companyJobStatus;
 
-    public function __construct(RolePermissionManagerInterface $roleManager)
+    public function __construct(
+        RolePermissionManagerInterface $roleManager, 
+        CompanyDivisionInterface $companyDivision,
+        CompanyJobStatusInterface $companyJobStatus
+    )
     {
         $this->roleManager = $roleManager;
+        $this->companyDivision = $companyDivision;
+        $this->companyJobStatus = $companyJobStatus;
     }
 
     /**
@@ -65,5 +74,29 @@ class DatasetController extends BaseController
     {
         $employees = DB::table('users')->select('id','nip','email','name')->where('id', $id)->first();
         return $this->sendResponse($employees, 'Data Fetched Successfully');
+    }
+
+    /**
+     * List Department
+     * 
+     * @param \Illuminate\Http\Request
+     * @return \Illuminate\Http\Response
+     */
+    public function listDepartment(Request $request)
+    {
+        $department = $this->companyDivision->getAllDivision($request->keyword);
+        return $this->sendResponse($department, 'Data Fetched Successfully');
+    }
+
+    /**
+     * List Job Status
+     * 
+     * @param \Illuminate\Http\Request
+     * @return \Illuminate\Http\Response
+    */
+    public function listJobStatus(Request $request)
+    {
+        $jobStatus = $this->companyJobStatus->getAllJobStatus($request->keyword);
+        return $this->sendResponse($jobStatus, 'Data Fetched Successfully');
     }
 }

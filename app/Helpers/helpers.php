@@ -1,4 +1,5 @@
 <?php
+
 /**
  * HELPERS SERVICE APPLICATION
  * DEVELOPER: MUHAMMAD RIZKY FIRDAUS
@@ -6,13 +7,41 @@
  *
  * MODIFY WITH YOUR OWN RISK
  * YOU CAN ADD MORE HELPERS FUNCTION IN HERE
-*/
+ */
 
 use App\Models\CompanySetting;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 
 
+/**
+ * Detect current user is Superadmin
+ * 
+ * @return bool
+ */
+function isSuperAdmin()
+{
+    if (Auth::guard('sanctum:manager')->user()->branch == null) {
+        return true;
+    }
 
- /**
+    return false;
+}
+
+/**
+ * Detect current branch user
+ * 
+ * @param string $guard_name - Is the Auth Guard for the current session (manager or employee)
+ * @return Object
+ */
+function branchManagerSelected($guard_name)
+{
+    return Request::header('Branch-Selected') ?
+        Auth::guard($guard_name)->user()->branchAssign()->find(Request::header('Branch-Selected'))
+        : null;
+}
+
+/**
  * Generate random string for random password
  * @return String
  */
@@ -118,7 +147,7 @@ function storeImages($path, $file)
  */
 function arrFilterCount(array $array, $key, $value)
 {
-    $cnt = count(array_filter($array,function($element) use ($key, $value) {
+    $cnt = count(array_filter($array, function ($element) use ($key, $value) {
         return $element[$key] == $value;
     }));
 
@@ -131,7 +160,7 @@ function arrFilterCount(array $array, $key, $value)
  */
 function generate_email_verification_key()
 {
-  $pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-  return substr(str_shuffle(str_repeat($pool, 5)), 0, 30);
+    return substr(str_shuffle(str_repeat($pool, 5)), 0, 30);
 }

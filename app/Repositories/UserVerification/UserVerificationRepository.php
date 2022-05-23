@@ -3,10 +3,9 @@
 namespace App\Repositories\UserVerification;
 
 use App\Models\UserVerification;
-use App\Repositories\BaseRepository;
 use Carbon\Carbon;
 
-class UserVerificationRepository extends BaseRepository implements UserVerificationInterface
+class UserVerificationRepository implements UserVerificationInterface
 {
     /**
     * @var App\Models\UserVerification

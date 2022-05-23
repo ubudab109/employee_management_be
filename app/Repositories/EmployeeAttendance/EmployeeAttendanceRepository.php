@@ -3,10 +3,8 @@
 namespace App\Repositories\EmployeeAttendance;
 
 use App\Models\EmployeeAttendance;
-use App\Repositories\BaseRepository;
-use Carbon\Carbon;
 
-class EmployeeAttendanceRepository extends BaseRepository implements EmployeeAttendanceInterface
+class EmployeeAttendanceRepository implements EmployeeAttendanceInterface
 {
     /**
     * @var ModelName
@@ -98,6 +96,6 @@ class EmployeeAttendanceRepository extends BaseRepository implements EmployeeAtt
      */
     public function detailEmployeeAttendance($id)
     {
-      return $this->model->with('employee:id,name,email,nip')->with('files')->with('attendanceLocation')->findOrFail($id);
+      return $this->model->with('employee:id,name,email,nip')->with('files')->with('attendanceLocation.files')->findOrFail($id);
     }
 }

@@ -4,9 +4,8 @@ namespace App\Repositories\EmployeeNote;
 
 use App\Models\UserNoted;
 use App\Models\UserNotedData;
-use App\Repositories\BaseRepository;
 
-class EmployeeNoteRepository extends BaseRepository implements EmployeeNoteInterface
+class EmployeeNoteRepository implements EmployeeNoteInterface
 {
     /**
     * @var ModelName

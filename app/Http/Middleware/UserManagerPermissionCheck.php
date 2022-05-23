@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\UserManagerAssign;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,11 +19,16 @@ class UserManagerPermissionCheck
      * @param  Auth::guard('api')
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next, $permission, $guard_name = 'auth:sanctum')
+    public function handle(Request $request, Closure $next, $permission, $guard_name = 'sanctum:manager')
     {
-        if (auth('sanctum')->guest()) throw UnauthorizedException::notLoggedIn();
+        if (auth($guard_name)->guest()) throw UnauthorizedException::notLoggedIn();
         $permissions = is_array($permission) ? $permission : explode('|', $permission);
-        $toManage = Auth::user()->roles[0];
+        if (Auth::guard($guard_name)->user()->branch()->first() == null) {
+            $toManage = Auth::user()->roles[0];
+        } else {
+            $assign = branchManagerSelected($guard_name)->pivot->id;
+            $toManage = UserManagerAssign::find($assign)->roles[0];
+        }
         foreach ($permissions as $perm) {
             if ($toManage->hasPermissionTo($perm)) {
                 return $next($request);

@@ -15,7 +15,7 @@ class UserManager extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
     protected $table = 'user_manager';
-    protected $guard_name = 'auth:sanctum';
+    protected $guard_name = 'sanctum:manager';
     /**
      * The attributes that are mass assignable.
      *
@@ -83,12 +83,28 @@ class UserManager extends Authenticatable implements MustVerifyEmail
 
     public function getRoleAttribute()
     {   
-        return ucfirst($this->roles[0]->name);
+        if ($this->branch()->exists()) {
+            return ucfirst($this->branchAssign()->first()->pivot->roles()->first()->name);
+        } else {
+            return ucfirst($this->roles()->first()->name);
+        }
+
     }
 
     public function verification()
     {
         return $this->morphMany(UserVerification::class, 'model');
+    }
+
+    public function branch()
+    {
+        return $this->hasOne(UserManagerAssign::class, 'user_manager_id', 'id');
+    }
+
+    public function branchAssign()
+    {
+        return $this->belongsToMany(CompanyBranch::class, 'user_manager_assign', 'user_manager_id', 'branch_id')->using(UserManagerAssign::class)
+        ->withPivot('id', 'user_manager_id', 'branch_id','status',);
     }
 
 }
