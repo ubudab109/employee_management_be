@@ -25,6 +25,7 @@ class AttendanceSeeder extends Seeder
                     'id'            => $i,
                     'employee_id'   => $employee->id,
                     'work_places'   => $i % 2 === 0 ? '0' : '1',
+                    'branch_id'     => 7,
                     'status_clock'  => $i % 2 === 0 ? '0' : ($i % 3 === 0 ? '1' : '2'),
                     'clock_in'      => $i % 2 === 0 ? '09:00:00' : ($i % 3 === 0 ? '09:45:00' : null),
                     'clock_out'     => $i % 2 === 0 ? '17:00:00' : ($i % 3 === 0 ? '17:45:00' : null),

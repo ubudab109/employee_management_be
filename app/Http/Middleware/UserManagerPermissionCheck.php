@@ -26,7 +26,7 @@ class UserManagerPermissionCheck
         if (Auth::guard($guard_name)->user()->branch()->first() == null) {
             $toManage = Auth::user()->roles[0];
         } else {
-            $assign = branchManagerSelected($guard_name)->pivot->id;
+            $assign = branchSelected($guard_name)->pivot->id;
             $toManage = UserManagerAssign::find($assign)->roles[0];
         }
         foreach ($permissions as $perm) {

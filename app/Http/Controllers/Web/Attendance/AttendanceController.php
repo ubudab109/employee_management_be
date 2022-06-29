@@ -34,6 +34,7 @@ class AttendanceController extends BaseController
                 $request->statusClock,
                 $request->has('date') && $request->date != '' ? $request->date : Date::now(),
                 $request->show,
+                $request->branch_id
             );
             $res = new PaginationResource($data);
         } else {
@@ -42,6 +43,7 @@ class AttendanceController extends BaseController
                 $request->workPlaces,
                 $request->statusClock,
                 $request->has('date') && $request->date != '' ? $request->date : Date::now(),
+                $request->branch_id
             );
         }
 

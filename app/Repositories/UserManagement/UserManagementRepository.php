@@ -32,13 +32,15 @@ class UserManagementRepository implements UserManagementInterface
    * @param String $role
    * @return App\Models\UserManager
    */
-  public function getUserManagement($keyword, $status, $role)
+  public function getUserManagement($keyword, $status, $role, $branch)
   {
     return $this->model
-      ->whereHas('branchAssign')
       ->when(!$this->isSuperAdmin, function ($query) {
-        $query->whereHas('branchAssign', function ($subQuery) {
-          $subQuery->where('branch_id', branchManagerSelected('sanctum:manager')->id);
+        $query->where('branch_id', branchSelected('sanctum:manager')->id);
+      })
+      ->when($this->isSuperAdmin, function ($query) use ($branch) {
+        $query->when($branch != null, function ($subQuery) use ($branch) {
+          $subQuery->where('branch_id', $branch);
         });
       })
       /* FILTER BY KEYWORD */
@@ -97,17 +99,19 @@ class UserManagementRepository implements UserManagementInterface
    * @param int $show
    * @return App\Models\UserManager
    */
-  public function getPaginateUserManagement($keyword, $status, $role, $show)
+  public function getPaginateUserManagement($keyword, $status, $role, $show, $branch)
   {
     return $this->model
-      ->whereHas('branchAssign')
       ->when(!$this->isSuperAdmin, function ($query) {
-        $query->whereHas('branchAssign', function ($subQuery) {
-          $subQuery->where('branch_id', branchManagerSelected('sanctum:manager')->id);
+        $query->where('branch_id', branchSelected('sanctum:manager')->id);
+      })
+      ->when($this->isSuperAdmin, function ($query) use ($branch) {
+        $query->when($branch != null, function ($subQuery) use ($branch) {
+          $subQuery->where('branch_id', $branch);
         });
       })
       ->whereHas('branchAssign', function ($query) {
-        $query->where('branch_id', branchManagerSelected('manager')->id);
+        $query->where('branch_id', branchSelected('manager')->id);
       })
       /* FILTER BY KEYWORD */
       ->when($keyword != '' || $keyword != null, function ($query) use ($keyword) {

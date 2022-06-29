@@ -9,10 +9,34 @@
  * YOU CAN ADD MORE HELPERS FUNCTION IN HERE
  */
 
+use App\Models\CompanyBranch;
 use App\Models\CompanySetting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
+
+/**
+ * Branch ID for creating any data that related to company branch
+ * @param bool $isSuperAdmin - checking if current user is superadmin or else
+ * @param int $branchId - id from company branch. If null, then this param will set to central branch id but this central branch id only will be used if user is superadmin, else the branch id will set according the header branch selected from request
+ * @return int
+ */
+function branchIdForCreateData($isSuperAdmin, $branchId = null)
+{
+    if ($isSuperAdmin) {
+        if ($branchId != null) {
+            $branch = $branchId;
+        } else {
+            $branch = CompanyBranch::where([
+                'is_centered'   => 1
+            ])->first()->id;
+        }
+    } else {
+        $branch = branchSelected('sanctum:manager')->pivot->branch_id;
+    }
+
+    return $branch;
+}
 
 /**
  * Detect current user is Superadmin
@@ -21,20 +45,41 @@ use Illuminate\Support\Facades\Request;
  */
 function isSuperAdmin()
 {
-    if (Auth::guard('sanctum:manager')->user()->branch == null) {
-        return true;
+    if (Auth::guard('sanctum:manager')->check()) {
+        if (Auth::guard('sanctum:manager')->user()->branch == null) {
+            return true;
+        }
+        return false;
     }
-
     return false;
 }
 
+/**
+ * Get current role name user
+ * 
+ * @param string $guard_name
+ * @return string
+ */
+function currentUserRole($guard_name)
+{
+    if (Auth::guard($guard_name)->check()) {
+        $user = Auth::guard($guard_name)->user();
+        if ($user->branch == null) {
+            return $user->roles()->first()->name;
+        } else {
+            return $user->branchAssign()->first()->pivot->roles()->first()->name;
+        }
+    }
+
+    return '';
+}
 /**
  * Detect current branch user
  * 
  * @param string $guard_name - Is the Auth Guard for the current session (manager or employee)
  * @return Object
  */
-function branchManagerSelected($guard_name)
+function branchSelected($guard_name)
 {
     return Request::header('Branch-Selected') ?
         Auth::guard($guard_name)->user()->branchAssign()->find(Request::header('Branch-Selected'))

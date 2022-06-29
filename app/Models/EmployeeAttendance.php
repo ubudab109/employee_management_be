@@ -14,6 +14,7 @@ class EmployeeAttendance extends Model
         'employee_id',
         'work_places',
         'status_clock',
+        'branch_id',
         'clock_in',
         'clock_out',
     ];
@@ -80,5 +81,10 @@ class EmployeeAttendance extends Model
     public function clockOut()
     {
         return $this->attendanceLocation()->where('clock_type','0')->with('files:id,files')->first();
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(CompanyBranch::class, 'branch_id', 'id');
     }
 }

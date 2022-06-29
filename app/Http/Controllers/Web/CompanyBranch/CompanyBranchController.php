@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\CompanyBranch;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\PaginationResource;
 use App\Repositories\CompanyBranch\CompanyBranchInterface;
+use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -12,11 +13,12 @@ use Illuminate\Support\Facades\Validator;
 class CompanyBranchController extends BaseController
 {
 
-    public $companyBranch;
+    public $companyBranch, $role;
 
-    public function __construct(CompanyBranchInterface $companyBranch)
+    public function __construct(CompanyBranchInterface $companyBranch, RolePermissionManagerInterface $role)
     {
         $this->companyBranch = $companyBranch;
+        $this->role = $role;
     }
 
     /**
@@ -77,6 +79,9 @@ class CompanyBranchController extends BaseController
         if ($validate->fails()) {
             return $this->sendBadRequest('Validator Error', $validate->errors());
         }
+        $permissions = $this->role->listAllPermission([
+            ['name' ,'not like', '%branch%']
+        ]);
 
         DB::beginTransaction();
         try {
@@ -95,12 +100,23 @@ class CompanyBranchController extends BaseController
                 $input['is_centered'] = 0;
             }
             $input['branch_order'] = $getLastOrder + 1;
-            $this->companyBranch->createBranch($input);
+            $branch = $this->companyBranch->createBranch($input);
+            $dataRole = [
+                'name'              => 'Head Branch - '.$branch->branch_name,
+                'guard_name'        => 'sanctum:manager',
+                'branch_id'         => $branch->id,
+                'is_role_manager'   => true,
+            ];
+            $dataPermission = [];
+            foreach ($permissions as $permission) {
+                array_push($dataPermission, $permission->id);
+            }
+            $this->role->createRolePermission($dataRole, $dataPermission);
             DB::commit();
             return $this->sendResponse(array('success' => true), 'Company Branch Created Successfully');
         } catch (\Exception $err) {
             DB::rollBack();
-            return $this->sendError(array('success' => false), 'Internal Server Error');
+            return $this->sendError(array('success' => false, 'message' => $err->getMessage()), 'Internal Server Error');
         }
     }
 

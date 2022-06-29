@@ -13,7 +13,7 @@ trait CurrentBranch {
     } else if (Auth::guard('sanctum:employee')->check()) {
       $guardName = 'sanctum:employee';
     }
-    $branchId = branchManagerSelected($guardName);
+    $branchId = branchSelected($guardName);
     
     static::creating(function ($model) use ($branchId) {
       $model->branch_id = $branchId;

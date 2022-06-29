@@ -57,6 +57,7 @@ class UserManager extends Authenticatable implements MustVerifyEmail
     protected $appends = [
         'avatar',
         'role',
+        'is_superadmin'
     ];
 
 
@@ -67,6 +68,12 @@ class UserManager extends Authenticatable implements MustVerifyEmail
         self::creating(function ($model) {
             $model->uuid = (string)Str::uuid();
         });
+    }
+
+    public function getIsSuperadminAttribute()
+    {
+        if ($this->branch()->first() == null) return true;
+        return false;
     }
 
     public function getAvatarAttribute()

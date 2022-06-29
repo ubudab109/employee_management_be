@@ -34,12 +34,12 @@ class UserManagementController extends BaseController
         $this->userManagement = $userManagement;
         $this->userVerification = $userVerification;
         $this->roles = $roles;
-        // $this->middleware('userpermissionmanager:user-management-permission-list', ['only' => 'index']);
-        // $this->middleware('userpermissionmanager:user-management-permission-detail', ['only' => 'detail']);
-        // // $this->middleware('userpermissionmanager:user-management-permission-create', ['only' => 'create']);
-        // $this->middleware('userpermissionmanager:user-management-permission-update', ['only' => 'update']);
-        // $this->middleware('userpermissionmanager:user-management-permission-delete', ['only' => 'delete']);
-        // $this->middleware('userpermissionmanager:user-management-permission-resend', ['only' => 'resendInvitation']);
+        $this->middleware('userpermissionmanager:user-management-permission-list', ['only' => 'index']);
+        $this->middleware('userpermissionmanager:user-management-permission-detail', ['only' => 'detail']);
+        $this->middleware('userpermissionmanager:user-management-permission-create', ['only' => 'create']);
+        $this->middleware('userpermissionmanager:user-management-permission-update', ['only' => 'update']);
+        $this->middleware('userpermissionmanager:user-management-permission-delete', ['only' => 'delete']);
+        $this->middleware('userpermissionmanager:user-management-permission-resend', ['only' => 'resendInvitation']);
     }
 
     /**
@@ -50,10 +50,10 @@ class UserManagementController extends BaseController
     public function index(Request $request)
     {
         if ($request->show != null && $request->show != 'all') {
-            $data = $this->userManagement->getPaginateUserManagement($request->keyword, $request->status, $request->role, $request->show != null ? $request->show : 10);
+            $data = $this->userManagement->getPaginateUserManagement($request->keyword, $request->status, $request->role, $request->show != null ? $request->show : 10, $request->branch_id);
             $res = new PaginationResource($data);
         } else {
-            $res = $this->userManagement->getUserManagement($request->keyword, $request->status, $request->role);
+            $res = $this->userManagement->getUserManagement($request->keyword, $request->status, $request->role, $request->branch_id);
         }
         return $this->sendResponse($res, 'Data Fetched Successfully');
     }
@@ -95,12 +95,7 @@ class UserManagementController extends BaseController
                 return $this->sendBadRequest('This User Has Been Invited Before');
             }
 
-            if ($request->branch_id != null) {
-                $branch = $request->branch_id;
-            } else {
-                $branch = branchManagerSelected('sanctum:manager')->pivot->branch_id;
-                // return $branch;
-            }
+            $branch = branchIdForCreateData(isSuperAdmin(), $request->has('branch_id') ? $request->branch_id : null);
 
             $dataUserManager = [
                 'name'              => $user->name,
@@ -189,7 +184,7 @@ class UserManagementController extends BaseController
             'key'       => $mailKey,
         ];
         $this->userVerification->generateEmailVerification(UserManager::class, $userId, $mailKey);
-        Mail::to($userManager->email)->send(new UserManagerVerification($dataEmail));
+        dispatch(new SendEmailJob($dataEmail));
         return $this->sendResponse($userManager, 'User Invited Successfully');
     }
 }

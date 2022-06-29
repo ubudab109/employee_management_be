@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Models\UserManager;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -50,7 +51,7 @@ class AuthController extends BaseController
                 $data = array();
 
                 /* GET SCOPE PERMISSION FIRST */
-                $scopes = $this->rolePermission->listAllPermissionScope();
+                $scopes = $this->rolePermission->listAuthAllPermissionScope();
 
                 foreach ($scopes as $scope) {
                     $dataScope['id'] = $scope->id;
@@ -128,7 +129,7 @@ class AuthController extends BaseController
     public function validateToken()
     {
         try {
-            if (auth('sanctum')->check()) {
+            if (Auth::guard('sanctum:manager')->check()) {
                 return $this->sendResponse(true, 'Validated');
             } else {
                 return $this->sendUnauthorized(false, 'Validated');

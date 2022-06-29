@@ -15,11 +15,10 @@ class DatasetController extends BaseController
     public $roleManager, $companyDivision, $companyJobStatus;
 
     public function __construct(
-        RolePermissionManagerInterface $roleManager, 
+        RolePermissionManagerInterface $roleManager,
         CompanyDivisionInterface $companyDivision,
         CompanyJobStatusInterface $companyJobStatus
-    )
-    {
+    ) {
         $this->roleManager = $roleManager;
         $this->companyDivision = $companyDivision;
         $this->companyJobStatus = $companyJobStatus;
@@ -32,12 +31,20 @@ class DatasetController extends BaseController
      */
     public function employee()
     {
-        $employees = DB::table('users')->get();
+        $isSuperadmin = isSuperAdmin();
+        $employees = DB::table('users')
+            ->select('users.*', 'assign.user_id', 'assign.branch_id', 'branch.branch_name')
+            ->join('user_division_assign as assign', 'users.id', '=', 'assign.user_id')
+            ->join('company_branch as branch', 'branch.id' , '=', 'assign.branch_id')
+            ->when(!$isSuperadmin, function ($query) {
+                $query->where('assign.branch_id', branchSelected('sanctum:manager')->id);
+            })
+            ->get();
         $data = array();
-        foreach($employees as $employee) {
+        foreach ($employees as $employee) {
             $res = [
                 'value'     => $employee->id,
-                'label'     => $employee->name.' | '.$employee->nip
+                'label'     => $employee->name . ' | ' . $employee->nip.' | '.$employee->branch_name
             ];
 
             array_push($data, $res);
@@ -50,14 +57,14 @@ class DatasetController extends BaseController
      * 
      * @return \Illuminate\Http\Response
      */
-    public function roleManager()
+    public function roleManager(Request $request)
     {
-        $roles = $this->roleManager->listRoleManager('');
+        $roles = $this->roleManager->listRoleManager('', $request->branch_id);
         $data = array();
         foreach ($roles as $role) {
             $res = [
                 'value' => $role->id,
-                'label' => ucfirst($role->name)
+                'label' => ucfirst($role->name) . ' | ' . $role->branch->branch_name
             ];
             array_push($data, $res);
         }
@@ -72,7 +79,7 @@ class DatasetController extends BaseController
      */
     public function detailEmployee($id)
     {
-        $employees = DB::table('users')->select('id','nip','email','name')->where('id', $id)->first();
+        $employees = DB::table('users')->select('id', 'nip', 'email', 'name')->where('id', $id)->first();
         return $this->sendResponse($employees, 'Data Fetched Successfully');
     }
 
@@ -93,10 +100,30 @@ class DatasetController extends BaseController
      * 
      * @param \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
-    */
+     */
     public function listJobStatus(Request $request)
     {
         $jobStatus = $this->companyJobStatus->getAllJobStatus($request->keyword);
         return $this->sendResponse($jobStatus, 'Data Fetched Successfully');
+    }
+
+    /**
+     * Dataset Company Branch
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function listCompanyBranch()
+    {
+        $branchs = DB::table('company_branch')->select('id', 'branch_name', 'branch_code')->get();
+        $data = array();
+        foreach ($branchs as $branch) {
+            $res = [
+                'value' => $branch->id,
+                'label' => $branch->branch_name . ' | ' . $branch->branch_code,
+            ];
+            array_push($data, $res);
+        }
+
+        return $this->sendResponse($data, 'Data Fetched Successfully');
     }
 }
