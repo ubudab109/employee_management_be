@@ -83,7 +83,7 @@ class RolePermissionManagerRepository implements RolePermissionManagerInterface
    */
   public function listAllPermissionFromScope()
   {
-    return $this->permissionScope->orderBy('order')->with(['permissions', function ($query) {
+    return $this->permissionScope->orderBy('order')->with(['permissions' => function ($query) {
       $query->where('name', 'not like', '%' . 'branch');
     }])->get();
   }
