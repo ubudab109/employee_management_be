@@ -4,36 +4,19 @@ namespace App\Http\Controllers\Web\UserManagement;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\PaginationResource;
-use App\Jobs\SendEmailJob;
-use App\Mail\UserManagerVerification;
-use App\Models\User;
-use App\Models\UserManager;
-use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
-use App\Repositories\UserManagement\UserManagementInterface;
-use App\Repositories\UserVerification\UserVerificationInterface;
+use App\Services\ManagerServices;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class UserManagementController extends BaseController
 {
-    public $userManagement, $userVerification,$roles;
+    public $managerServices;
 
-    /**
-     * @param App\Repositories\UserManagement\UserManagementInterface $userManagement
-     * @param App\Repositories\UserVerification\UserVerificationInterface $userVerification
-     * @return null
-     */
-    public function __construct(
-        UserManagementInterface $userManagement,
-        UserVerificationInterface $userVerification,
-        RolePermissionManagerInterface $roles
-    ) {
-        $this->userManagement = $userManagement;
-        $this->userVerification = $userVerification;
-        $this->roles = $roles;
+    public function __construct(ManagerServices $managerServices) 
+    {
+        $this->managerServices = $managerServices;
         $this->middleware('userpermissionmanager:user-management-permission-list', ['only' => 'index']);
         $this->middleware('userpermissionmanager:user-management-permission-detail', ['only' => 'detail']);
         $this->middleware('userpermissionmanager:user-management-permission-create', ['only' => 'create']);
@@ -49,13 +32,13 @@ class UserManagementController extends BaseController
      */
     public function index(Request $request)
     {
-        if ($request->show != null && $request->show != 'all') {
-            $data = $this->userManagement->getPaginateUserManagement($request->keyword, $request->status, $request->role, $request->show != null ? $request->show : 10, $request->branch_id);
-            $res = new PaginationResource($data);
+        $getData = $this->managerServices->list($request);
+        if ($getData['type'] == 'paginate') {
+            $data = new PaginationResource($getData['data']);
         } else {
-            $res = $this->userManagement->getUserManagement($request->keyword, $request->status, $request->role, $request->branch_id);
+            $data = $getData['data'];
         }
-        return $this->sendResponse($res, 'Data Fetched Successfully');
+        return $this->sendResponse($data, 'Data Fetched Successfully');
     }
 
     /**
@@ -65,7 +48,11 @@ class UserManagementController extends BaseController
      */
     public function show($id)
     {
-        return $this->sendResponse($this->userManagement->detailUserManagement($id), 'Data Fetched Successfully');
+        $data = $this->managerServices->detail($id);
+        if (!$data['status']) {
+            return $this->sendError('Not Found','Data Not Found', Response::HTTP_NOT_FOUND);
+        }
+        return $this->sendResponse($data['data'], 'Data Fetched Successfully');
     }
 
     /**
@@ -76,7 +63,11 @@ class UserManagementController extends BaseController
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id'              => 'required',
+            'user_id'              => 'required_without:email',
+            'email'                => 'required_without:user_id',
+            'name'                 => 'required_without:user_id',
+            'nip'                  => 'required_without:user_id',
+            'gender'               => 'required_without:user_id',
             'role'                 => 'required',
             'branch_id'            => '',
         ]);
@@ -85,43 +76,16 @@ class UserManagementController extends BaseController
             return $this->sendBadRequest('Validation Error', 'Please Select User');
         }
 
-        DB::beginTransaction();
-        try {
-            $user = User::find($request->user_id);
-            $password = randomPassword();
-            $checkUser = $this->userManagement->checkExistsUserByEmail($user->email);
-
-            if ($checkUser) {
-                return $this->sendBadRequest('This User Has Been Invited Before');
+        $createUserManager = $this->managerServices->store($request);
+        if (!$createUserManager['status']) {
+            if ($createUserManager['res'] == 422) {
+                return $this->sendBadRequest($createUserManager['data'],null);
+            } else {
+                return $this->sendError(array('success' => 0),'Internal Server Error');
             }
-
-            $branch = branchIdForCreateData(isSuperAdmin(), $request->has('branch_id') ? $request->branch_id : null);
-
-            $dataUserManager = [
-                'name'              => $user->name,
-                'email'             => $user->email,
-                'nip'               => $user->nip,
-                'gender'            => $user->gender,
-                'phone_number'      => $user->phone_number,
-                'password'          => Hash::make($password),
-            ];
-            $mailKey = generate_email_verification_key();
-
-            $this->userManagement->inviteUser($dataUserManager, $branch, $request->role, $mailKey);
-            $dataEmail = [
-                'name'      => $user->name,
-                'email'     => $user->email,
-                'password'  => $password,
-                'role'      => $this->roles->detailRoleManager($request->role)->name,
-                'key'       => $mailKey,
-            ];
-            dispatch(new SendEmailJob($dataEmail));
-            DB::commit();
-            return $this->sendResponse($user, 'User Invited Successfully');
-        } catch (\Exception $err) {
-            DB::rollBack();
-            return $this->sendError(array('success' => false), $err->getMessage().'-'.$err->getLine());
         }
+
+        return $this->sendResponse($createUserManager['data'], 'Data Created Successfully');
     }
 
     /**
@@ -133,26 +97,21 @@ class UserManagementController extends BaseController
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
+            'email'     => ['required', Rule::unique('user_manager','email')->ignore($id) ],
+            'name'      => 'required',
+            'nip'       => ['required', Rule::unique('user_manager','nip')->ignore($id) ],
+            'gender'    => 'required',
             'role'      => '',
             'branch_id' => '',
         ]);
         if ($validator->fails()) {
             return $this->sendBadRequest('Validator Error', $validator->errors());
         }
-        $userManager = $this->userManagement->detailUserBranchAssign($id);
-
-        if ($request->role != null) {
-            $userManager->roles()->detach();
-            $userManager->assignRole($request->role);
+        $updateUserManager = $this->managerServices->update($request->all(), $id);
+        if (!$updateUserManager['status']) {
+            return $this->sendError('Internal Server Error');
         }
-
-        if ($request->branch_id != null) {
-            $userManager->update([
-                'branch_id' => $request->branch_id,
-            ]);
-        }
-
-        return $this->sendResponse(array('success' => 1), 'User Updated Successfully');
+        return $this->sendResponse($updateUserManager['data'], 'User Updated Successfully');
     }
 
     /**
@@ -162,7 +121,11 @@ class UserManagementController extends BaseController
      */
     public function destroy($userId)
     {
-        return $this->sendResponse(array('success' => $this->userManagement->deleteUserManagement($userId)), 'User Remove Succesfully');
+        $isDeleted = $this->managerServices->destroy($userId);
+        if (!$isDeleted) {
+            return $this->sendError('Internal Server Error');
+        }
+        return $this->sendResponse(array('success' => 1), 'User Remove Succesfully');
     }
 
     /**
@@ -172,19 +135,11 @@ class UserManagementController extends BaseController
      */
     public function resendInvitation($userId)
     {
-        $userManager = $this->userManagement->detailUserManagement($userId);
-        $password = randomPassword();
-        $mailKey = generate_email_verification_key();
-        $this->userVerification->deleteVerificationEmail(UserManager::class, $userId);
-        $dataEmail = [
-            'name'      => $userManager->name,
-            'email'     => $userManager->email,
-            'password'  => $password,
-            'role'      => $userManager->roles[0]->name,
-            'key'       => $mailKey,
-        ];
-        $this->userVerification->generateEmailVerification(UserManager::class, $userId, $mailKey);
-        dispatch(new SendEmailJob($dataEmail));
-        return $this->sendResponse($userManager, 'User Invited Successfully');
+        $resendInv = $this->managerServices->resendInvite($userId);
+        if (!$resendInv['status']) {
+            return $this->sendError($resendInv['data']);
+        }
+
+        return $this->sendResponse($resendInv['data'], 'User Invited Successfully');
     }
 }

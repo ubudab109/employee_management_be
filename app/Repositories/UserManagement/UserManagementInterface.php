@@ -11,6 +11,7 @@ interface UserManagementInterface
   public function verifyEmailUserManagement($userId);
   public function checkExistsUserByEmail($email);
   public function inviteUser(array $data, $branchId, $role, $code);
+  public function updateUser(array $data, $managerId);
   public function changeRole($userId, $role);
   public function deleteUserManagement($userId);
   public function moveBranch($userId, $branchId);

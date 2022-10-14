@@ -3,14 +3,8 @@
 namespace App\Http\Controllers\Web\RolePermission;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Controllers\Controller;
-use App\Repositories\CompanyBranch\CompanyBranchInterface;
-use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
 use App\Services\RoleServices;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class RolePermissionController extends BaseController

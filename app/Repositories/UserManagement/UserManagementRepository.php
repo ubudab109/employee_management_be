@@ -36,11 +36,15 @@ class UserManagementRepository implements UserManagementInterface
   {
     return $this->model
       ->when(!$this->isSuperAdmin, function ($query) {
-        $query->where('branch_id', branchSelected('sanctum:manager')->id);
+        $query->whereHas('branchAssign', function ($subQuery) {
+          $subQuery->where('branch_id', branchSelected('sanctum:manager')->id);
+        });
       })
       ->when($this->isSuperAdmin, function ($query) use ($branch) {
         $query->when($branch != null, function ($subQuery) use ($branch) {
-          $subQuery->where('branch_id', $branch);
+          $subQuery->whereHas('branchAssign', function ($subQuery) use ($branch) {
+            $subQuery->where('branch_id', $branch);
+          });
         });
       })
       /* FILTER BY KEYWORD */
@@ -64,7 +68,12 @@ class UserManagementRepository implements UserManagementInterface
    */
   public function detailUserManagement($userId)
   {
-    return $this->model->with('branchAssign')->findOrFail($userId);
+    $data = $this->model->with('branchAssign')->find($userId);
+    if ($data) {
+      return $data;
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -103,15 +112,16 @@ class UserManagementRepository implements UserManagementInterface
   {
     return $this->model
       ->when(!$this->isSuperAdmin, function ($query) {
-        $query->where('branch_id', branchSelected('sanctum:manager')->id);
+        $query->whereHas('branchAssign', function ($subQuery) {
+          $subQuery->where('branch_id', branchSelected('sanctum:manager')->id);
+        });
       })
       ->when($this->isSuperAdmin, function ($query) use ($branch) {
         $query->when($branch != null, function ($subQuery) use ($branch) {
-          $subQuery->where('branch_id', $branch);
+          $subQuery->whereHas('branchAssign', function ($subQuery) use ($branch) {
+            $subQuery->where('branch_id', $branch);
+          });
         });
-      })
-      ->whereHas('branchAssign', function ($query) {
-        $query->where('branch_id', branchSelected('manager')->id);
       })
       /* FILTER BY KEYWORD */
       ->when($keyword != '' || $keyword != null, function ($query) use ($keyword) {
@@ -149,6 +159,22 @@ class UserManagementRepository implements UserManagementInterface
       'expired_at'        => date('Y-m-d', strtotime('+1 days')),
       'verification_type' => EMAIL_VERIFICATION_TYPE,
     ]);
+    return $user;
+  }
+
+  /**
+   * It takes an array of data and a managerId, finds the managerId in the database, updates the data,
+   * and returns the updated user
+   * 
+   * @param array data an array of the data you want to update
+   * @param int managerId The id of the user you want to update
+   * 
+   * @return object user object.
+   */
+  public function updateUser(array $data, $managerId)
+  {
+    $user = $this->model->find($managerId);
+    $user->update($data);
     return $user;
   }
 
