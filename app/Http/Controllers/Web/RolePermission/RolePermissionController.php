@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Validator;
 
 class RolePermissionController extends BaseController
 {
-    public $roleService;
+    public $services;
 
-    public function __construct(RoleServices $roleService)
+    public function __construct(RoleServices $services)
     {
-        $this->roleService = $roleService;
+        $this->services = $services;
         // $this->middleware('userpermissionmanager:role-permission-list',['only' => 'listRole']);
         // $this->middleware('userpermissionmanager:role-permission-detail',['only' => 'detailRoleWithPermissions']);
         // $this->middleware('userpermissionmanager:role-permission-create',['only' => 'createRolePermissions']);
@@ -29,7 +29,7 @@ class RolePermissionController extends BaseController
      */
     public function listRole(Request $request)
     {
-        return $this->sendResponse($this->roleService->list($request), 'Data Fetched Successfully');
+        return $this->sendResponse($this->services->list($request), 'Data Fetched Successfully');
     }
 
     /**
@@ -38,7 +38,7 @@ class RolePermissionController extends BaseController
      */
     public function listPermissions()
     {
-        return $this->sendResponse($this->roleService->listPermissionsFromScope(), 'Data Fetched Successfully');
+        return $this->sendResponse($this->services->listPermissionsFromScope(), 'Data Fetched Successfully');
     }
 
     /**
@@ -47,7 +47,7 @@ class RolePermissionController extends BaseController
      */
     public function detailRoleWithPermissions($roleId)
     {
-        return $this->sendResponse($this->roleService->detailWithPermissions($roleId), 'Data Fetched Successfully');
+        return $this->sendResponse($this->services->detailWithPermissions($roleId), 'Data Fetched Successfully');
     }
 
     /**
@@ -67,7 +67,7 @@ class RolePermissionController extends BaseController
             return $this->sendBadRequest('Validator Error', $validator->errors());
         }
 
-        $createRolePermission = $this->roleService->createRolePermissions($request);
+        $createRolePermission = $this->services->createRolePermissions($request);
         if (!$createRolePermission['status']) {
             return $this->sendError(array('success' => 0), 'Internal Server Error');
         }
@@ -92,7 +92,7 @@ class RolePermissionController extends BaseController
             return $this->sendBadRequest('Validator Error', $validator->errors());
         }
 
-        $updateRolePermission = $this->roleService->updateRolePermission($request, $roleId);
+        $updateRolePermission = $this->services->updateRolePermission($request, $roleId);
         if (!$updateRolePermission['status']) {
             return $this->sendError(array('success' => 0), $updateRolePermission['data']);
         }
@@ -106,10 +106,10 @@ class RolePermissionController extends BaseController
      */
     public function deleteRole($roleId)
     {
-        $isDeleted = $this->roleService->deleteRole($roleId);
+        $isDeleted = $this->services->deleteRole($roleId);
         if (!$isDeleted) {
             return $this->sendBadRequest(array('success' => 0), 'Internal Server Error');
         }
-        return $this->sendResponse($this->roleService->list([]), 'Data Deleted Successfully');
+        return $this->sendResponse($this->services->list([]), 'Data Deleted Successfully');
     }
 }

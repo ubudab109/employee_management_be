@@ -9,10 +9,11 @@ class CompanyDivisionRepository implements CompanyDivisionInterface
     /**
     * @var ModelName
     */
-    protected $model;
+    protected $model, $isSupaerAdmin;
 
     public function __construct(CompanyDivision $model)
     {
+      $this->isSuperAdmin = isSuperAdmin();
       $this->model = $model;
     }
 
@@ -22,9 +23,18 @@ class CompanyDivisionRepository implements CompanyDivisionInterface
      * @param string $keyword
      * @return \App\Models\CompanyDivision
      */
-    public function getAllDivision($keyword)
+    public function getAllDivision($branchId, $keyword)
     {
-      return $this->model->when($keyword != null && $keyword != '', function ($query) use ($keyword) {
+      return $this->model
+      ->when(!$this->isSuperAdmin, function ($query) {
+        $query->where('branch_id', branchSelected('sanctum:manager')->id);
+      })
+      ->when($this->isSuperAdmin, function ($query) use ($branchId) {
+        $query->when($branchId != null, function ($subQuery) use ($branchId) {
+          $subQuery->where('branch_id', $branchId);
+        });
+      })
+      ->when($keyword != null && $keyword != '', function ($query) use ($keyword) {
         $query->where('division_name', 'LIKE', '%'.$keyword.'%')->orWhere('division_code', 'LIKE', '%'.$keyword.'%');
       })->get();
     }
@@ -36,9 +46,18 @@ class CompanyDivisionRepository implements CompanyDivisionInterface
      * @param int $show
      * @return \App\Model\CompanyDivision
      */
-    public function getPaginateDivision($keyword, $show)
+    public function getPaginateDivision($branchId, $keyword, $show)
     {
-      return $this->model->when($keyword != null && $keyword != '', function ($query) use ($keyword) {
+      return $this->model
+      ->when(!$this->isSuperAdmin, function ($query) {
+        $query->where('branch_id', branchSelected('sanctum:manager')->id);
+      })
+      ->when($this->isSuperAdmin, function ($query) use ($branchId) {
+        $query->when($branchId != null, function ($subQuery) use ($branchId) {
+          $subQuery->where('branch_id', $branchId);
+        });
+      })
+      ->when($keyword != null && $keyword != '', function ($query) use ($keyword) {
         $query->where('division_name', 'LIKE', '%'.$keyword.'%')->orWhere('division_code', 'LIKE', '%'.$keyword.'%');
       })->paginate($show);
     }
@@ -51,7 +70,7 @@ class CompanyDivisionRepository implements CompanyDivisionInterface
      */
     public function detailDivision($id)
     {
-      return $this->model->findOrFail($id);
+      return $this->model->find($id);
     }
 
     /**
@@ -74,7 +93,9 @@ class CompanyDivisionRepository implements CompanyDivisionInterface
      */
     public function updateDivision(array $data, $id)
     {
-      return $this->model->findOrFail($id)->update($data);
+      $division = $this->model->find($id);
+      $division->update($data);
+      return $division;
     }
 
     /**

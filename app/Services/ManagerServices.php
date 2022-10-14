@@ -210,15 +210,7 @@ class ManagerServices
      */
     public function destroy($managerId)
     {
-        DB::beginTransaction();
-        try {
-            $this->userManagement->deleteUserManagement($managerId);
-            DB::commit();
-            return true;
-        } catch (\Exception $err) {
-            DB::rollBack();
-            return false;
-        }
+        return $this->userManagement->deleteUserManagement($managerId);
     }
 
     /**

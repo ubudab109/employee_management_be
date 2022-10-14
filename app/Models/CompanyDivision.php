@@ -11,7 +11,7 @@ class CompanyDivision extends Model
     use HasFactory;
 
     protected $table = 'company_division';
-    protected $fillable = ['division_code','division_name','style_color'];
+    protected $fillable = ['division_code','division_name','style_color','branch_id'];
     protected $appends = ['icon'];
 
     public function getIconAttribute()

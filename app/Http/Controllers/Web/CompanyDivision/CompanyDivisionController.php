@@ -4,23 +4,23 @@ namespace App\Http\Controllers\Web\CompanyDivision;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\PaginationResource;
-use App\Repositories\CompanyDivision\CompanyDivisionInterface;
+use App\Services\CompanyDivisionServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CompanyDivisionController extends BaseController
 {
 
-    public $companyDivisionRepository;
+    public $services;
 
-    public function __construct(CompanyDivisionInterface $companyDivisionRepository)
+    public function __construct(CompanyDivisionServices $services)
     {
         $this->middleware('userpermissionmanager:department-list',['only' => 'index']);
         $this->middleware('userpermissionmanager:department-create',['only' => 'store']);
         $this->middleware('userpermissionmanager:department-update',['only' => 'update']);
         $this->middleware('userpermissionmanager:department-detail',['only' => 'detail']);
         $this->middleware('userpermissionmanager:department-delete',['only' => 'delete']);
-        $this->companyDivisionRepository = $companyDivisionRepository;
+        $this->services = $services;
     }
     /**
      * Display a listing company division.
@@ -29,14 +29,14 @@ class CompanyDivisionController extends BaseController
      */
     public function index(Request $request)
     {
-        if ($request->show != null && $request->show != 'all') {
-            $data = $this->companyDivisionRepository->getPaginateDivision($request->keyword, $request->show);
-            $res = new PaginationResource($data);
+        $getData = $this->services->list($request);
+        if ($getData['type'] == 'paginate') {
+            $data = new PaginationResource($getData['data']);
         } else {
-            $res = $this->companyDivisionRepository->getAllDivision($request->keyword);
+            $data = $getData['data'];
         }
 
-        return $this->sendResponse($res, 'Data Fetched Successfully');
+        return $this->sendResponse($data, 'Data Fetched Successfully');
     }
 
     /**
@@ -59,9 +59,11 @@ class CompanyDivisionController extends BaseController
         
         $input = $request->all();
 
-        $this->companyDivisionRepository->storeDivision($input);
-
-        return $this->sendResponse(array('success' => true), 'Data Created Successfully');
+        $create = $this->services->create($input);
+        if (!$create['status']) {
+            return $this->sendError($create['data']);
+        }
+        return $this->sendResponse($create['data'], 'Data Created Successfully');
     }
 
     /**
@@ -72,7 +74,11 @@ class CompanyDivisionController extends BaseController
      */
     public function show($id)
     {
-        return $this->sendResponse($this->companyDivisionRepository->detailDivision($id), 'Data Fetched Successfully');
+        $data = $this->services->detail($id);
+        if (!$data['status']) {
+            return $this->sendError($data['data'],null, $data['code']);
+        }
+        return $this->sendResponse($data['data'], 'Data Fetched Successfully');
     }
 
     /**
@@ -96,9 +102,13 @@ class CompanyDivisionController extends BaseController
 
         $input = $request->all();
 
-        $$this->companyDivisionRepository->updateDivision($input, $id);
+        $data = $this->services->update($input, $id);
+
+        if (!$data['status']) {
+            return $this->sendError('Internal Server Error');
+        }
         
-        return $this->sendResponse(array('success' => true), 'Data Updated Successfully');
+        return $this->sendResponse($data['data'], 'Data Updated Successfully');
     }
 
     /**
@@ -109,7 +119,10 @@ class CompanyDivisionController extends BaseController
      */
     public function destroy($id)
     {
-        $this->companyDivisionRepository->deleteDivision($id);
-        return $this->sendResponse(array('success' => true), 'Data Deleted Successfully');
+        $isDeleted = $this->services->delete($id);
+        if (!$isDeleted) {
+            return $this->sendError('Internal Server Error');
+        }
+        return $this->sendResponse($isDeleted, 'Data Deleted Successfully');
     }
 }

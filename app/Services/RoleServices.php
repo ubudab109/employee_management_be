@@ -208,14 +208,6 @@ class RoleServices
      */
     public function deleteRole($roleId)
     {
-        DB::beginTransaction();
-        try {
-            $this->roleInterface->deleteRolePermission($roleId);
-            DB::commit();
-            return true;
-        } catch (\Exception $err) {
-            DB::rollBack();
-            return false;
-        }
+        return $this->roleInterface->deleteRolePermission($roleId);
     }
 }

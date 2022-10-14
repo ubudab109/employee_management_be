@@ -12,11 +12,11 @@ use Illuminate\Validation\Rule;
 
 class UserManagementController extends BaseController
 {
-    public $managerServices;
+    public $services;
 
-    public function __construct(ManagerServices $managerServices) 
+    public function __construct(ManagerServices $services) 
     {
-        $this->managerServices = $managerServices;
+        $this->services = $services;
         $this->middleware('userpermissionmanager:user-management-permission-list', ['only' => 'index']);
         $this->middleware('userpermissionmanager:user-management-permission-detail', ['only' => 'detail']);
         $this->middleware('userpermissionmanager:user-management-permission-create', ['only' => 'create']);
@@ -32,7 +32,7 @@ class UserManagementController extends BaseController
      */
     public function index(Request $request)
     {
-        $getData = $this->managerServices->list($request);
+        $getData = $this->services->list($request);
         if ($getData['type'] == 'paginate') {
             $data = new PaginationResource($getData['data']);
         } else {
@@ -48,7 +48,7 @@ class UserManagementController extends BaseController
      */
     public function show($id)
     {
-        $data = $this->managerServices->detail($id);
+        $data = $this->services->detail($id);
         if (!$data['status']) {
             return $this->sendError('Not Found','Data Not Found', Response::HTTP_NOT_FOUND);
         }
@@ -76,7 +76,7 @@ class UserManagementController extends BaseController
             return $this->sendBadRequest('Validation Error', 'Please Select User');
         }
 
-        $createUserManager = $this->managerServices->store($request);
+        $createUserManager = $this->services->store($request);
         if (!$createUserManager['status']) {
             if ($createUserManager['res'] == 422) {
                 return $this->sendBadRequest($createUserManager['data'],null);
@@ -107,7 +107,7 @@ class UserManagementController extends BaseController
         if ($validator->fails()) {
             return $this->sendBadRequest('Validator Error', $validator->errors());
         }
-        $updateUserManager = $this->managerServices->update($request->all(), $id);
+        $updateUserManager = $this->services->update($request->all(), $id);
         if (!$updateUserManager['status']) {
             return $this->sendError('Internal Server Error');
         }
@@ -121,7 +121,7 @@ class UserManagementController extends BaseController
      */
     public function destroy($userId)
     {
-        $isDeleted = $this->managerServices->destroy($userId);
+        $isDeleted = $this->services->destroy($userId);
         if (!$isDeleted) {
             return $this->sendError('Internal Server Error');
         }
@@ -135,7 +135,7 @@ class UserManagementController extends BaseController
      */
     public function resendInvitation($userId)
     {
-        $resendInv = $this->managerServices->resendInvite($userId);
+        $resendInv = $this->services->resendInvite($userId);
         if (!$resendInv['status']) {
             return $this->sendError($resendInv['data']);
         }
