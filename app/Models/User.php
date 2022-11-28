@@ -40,13 +40,18 @@ class User extends Authenticatable implements MustVerifyEmail
         'end_date',
         'job_status',
         'job_level',
+        'job_position',
         'marital_status',
         'blood_type',
         'identity_type',
         'identity_number',
+        'identity_expired',
         'email_verified_at',
         'password',
+        'payment_date',
+        'salary_settings',
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -65,10 +70,12 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'salary_settings'   => 'object',
     ];
 
     protected $appends = [
-        'avatar', 'roles_name', 'division_name'
+        'avatar', 'division_name', 'total_salary', 'total_income', 
+        'total_cuts', 'status', 'status_badge', 'status_name', 'job_status_name'
     ];
 
     protected static function boot()
@@ -80,29 +87,88 @@ class User extends Authenticatable implements MustVerifyEmail
         });
     }
 
+    public function getJobStatusNameAttribute()
+    {
+        return getJobStatusName($this->job_status);
+    }
+
+    public function getStatusNameAttribute()
+    {
+        if ($this->getStatusAttribute() == EMPLOYEE_ACTIVE) {
+            $name = 'Active';
+        } else if ($this->getStatusAttribute() === EMPLOYEE_INACTIVE) {
+            $name = 'Not Active';
+        } else {
+            $name = 'Pending';
+        }
+
+        return $name;
+    }
+
+    public function getStatusBadgeAttribute()
+    {
+        if ($this->getStatusAttribute() == EMPLOYEE_ACTIVE) {
+            $badge = [
+                'badge' => '#BBFFCC',
+                'color' => '#008836',
+            ];
+        } else if ($this->getStatusAttribute() === EMPLOYEE_INACTIVE) {
+            $badge = [
+                'badge' => '#FCE8E8',
+                'color' => '#FF1111',
+            ];
+        } else {
+            $badge = [
+                'badge' => '#FFEBD7',
+                'color' => '#D88430',
+            ];
+        }
+
+        return $badge;
+    }
+
     public function getDivisionNameAttribute()
     {
-        return $this->division()->first()->division_name;
+        if ($this->division()->first()) {
+            return $this->division()->first()->division_name;
+        }
+
+        return null;
     }
 
 
-    public function getRolesNameAttribute()
+    public function getTotalSalaryAttribute()
     {
-        return ucfirst($this->branchAssign()->first()->pivot->roles()->first()->name);
+        return $this->salary()->sum('amount');
+    }
+
+    public function getTotalIncomeAttribute()
+    {
+        return $this->salary()->where('type', SALARY_INCOME)->sum('amount');
+    }
+
+    public function getTotalCutsAttribute()
+    {
+        return $this->salary()->where('type', SALARY_CUTS)->sum('amount');
+    }
+
+    public function getStatusAttribute()
+    {
+        return $this->userDivision()->first()->status;
     }
 
     public function getAvatarAttribute()
-    {   
+    {
 
         if ($this->profile_picture === NULL) {
             $avatar = new Avatar();
-            $image = $avatar->create($this->name[0])->setBackground('#F79E1B')->toBase64();
+            $image = $avatar->create($this->firstname[0])->setBackground('#F79E1B')->toBase64();
         } else {
             $image = $this->profile_picture;
         }
         return $image;
     }
-    
+
     public function jobStatus()
     {
         return $this->belongsTo(CompanyJobStatus::class, 'job_status_id', 'id');
@@ -117,11 +183,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(UserDivisionAssign::class, 'user_id', 'id');
     }
-    
+
     public function branchAssign()
     {
         return $this->belongsToMany(CompanyBranch::class, 'user_division_assign', 'user_id', 'branch_id')->using(UserDivisionAssign::class)
-        ->withPivot('id', 'user_id', 'division_id', 'branch_id','status', 'employment_type');
+            ->withPivot('id', 'user_id', 'division_id', 'branch_id', 'status', 'employment_type');
     }
 
     public function userDivision()
@@ -141,8 +207,31 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function attendance()
     {
-        return $this->hasMany(EmployeeAttendance::class, 'employee_id','id');
+        return $this->hasMany(EmployeeAttendance::class, 'employee_id', 'id');
     }
 
-    
+    public function salary()
+    {
+        return $this->hasMany(EmployeeSalary::class, 'employee_id', 'id');
+    }
+
+    public function income()
+    {
+        return $this->salary()->where('type', SALARY_INCOME)->get();
+    }
+
+    public function cuts()
+    {
+        return $this->salary()->where('type', SALARY_INCOME)->get();
+    }
+
+    public function attendanceCut()
+    {
+        return $this->hasMany(EmployeeAttendanceCut::class, 'employee_id', 'id');
+    }
+
+    public function bank()
+    {
+        return $this->morphMany(BankAccount::class, 'source');
+    }
 }

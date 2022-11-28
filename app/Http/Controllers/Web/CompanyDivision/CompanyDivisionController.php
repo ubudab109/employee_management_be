@@ -7,6 +7,7 @@ use App\Http\Resources\PaginationResource;
 use App\Services\CompanyDivisionServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class CompanyDivisionController extends BaseController
 {
@@ -58,7 +59,9 @@ class CompanyDivisionController extends BaseController
         }
         
         $input = $request->all();
-
+        if (isset($input['division_code']) && $input['division_code'] != null) {
+            $input['division_code'] = branchSelected('sanctum:manager')->branch_name.'-'.$input['division_code'];
+        }
         $create = $this->services->create($input);
         if (!$create['status']) {
             return $this->sendError($create['data']);
@@ -101,7 +104,9 @@ class CompanyDivisionController extends BaseController
         }
 
         $input = $request->all();
-
+        if (isset($input['division_code']) && $input['division_code'] != null) {
+            $input['division_code'] = branchSelected('sanctum:manager')->branch_name.'-'.$input['division_code'];
+        }
         $data = $this->services->update($input, $id);
 
         if (!$data['status']) {

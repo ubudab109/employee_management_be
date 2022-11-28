@@ -17,11 +17,9 @@ class DatasetController extends BaseController
     public function __construct(
         RolePermissionManagerInterface $roleManager,
         CompanyDivisionInterface $companyDivision,
-        CompanyJobStatusInterface $companyJobStatus
     ) {
         $this->roleManager = $roleManager;
         $this->companyDivision = $companyDivision;
-        $this->companyJobStatus = $companyJobStatus;
     }
 
     /**
@@ -44,7 +42,7 @@ class DatasetController extends BaseController
         foreach ($employees as $employee) {
             $res = [
                 'value'     => $employee->id,
-                'label'     => $employee->name . ' | ' . $employee->nip.' | '.$employee->branch_name
+                'label'     => $employee->firstname.' '. $employee->lastname . ' | ' . $employee->nip.' | '.$employee->branch_name
             ];
 
             array_push($data, $res);
@@ -79,7 +77,7 @@ class DatasetController extends BaseController
      */
     public function detailEmployee($id)
     {
-        $employees = DB::table('users')->select('id', 'nip', 'email', 'name')->where('id', $id)->first();
+        $employees = DB::table('users')->select('id', 'nip', 'email', 'firstname','lastname')->where('id', $id)->first();
         return $this->sendResponse($employees, 'Data Fetched Successfully');
     }
 
@@ -91,20 +89,8 @@ class DatasetController extends BaseController
      */
     public function listDepartment(Request $request)
     {
-        $department = $this->companyDivision->getAllDivision($request->keyword);
+        $department = $this->companyDivision->getAllDivision($request->branch,$request->keyword);
         return $this->sendResponse($department, 'Data Fetched Successfully');
-    }
-
-    /**
-     * List Job Status
-     * 
-     * @param \Illuminate\Http\Request
-     * @return \Illuminate\Http\Response
-     */
-    public function listJobStatus(Request $request)
-    {
-        $jobStatus = $this->companyJobStatus->getAllJobStatus($request->keyword);
-        return $this->sendResponse($jobStatus, 'Data Fetched Successfully');
     }
 
     /**

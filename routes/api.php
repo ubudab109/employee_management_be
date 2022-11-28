@@ -11,6 +11,7 @@ use App\Http\Controllers\Web\CompanyBranch\CompanyBranchController;
 use App\Http\Controllers\Web\CompanyDivision\CompanyDivisionController;
 use App\Http\Controllers\Web\Dashboard\DashboardController;
 use App\Http\Controllers\Web\Dataset\DatasetController;
+use App\Http\Controllers\Web\Employee\EmployeeController;
 use App\Http\Controllers\Web\Profile\ProfileController as ProfileProfileController;
 use App\Http\Controllers\Web\RolePermission\RolePermissionController;
 use App\Http\Controllers\Web\UserManagement\UserManagementController;
@@ -121,6 +122,10 @@ Route::group(['middleware' => 'cors'], function() {
                     /* Company Branch */
                     Route::resource('company-branch', CompanyBranchController::class);
                     Route::get('company-branch/branch/{branch_code}', [CompanyBranchController::class, 'validateBranchCode']);
+
+                    /** Employee */
+                    // Route::post('employee', [EmployeeController::class, 'store']);
+                    Route::resource('employee', EmployeeController::class);
                 });
             });
 

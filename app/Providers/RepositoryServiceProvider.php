@@ -8,6 +8,8 @@ use App\Repositories\CompanyDivision\CompanyDivisionInterface;
 use App\Repositories\CompanyDivision\CompanyDivisionRepository;
 use App\Repositories\CompanySetting\CompanySettingInterface;
 use App\Repositories\CompanySetting\CompanySettingRepository;
+use App\Repositories\Employee\EmployeeInterface;
+use App\Repositories\Employee\EmployeeRepository;
 use App\Repositories\EmployeeAttendance\EmployeeAttendanceInterface;
 use App\Repositories\EmployeeAttendance\EmployeeAttendanceRepository;
 use App\Repositories\EmployeeNote\EmployeeNoteInterface;
@@ -38,6 +40,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EmployeeAttendanceInterface::class, EmployeeAttendanceRepository::class);
         $this->app->bind(CompanyDivisionInterface::class, CompanyDivisionRepository::class);
         $this->app->bind(CompanyBranchInterface::class, CompanyBranchRepository::class);
+        $this->app->bind(EmployeeInterface::class, EmployeeRepository::class);
 
     }
 

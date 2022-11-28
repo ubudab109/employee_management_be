@@ -146,7 +146,7 @@ class ManagerServices
                 'role'      => $this->roles->detailRoleManager($data['role'])->name,
                 'key'       => $mailKey,
             ];
-            dispatch(new SendEmailJob($dataEmail));
+            dispatch(new SendEmailJob($dataEmail, USER_MANAGER_TYPE));
             DB::commit();
             return [
                 'status'   => true,
@@ -235,7 +235,7 @@ class ManagerServices
                 'key'       => $mailKey,
             ];
             $this->userVerification->generateEmailVerification(UserManager::class, $managerId, $mailKey);
-            dispatch(new SendEmailJob($dataEmail));
+            dispatch(new SendEmailJob($dataEmail, USER_MANAGER_TYPE));
             DB::commit();
             return [
                 'status'    => true,

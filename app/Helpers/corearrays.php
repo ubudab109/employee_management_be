@@ -91,3 +91,17 @@ function textColorStatusAbsent($input = null) {
 
   return $data;
 }
+
+function getJobStatusName($input = null) {
+  $data = [
+    JOB_STATUS_PERMANENT  => 'Permanent',
+    JOB_STATUS_CONTRACT   => 'Contract',
+    JOB_STATUS_PROBATION  => 'Probation'
+  ];
+
+  if ($input != null) {
+    return $data[$input];
+  }
+
+  return $data;
+}

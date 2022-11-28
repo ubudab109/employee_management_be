@@ -80,7 +80,7 @@ function currentUserRole($guard_name)
  * @param string $guard_name - Is the Auth Guard for the current session (manager or employee)
  * @return Object
  */
-function branchSelected($guard_name)
+function branchSelected(string $guard_name)
 {
     return Request::header('Branch-Selected') ?
         Auth::guard($guard_name)->user()->branchAssign()->find(Request::header('Branch-Selected'))

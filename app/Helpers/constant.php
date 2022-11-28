@@ -9,6 +9,8 @@
  * YOU CAN ADD MORE CONSTANT VARIABLE IN HERE
 */
 
+const DEFAULT_CURRENCY = 'IDR';
+
 const FRONTEND_URL = 'http://localhost:2000'; // change this FE URL with ur own
 
 const MALE_GENDER = 'male';
@@ -16,6 +18,9 @@ const FEMALE_GENDER = 'female';
 
 const VERIFICATION_STATUS_PENDING = 0;
 const VERIFICATION_STATUS_ACCEPTED = 1;
+
+const USER_MANAGER_TYPE = 0;
+const USER_EMPLOYEE_TYPE = 1;
 
 const EMAIL_VERIFICATION_TYPE = 'email';
 const PASSWORD_VERIFICATION_TYPE = 'password';
@@ -50,3 +55,17 @@ const EMPLOYEE_PENDING_INVITE = '2';
 const JOB_STATUS_PERMANENT = '0';
 const JOB_STATUS_CONTRACT = '1';
 const JOB_STATUS_PROBATION = '2';
+
+/** SALARY TYPE */
+const SALARY_INCOME = 'income';
+const SALARY_CUTS = 'cuts';
+
+/** SALARY PAYMENT_TYPE */
+const SALARY_MONTHLY_PAYMENT = '0';
+const SALARY_WEEKLEY_PAYMENT = '1';
+
+/** IDENTITY TYPE */
+const NATIONAL_ID_IDENTITY = '0';
+const PASSPORT_ID_IDENTITY = '1';
+const DRIVER_LICENSE_IDENTITY = '2';
+

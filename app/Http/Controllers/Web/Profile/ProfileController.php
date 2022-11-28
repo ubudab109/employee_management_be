@@ -12,6 +12,12 @@ use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends BaseController
 {
+    /**
+     * It takes the current password, checks if it's correct, and if it is, it updates the password
+     * 
+     * @param Request request The request object.
+     * @return Response
+     */
     public function updatePassword(Request $request)
     {
         $validator = Validator::make($request->all() ,[
@@ -35,6 +41,15 @@ class ProfileController extends BaseController
         return $this->sendResponse(array('success' => 1), 'Password Successfully Changed');
     }
 
+    /**
+     * It takes a file from the request, stores it in the
+     * storage/app/public/images/profile-pictures/{user_id}/ directory, and then updates the user's
+     * profile_picture column with the URL to the image
+     * 
+     * @param Request request The request object.
+     * 
+     * @return Response
+     */
     public function updateImage(Request $request)
     {
         $validator = Validator::make($request->all(), [
