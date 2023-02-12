@@ -5,22 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EmployeeSalary extends Model
+class EmployeeWarningLetter extends Model
 {
     use HasFactory;
 
-    protected $table = 'employee_salary';
+    protected $table = 'employee_warning_letter';
     protected $fillable = [
         'employee_id',
-        'type',
-        'name',
-        'amount',
-        'is_temporary',
-        'setting',
+        'date',
+        'level',
+        'warning_letter',
+        'desc',
     ];
-    
+
     public function employee()
     {
-        return $this->belongsTo(User::class, 'employee_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

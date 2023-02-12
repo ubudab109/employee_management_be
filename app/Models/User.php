@@ -35,6 +35,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'dob',
         'citizent_address',
         'resident_address',
+        'is_address_same',
         'postal_code',
         'join_date',
         'end_date',
@@ -50,6 +51,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'payment_date',
         'salary_settings',
+        'paid_leave_years',
+        'paid_leave_employee',
     ];
 
 
@@ -75,7 +78,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $appends = [
         'avatar', 'division_name', 'total_salary', 'total_income', 
-        'total_cuts', 'status', 'status_badge', 'status_name', 'job_status_name'
+        'total_cuts', 'status', 'status_badge', 'status_name', 'job_status_name',
+        'date_of_birth', 'identity_type_name', 'date_human_diff',
     ];
 
     protected static function boot()
@@ -85,6 +89,24 @@ class User extends Authenticatable implements MustVerifyEmail
         self::creating(function ($model) {
             $model->uuid = (string)Str::uuid();
         });
+    }
+
+    public function getDateHumanDiffAttribute()
+    {
+        return [
+            'join_date' => date('d F Y', strtotime($this->join_date)),
+            'end_date'  => $this->end_date !== null ? date('d F Y', strtotime($this->end_date)) : null,
+        ];
+    }
+
+    public function getIdentityTypeNameAttribute()
+    {
+        return getIdentityTypeName($this->identity_type);
+    }
+
+    public function getDateOfBirthAttribute()
+    {
+        return date('d F Y', strtotime($this->dob));    
     }
 
     public function getJobStatusNameAttribute()
@@ -139,7 +161,13 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getTotalSalaryAttribute()
     {
-        return $this->salary()->sum('amount');
+        $total = [];
+        foreach ($this->salary()->get() as $salary) {
+            if (is_null($salary->setting)) {
+                array_push($total, $salary->amount);
+            }
+        }
+        return array_sum($total);
     }
 
     public function getTotalIncomeAttribute()
@@ -233,5 +261,25 @@ class User extends Authenticatable implements MustVerifyEmail
     public function bank()
     {
         return $this->morphMany(BankAccount::class, 'source');
+    }
+
+    public function overtime()
+    {
+        return $this->hasMany(EmployeeOvertime::class, 'employee_id', 'id');
+    }
+
+    public function reimburshment()
+    {
+        return $this->hasMany(EmployeeReimburshment::class, 'employee_id', 'id');
+    }
+
+    public function paidLeave()
+    {
+        return $this->hasMany(EmployeeLeave::class, 'employee_id', 'id');
+    }
+
+    public function warningLetter()
+    {
+        return $this->hasMany(EmployeeWarningLetter::class, 'employee_id', 'id');
     }
 }

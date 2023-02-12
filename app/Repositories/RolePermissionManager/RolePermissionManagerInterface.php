@@ -4,7 +4,7 @@ namespace App\Repositories\RolePermissionManager;
 
 interface RolePermissionManagerInterface
 {
-  public function listRoleManager($keyword, $branch);
+  public function listRoleManager($keyword, $branch = null);
   public function detailRoleManager($roleId);
   public function listAuthAllPermissionScope();
   public function listAllPermissionScope();

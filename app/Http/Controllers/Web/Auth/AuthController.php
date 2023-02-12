@@ -39,7 +39,7 @@ class AuthController extends BaseController
         $user = UserManager::where('email', $request->credential)->orWhere('phone_number', $request->credential)->first();
         // dd($user);
         if ($user != null) {
-            $userBranch = $user->branch()->first();
+            $userBranch = $user->branch()->with('branch')->first();
             if (Hash::check($request->password, $user->password)) {
                 if (!$user->hasVerifiedEmail()) {
                     return $request->wantsJson()

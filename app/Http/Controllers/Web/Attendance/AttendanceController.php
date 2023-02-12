@@ -5,18 +5,21 @@ namespace App\Http\Controllers\Web\Attendance;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\PaginationResource;
 use App\Repositories\EmployeeAttendance\EmployeeAttendanceInterface;
+use App\Services\AttendanceServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Validator;
 
 class AttendanceController extends BaseController
 {
-    public $employeeAttendance;
+    public $services;
 
-    public function __construct(EmployeeAttendanceInterface $employeeAttendance)
+    public function __construct(AttendanceServices $services)
     {
-        $this->employeeAttendance = $employeeAttendance;
+        $this->services = $services;
         $this->middleware('userpermissionmanager:attendance-management-list', ['only' => 'index']);
         $this->middleware('userpermissionmanager:attendance-management-detail', ['only' => 'detail']);
+        $this->middleware('userpermissionmanager:attendance-management-edit', ['only' => 'update']);
     }
 
     /**
@@ -27,28 +30,18 @@ class AttendanceController extends BaseController
     */
     public function index(Request $request)
     {
-        if ($request->has('show') && $request->show != null) {
-            $data = $this->employeeAttendance->listEmployeeAttendancePaginate(
-                $request->keyword,
-                $request->workPlaces,
-                $request->statusClock,
-                $request->has('date') && $request->date != '' ? $request->date : Date::now(),
-                $request->show,
-                $request->branch_id
-            );
-            $res = new PaginationResource($data);
-        } else {
-            $res = $this->employeeAttendance->listEmployeeAttendance(
-                $request->keyword,
-                $request->workPlaces,
-                $request->statusClock,
-                $request->has('date') && $request->date != '' ? $request->date : Date::now(),
-                $request->branch_id
-            );
-        }
+        $param = [
+            $request->keyword,
+            $request->workPlaces,
+            $request->statusClock,
+            $request->has('date') && $request->date != '' ? $request->date : Date::now(),
+            $request->show,
+            $request->branch_id
+        ];
 
+        $data = $this->services->index($param);
 
-        return $this->sendResponse($res, 'Data Fetched Successfully');
+        return $this->sendResponse($data, 'Data Fetched Successfully');
     }
 
     /**
@@ -59,10 +52,40 @@ class AttendanceController extends BaseController
     */
     public function show($id)
     {
-        $data = $this->employeeAttendance->detailEmployeeAttendance($id);
+        $data = $this->services->detail($id);
         return $this->sendResponse([
             'shift_time'    => allCompanySetting('company_entry_hours'). '-' . allCompanySetting('company_out_hours'),
-            'data'          => $data,
+            'data'          => $data['data'],
         ], 'Data Fetched Successfully');
+    }
+
+    /**
+     * Update Attendance
+     * 
+     * @param Request $request
+     * @param int $id
+     * @return Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'work_places'   => 'required',
+            'status_clock'  => 'required',
+            'clock_in'      => '',
+            'clock_out'     => '',
+            'date'          => '',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendBadRequest('Validator Error', $validator->errors());
+        }
+
+        $data = $this->services->updateAttendance($request->all(), $id);
+
+        if (!$data['status']) {
+            return $this->sendError($data['message']);
+        }
+
+        return $this->sendResponse(array('success' => 1), $data['message']);
     }
 }

@@ -10,6 +10,13 @@
 */
 
 
+/**
+ * It returns an array of key-value pairs, where the key is the input and the value is the output.
+ * 
+ * @param $string input The value you want to get the name of.
+ * 
+ * @return array of key-value pairs.
+ */
 function getWorkPlaceName($input = null) {
   $data = [
     OFFICE_PLACE => __("On Office"),
@@ -24,6 +31,13 @@ function getWorkPlaceName($input = null) {
 }
 
 
+/**
+ * It returns an array of status absent
+ * 
+ * @param string input The value of the input.
+ * 
+ * @return array of key-value pairs.
+ */
 function getStatusAbsent($input = null) {
   $data = [
     ON_TIME => __("On Time"),
@@ -38,6 +52,13 @@ function getStatusAbsent($input = null) {
   return $data;
 }
 
+/**
+ * It returns a color based on the input.
+ * 
+ * @param string input The value of the input.
+ * 
+ * @return array of key-value pairs.
+ */
 function badgeWorkPlaces($input = null) {
   $data = [
     OFFICE_PLACE => "#DAE4FF",
@@ -51,6 +72,13 @@ function badgeWorkPlaces($input = null) {
   return $data;
 }
 
+/**
+ * It returns a color based on the input. If no input is given, it returns all the colors.
+ * 
+ * @param string input The value of the input.
+ * 
+ * @return array of key-value pairs.
+ */
 function textColorWorkSpaces($input = null) {
   $data = [
     OFFICE_PLACE => "#1959FF",
@@ -64,6 +92,13 @@ function textColorWorkSpaces($input = null) {
   return $data;
 }
 
+/**
+ * It returns a color code based on the input.
+ * 
+ * @param string input The value of the input.
+ * 
+ * @return array of key-value pairs.
+ */
 function badgeStatusAbsen($input = null) {
   $data = [
     ON_TIME => "#BBFFCC",
@@ -78,6 +113,13 @@ function badgeStatusAbsen($input = null) {
   return $data;
 }
 
+/**
+ * It returns a color code based on the input
+ * 
+ * @param string input The value of the input.
+ * 
+ * @return array of key-value pairs.
+ */
 function textColorStatusAbsent($input = null) {
   $data = [
     ON_TIME => "#008836",
@@ -92,11 +134,85 @@ function textColorStatusAbsent($input = null) {
   return $data;
 }
 
+/**
+ * It returns the name of the job status if the input is not null, otherwise it returns all the job
+ * status names.
+ * 
+ * @param string input The value of the input.
+ * 
+ * @return array of key-value pairs.
+ */
 function getJobStatusName($input = null) {
   $data = [
     JOB_STATUS_PERMANENT  => 'Permanent',
     JOB_STATUS_CONTRACT   => 'Contract',
     JOB_STATUS_PROBATION  => 'Probation'
+  ];
+
+  if ($input != null) {
+    return $data[$input];
+  }
+
+  return $data;
+}
+
+/**
+ * It returns an array of identity types if no input is given, or the name of the identity type if the
+ * input is given.
+ * 
+ * @param string input The value of the input.
+ * 
+ * @return array of key-value pairs.
+ */
+function getIdentityTypeName($input = null) {
+  $data = [
+    NATIONAL_ID_IDENTITY => 'National ID Card (KTP)',
+    PASSPORT_ID_IDENTITY => 'Passport',
+    DRIVER_LICENSE_IDENTITY => 'Driver License (SIM)'
+  ];
+
+  if ($input != null) {
+    return $data[$input];
+  }
+
+  return $data;
+}
+
+/**
+ * It returns a string based on the input
+ * 
+ * @param string input The value of the status.
+ * 
+ * @return array of key-value pairs.
+ */
+function getStatusNameOvertime($input = null)
+{
+  $data = [
+    HAS_BEEN_APPLIED => 'Has Been Applied',
+    APPROVED => 'Approved',
+    REJECTED => 'Rejected',
+  ];
+
+  if ($input != null) {
+    return $data[$input];
+  }
+
+  return $data;
+}
+
+/**
+ * It returns a string color based on the input
+ * 
+ * @param string input The value of the status.
+ * 
+ * @return array of key-value pairs.
+ */
+function getStatusNameOvertimeColor($input = null)
+{
+  $data = [
+    HAS_BEEN_APPLIED => '#19C8FF',
+    APPROVED => '#19C8FF',
+    REJECTED => '#19C8FF',
   ];
 
   if ($input != null) {

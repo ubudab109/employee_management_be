@@ -70,7 +70,7 @@ class EmployeeServices
                 $employeeData['profile_picture'] = $data['profile_picture'];
             }
             $employeeData['password'] = Hash::make($password);
-
+            $employeeData['job_position'] = ucfirst($data['job_position']);
             
             $employee = $this->employee->createEmployee($employeeData);
 
@@ -85,21 +85,32 @@ class EmployeeServices
 
             if (isset($data['salary'])) {
                 foreach ($data['salary'] as $salary) {
+
+                    // THIS IS FOR OVERTIME
+                    $salarySetting = [
+                        'type'      => OVERTIME,
+                        'setting'   => [
+                            'paid_at'   => 'hour',
+                        ],
+                    ];
                     $this->employee->salaryInput($employee, [
                         'type'          => $salary['type'],
                         'name'          => $salary['name'],
-                        'amount'        => $salary['type'] == SALARY_CUTS ? -$salary['amount'] : $salary['amount'],                    
+                        'amount'        => $salary['type'] == SALARY_CUTS ? -$salary['amount'] : $salary['amount'], 
+                        'setting'       => $salary['name'] == OVERTIME || $salary['name'] == 'Overtime' ? json_encode($salarySetting) : null,             
                     ]);
                 }
             }
 
             if (isset($data['cuts']) && !is_null($data['cuts'])) {
                 foreach ($data['cuts'] as $cuts) {
-                    $this->employee->attendanceCutInput($employee, [
-                        'cut_type'  => $cuts['cut_type'],
-                        'total'     => $cuts['total'],
-                        'amount'    => $cuts['amount'],
-                    ]);
+                    if ($cuts['total'] !== '') {
+                        $this->employee->attendanceCutInput($employee, [
+                            'cut_type'  => $cuts['cut_type'],
+                            'total'     => $cuts['total'],
+                            'amount'    => $cuts['amount'],
+                        ]);
+                    }
                 }
             }
 
@@ -128,6 +139,43 @@ class EmployeeServices
     }
 
     /**
+     * It updates the employee data in the database
+     * 
+     * @param array data The data to be updated
+     * @param integer id The id of the employee you want to update
+     * 
+     * @return array array with two keys, status and message.
+     */
+    public function update($data = [], $id)
+    {
+        DB::beginTransaction();
+        try {
+            $this->employee->updateEmployee($data, $id);
+            $assignedEmployee = [];
+            
+            if (isset($data['status'])) {
+                $assignedEmployee['status'] = $data['status'];
+            }
+
+            if (isset($data['department'])) {
+                $assignedEmployee['division_id'] = $data['department'];
+            }
+            $this->employee->updateBranchEmployee($assignedEmployee, $id);
+            DB::commit();
+            return [
+                'status'    => true,
+                'message'   => 'Employee Updated Successfully', 
+            ];
+        } catch (\Exception $err) {
+            DB::rollBack();
+            return [
+                'status'    => true,
+                'message'   => 'Internal Server Error', 
+            ];
+        }
+    }
+
+    /**
      * It deletes an employee from the database
      * 
      * @param array $data This is the data that you want to pass to the model.
@@ -138,8 +186,8 @@ class EmployeeServices
     {
         DB::beginTransaction();
         try {
-            DB::commit();
             $this->employee->deleteEmployee($data);
+            DB::commit();
             return [
                 'status'    => true,
                 'message'   => 'Employee Deleted Successfully',
@@ -151,5 +199,33 @@ class EmployeeServices
                 'message'   => $err->getMessage(),
             ];
         }
+    }
+
+    /**
+     * Detail data of the employee by ID
+     * 
+     * @param integer $id - ID of employee
+     * @param string $param - Detail param type
+     * @param array $request - Request data for filtering
+     * 
+     * @return object
+     */
+    public function detail($id, $param, $request = [])
+    {
+        $data = $this->employee->detailEmployee($id, $param, $request);
+        if (is_null($data)) {
+            return [
+                'status'    => false,
+                'data'      => [],
+                'message'   => 'Detail Type Param is Required',
+            ];
+        }
+
+        return [
+            'status'    => true,
+            'data'      => $data,
+            'message'   => 'Data Fetched Successfully',
+        ];
+
     }
 }

@@ -3,9 +3,13 @@
 namespace App\Repositories\Employee;
 
 use App\Models\BankAccount;
+use App\Models\EmployeeAttendance;
+use App\Models\EmployeeLeave;
+use App\Models\EmployeeOvertime;
 use App\Models\User;
 use App\Models\UserDivisionAssign;
 use App\Models\UserVerification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
@@ -30,7 +34,7 @@ class EmployeeRepository implements EmployeeInterface
      * @param int $department — filter by departement or division id
      * @param int $jobStatus — filter by job status like full time, freelance or etc. According to company job status
      * @param string $employeeStatus — filter by status employee like active ('1'), inactive ('0'), pending ('2')
-     * @return Array
+     * @return Collection
      */
     public function getAllEmployee($keyword, $department, $jobStatus, $employeeStatus)
     {
@@ -83,7 +87,7 @@ class EmployeeRepository implements EmployeeInterface
      * @param int $jobStatus — filter by job status like full time, freelance or etc. According to company job status
      * @param string $employeeStatus — filter by status employee like active ('1'), inactive ('0'), pending ('2')
      * @param int $show — total data per page
-     * @return Array
+     * @return Collection
      */
     public function getPaginateEmployee($keyword, $department, $jobStatus, $employeeStatus, $show)
     {
@@ -121,12 +125,100 @@ class EmployeeRepository implements EmployeeInterface
      * DETAIL EMPLOYEE
      * 
      * @param int $id - ID from employee or users
-     * @return \App\Models\User
+     * @param string $param - Detail Type
+     * @param array $request - Array of Request
+     * @return Collection
      */
-    public function detailEmployee($id)
+    public function detailEmployee($id, $param = null, $request = [])
     {
-      $employee = $this->model->with('attendance')->with('jobStatus')->findOrFail($id);
-      return $employee;
+      switch($param) {
+        case 'employee':
+          return $this->model->with('branch')->find($id);
+        case 'absent':
+          return EmployeeAttendance::where('employee_id', $id)
+          ->when(isset($request['date']) && $request['date'] != null, function ($query) use ($request) {
+            $query->when(isset($request['date']['month']) && $request['date']['month'] != null, function ($subQuery) use ($request) {
+              $subQuery->whereMonth('created_at', $request['date']['month']);
+            })
+            ->when(isset($request['date']['year']) && $request['date']['year'] != null, function ($subQuery) use ($request) {
+              $subQuery->whereYear('created_at', $request['date']['year']);
+            });
+          })
+          ->when(isset($request['status']) && $request['status'] != '', function ($query) use ($request) {
+            $query->where('status_clock', $request['status']);
+          })
+          ->get();
+        case 'overtime':
+          return EmployeeOvertime::where('employee_id', $id)
+          ->when(isset($request['date']) && $request['date'] != null, function ($query) use ($request) {
+            $query->when(isset($request['date']['month']) && $request['date']['month'] != null, function ($subQuery) use ($request) {
+              $subQuery->whereMonth('created_at', $request['date']['month']);
+            })
+            ->when(isset($request['date']['year']) && $request['date']['year'] != null, function ($subQuery) use ($request) {
+              $subQuery->whereYear('created_at', $request['date']['year']);
+            });
+          })
+          ->when(isset($request['status']) && $request['status'] != null, function ($query) use ($request) {
+            $query->where('status', $request['status']);
+          })
+          ->get();
+        case 'leave':
+          return EmployeeLeave::where('employee_id', $id)
+          ->where('type',PAID_LEAVE)
+          ->when(isset($request['date']) && $request['date'] != null, function ($query) use ($request) {
+            $query->when(isset($request['date']['month']) && $request['date']['month'] != null, function ($subQuery) use ($request) {
+              $subQuery->whereMonth('created_at', $request['date']['month']);
+            });
+          })
+          ->when(isset($request['status']) && $request['status'] != null, function ($query) use ($request) {
+            $query->where('status', $request['status']);
+          })
+          ->get();
+        case 'permit':
+          return EmployeeLeave::where('employee_id', $id)
+          ->where('type', PERMIT)
+          ->when(isset($request['date']) && $request['date'] != null, function ($query) use ($request) {
+            $query->when(isset($request['date']['month']) && $request['date']['month'] != null, function ($subQuery) use ($request) {
+              $subQuery->whereMonth('created_at', $request['date']['month']);
+            })
+            ->when(isset($request['date']['year']) && $request['date']['year'] != null, function ($subQuery) use ($request) {
+              $subQuery->whereYear('created_at', $request['date']['year']);
+            });
+          })
+          ->when(isset($request['status']) && $request['status'] != null, function ($query) use ($request) {
+            $query->where('status', $request['status']);
+          })
+          ->get();
+        case 'payroll':
+          $data = [];
+          $data['payment_date'] = DB::table('users')->where('id', $id)->select('id','payment_date')->first();
+          $data['bank'] = DB::table('bank_account')->where('source_type', User::class)->where('source_id', $id)->first();
+          $data['income'] = DB::table('employee_salary')->where('type',SALARY_INCOME)->where('employee_id', $id)->get();
+          $data['cuts'] = DB::table('employee_salary')->where('type',SALARY_CUTS)->where('employee_id', $id)->get();
+          $data['attendance_cuts'] = DB::table('employee_attendance_cut')->where('employee_id', $id)->get();
+          $data['total_salary'] = DB::table('employee_salary')->where('employee_id', $id)->sum('amount');
+          return $data;
+        case 'reiumbershment':
+          return DB::table('employee_reimburshment')->where('employee_id', $id)
+          ->when(isset($request['date']) && $request['date'] != null, function ($query) use ($request) {
+            $query->when(isset($request['date']['month']) && $request['date']['month'] != null, function ($subQuery) use ($request) {
+              $subQuery->whereMonth('created_at', $request['date']['month']);
+            })
+            ->when(isset($request['date']['year']) && $request['date']['year'] != null, function ($subQuery) use ($request) {
+              $subQuery->whereYear('created_at', $request['date']['year']);
+            });
+          })
+          ->when(isset($request['status']) && $request['status'] != null, function ($query) use ($request) {
+            $query->where('status', $request['status']);
+          })
+          ->get();
+        case 'warning':
+          return DB::table('employee_warning_letter')
+          ->where('employee_id', $id)
+          ->get();
+        default: 
+          return null;
+      }
     }
 
     /**
@@ -162,13 +254,41 @@ class EmployeeRepository implements EmployeeInterface
         return $employee;
     }
 
+  /**
+   * It takes an array of data and an id, and then it updates the model with the given id with the
+   * given data
+   * 
+   * @param array data The data to be updated
+   * @param integer id The id of the employee you want to update
+   * 
+   * @return object.
+   */
+    public function updateEmployee(array $data, $id)
+    {
+      return $this->model->find($id)->update($data);
+    }
+
+    /**
+     * Updating assigned branch from spesific user or employee
+     * 
+     * @param array $data - The data to be updated
+     * @param integer $id - The id of the employee you want to update
+     * 
+     * @return object
+     */
+    public function updateBranchEmployee(array $data, $id)
+    {
+      return UserDivisionAssign::where('user_id', $id)->first()->update($data);
+    }
+
+
     /**
      * It assigns a user to a division
      * 
      * @param User user The user object
-     * @param divisionId The id of the division you want to assign the user to.
+     * @param integer $divisionId The id of the division you want to assign the user to.
      * 
-     * @return A new instance of the UserDivision model.
+     * @return object new instance of the UserDivision model.
      */
     public function assignEmployeeToDepartment(User $user, $divisionId)
     {
@@ -184,7 +304,7 @@ class EmployeeRepository implements EmployeeInterface
      * @param User user The user model instance
      * @param array data
      * 
-     * @return The salaryInput method is returning the salary record that was created.
+     * @return object salaryInput method is returning the salary record that was created.
      */
     public function salaryInput(User $user, array $data)
     {

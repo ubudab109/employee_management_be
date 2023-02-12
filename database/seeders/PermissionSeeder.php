@@ -90,11 +90,17 @@ class PermissionSeeder extends Seeder
                 [
                     'id' => 7,
                     'name' => 'Branch',
-                    'order' => 6,
+                    'order' => 7,
                     'created_at' => Date::now(),
                     'updated_at' => Date::now(),
                 ],
-                
+                [
+                    'id' => 8,
+                    'name' => 'Employee Overtime',
+                    'order' => 8,
+                    'created_at' => Date::now(),
+                    'updated_at' => Date::now(),
+                ]
             ];
     
             PermissionScope::insert($dataPermissionScopeManager);
@@ -293,6 +299,14 @@ class PermissionSeeder extends Seeder
                     'updated_at'        => Date::now(),
                 ],
                 [
+                    'scope_id'          => 2,
+                    'name'              => 'attendance-management-edit',
+                    'display_name'      => 'Edit Attendance',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
                     'scope_id'          => 3,
                     'name'              => 'payroll-management-list',
                     'display_name'      => 'Payroll List',
@@ -384,6 +398,46 @@ class PermissionSeeder extends Seeder
                     'scope_id'          => 7,
                     'name'              => 'branch-delete',
                     'display_name'      => 'Delete Company Branch',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 8,
+                    'name'              => 'employee-overtime-list',
+                    'display_name'      => 'Employee Overtime List',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 8,
+                    'name'              => 'employee-overtime-detail',
+                    'display_name'      => 'Employee Overtime Detail',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 8,
+                    'name'              => 'employee-overtime-update',
+                    'display_name'      => 'Employee Overtime Update',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 8,
+                    'name'              => 'employee-overtime-delete',
+                    'display_name'      => 'Employee Overtime Delete',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 8,
+                    'name'              => 'employee-overtime-assign',
+                    'display_name'      => 'Employee Overtime Assign Payroll',
                     'guard_name'        => 'sanctum:manager',
                     'created_at'        => Date::now(),
                     'updated_at'        => Date::now(),

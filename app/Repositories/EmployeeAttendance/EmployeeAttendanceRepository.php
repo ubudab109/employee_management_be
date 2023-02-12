@@ -3,6 +3,7 @@
 namespace App\Repositories\EmployeeAttendance;
 
 use App\Models\EmployeeAttendance;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeAttendanceRepository implements EmployeeAttendanceInterface
 {
@@ -27,7 +28,7 @@ class EmployeeAttendanceRepository implements EmployeeAttendanceInterface
    * @param int $branch
    * @return array
    */
-  public function listEmployeeAttendancePaginate($keyword, $workPlaces, $statusClock, $date, $show, $branch)
+  public function listEmployeeAttendancePaginate($keyword, $workPlaces, $statusClock, $date, $show, $branch = null)
   {
     $data = $this->model
       ->when(!$this->isSuperAdmin, function ($query) {
@@ -38,11 +39,11 @@ class EmployeeAttendanceRepository implements EmployeeAttendanceInterface
           $subQuery->where('branch_id', $branch);
         });
       })
-      ->with('employee:id,name,email,nip')
+      ->with('employee')
       /* SEARCH BY KEYWORD */
       ->when($keyword != null || $keyword != '', function ($query) use ($keyword) {
         $query->whereHas('employee', function ($subQuery) use ($keyword) {
-          $subQuery->where('name', 'LIKE', '%' . $keyword . '%')
+          $subQuery->where(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', '%'. $keyword .'%')
             ->orWhere('email', 'LIKE', '%' . $keyword . '%')
             ->orWhere('nip', 'LIKE', '%' . $keyword . '%');
         });
@@ -56,7 +57,7 @@ class EmployeeAttendanceRepository implements EmployeeAttendanceInterface
         $query->where('status_clock', $statusClock);
       })
       ->when($date != null || $date != '', function ($query) use ($date) {
-        $query->whereDate('created_at', '=', $date);
+        $query->whereDate('date', '=', $date);
       })->paginate($show);
 
     return $data;
@@ -73,7 +74,7 @@ class EmployeeAttendanceRepository implements EmployeeAttendanceInterface
    * @param int $branch
    * @return array
    */
-  public function listEmployeeAttendance($keyword, $workPlaces, $statusClock, $date, $branch)
+  public function listEmployeeAttendance($keyword, $workPlaces, $statusClock, $date, $branch = null)
   {
     $data = $this->model
       ->when(!$this->isSuperAdmin, function ($query) {
@@ -84,11 +85,11 @@ class EmployeeAttendanceRepository implements EmployeeAttendanceInterface
           $subQuery->where('branch_id', $branch);
         });
       })
-      ->with('employee:id,name,email,nip')
+      ->with('employee')
       /* SEARCH BY KEYWORD */
       ->when($keyword != null || $keyword != '', function ($query) use ($keyword) {
         $query->whereHas('employee', function ($subQuery) use ($keyword) {
-          $subQuery->where('name', 'LIKE', '%' . $keyword . '%')
+          $subQuery->where(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', '%'. $keyword .'%')
             ->orWhere('email', 'LIKE', '%' . $keyword . '%')
             ->orWhere('nip', 'LIKE', '%' . $keyword . '%');
         });
@@ -102,8 +103,9 @@ class EmployeeAttendanceRepository implements EmployeeAttendanceInterface
         $query->where('status_clock', $statusClock);
       })
       ->when($date != null || $date != '', function ($query) use ($date) {
-        $query->whereDate('created_at', '=', $date);
-      })->get();
+        $query->whereDate('date', '=', $date);
+      })
+      ->get();
 
     return $data;
   }
@@ -115,6 +117,16 @@ class EmployeeAttendanceRepository implements EmployeeAttendanceInterface
    */
   public function detailEmployeeAttendance($id)
   {
-    return $this->model->with('employee:id,name,email,nip')->with('files')->with('attendanceLocation.files')->findOrFail($id);
+    return $this->model->with('employee')->with('files')->with('attendanceLocation.files')->findOrFail($id);
+  }
+
+  /**
+   * Update Attendance Employee
+   * @param int $id
+   * @return boolean
+   */
+  public function updateEmployeeAttendance($data, $id)
+  {
+    return $this->model->find($id)->update($data);
   }
 }

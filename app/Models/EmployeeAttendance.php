@@ -17,6 +17,7 @@ class EmployeeAttendance extends Model
         'branch_id',
         'clock_in',
         'clock_out',
+        'date',
     ];
 
     protected $appends = [

@@ -112,4 +112,38 @@ class DatasetController extends BaseController
 
         return $this->sendResponse($data, 'Data Fetched Successfully');
     }
+
+    /**
+     * Check User BY Email or NIP
+     * 
+     * @param Request request The request object.
+     * 
+     * @return bool boolean value.
+     */
+    public function checkEmployee(Request $request)
+    {
+        if ($request->has('nip') && $request->nip != null) {
+            $exists = DB::table('users')->where('nip', $request->nip)
+            ->when($request->has('user_id') && $request->user_id != null, function ($query) use ($request) {
+                $query->where('id','!=',$request->user_id);
+            })
+            ->exists();
+            return $this->sendResponse([
+                'type'      => 'nip',
+                'result'    => $exists
+            ], 'Checked Successfully');
+        } else if ($request->has('email') && $request->email != null) {
+            $exists = DB::table('users')->where('email', $request->email)
+            ->when($request->has('user_id') && $request->user_id != null, function ($query) use ($request) {
+                $query->where('id','!=',$request->user_id);
+            })
+            ->exists();
+            return $this->sendResponse([
+                'type'          => 'email',
+                'result'        => $exists
+            ], 'Checked Successfully');
+        } else {
+            return $this->sendResponse(false, 'Checked Successfully');
+        }
+    }
 }

@@ -29,7 +29,7 @@ class RolePermissionManagerRepository implements RolePermissionManagerInterface
    * @param String $keyword
    * @return App\Models\Role
    */
-  public function listRoleManager($keyword, $branch)
+  public function listRoleManager($keyword, $branch = null)
   {
     return $this->role
       ->when(!$this->isSuperAdmin, function ($query) {
@@ -98,6 +98,7 @@ class RolePermissionManagerRepository implements RolePermissionManagerInterface
     $role = $this->role->findOrFail($roleId);
     return $role->permissions()->pluck('id');
   }
+  
   /**
    * List All Permissions
    * @return App\Models\Permission

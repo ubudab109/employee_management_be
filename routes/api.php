@@ -12,6 +12,7 @@ use App\Http\Controllers\Web\CompanyDivision\CompanyDivisionController;
 use App\Http\Controllers\Web\Dashboard\DashboardController;
 use App\Http\Controllers\Web\Dataset\DatasetController;
 use App\Http\Controllers\Web\Employee\EmployeeController;
+use App\Http\Controllers\Web\EmployeeOvertime\EmployeeOvertimeController;
 use App\Http\Controllers\Web\Profile\ProfileController as ProfileProfileController;
 use App\Http\Controllers\Web\RolePermission\RolePermissionController;
 use App\Http\Controllers\Web\UserManagement\UserManagementController;
@@ -100,6 +101,7 @@ Route::group(['middleware' => 'cors'], function() {
                     /* Dataset */
                     Route::group(['prefix' => 'dataset'], function () {
                         Route::get('employee', [DatasetController::class, 'employee']);
+                        Route::get('exists-employee', [DatasetController::class, 'checkEmployee']);
                         Route::get('employee/{id}', [DatasetController::class, 'detailEmployee']);
                         Route::get('role-manager', [DatasetController::class, 'roleManager']);
                         Route::get('department', [DatasetController::class, 'listDepartment']);
@@ -111,13 +113,11 @@ Route::group(['middleware' => 'cors'], function() {
                     Route::group(['prefix' => 'attendance'], function() {
                         Route::get('', [AttendanceController::class, 'index']);
                         Route::get('{id}', [AttendanceController::class, 'show']);
+                        Route::put('{id}', [AttendanceController::class, 'update']);
                     });
     
                     /* Division or Department */
                     Route::resource('division', CompanyDivisionController::class);
-    
-                    /* Job Status */
-                    Route::resource('job-status', CompanyJobStatusController::class);
     
                     /* Company Branch */
                     Route::resource('company-branch', CompanyBranchController::class);
@@ -126,6 +126,11 @@ Route::group(['middleware' => 'cors'], function() {
                     /** Employee */
                     // Route::post('employee', [EmployeeController::class, 'store']);
                     Route::resource('employee', EmployeeController::class);
+                    // Route::get('employee/{id}',[EmployeeController::class, 'show']);
+                    Route::delete('delete-employee', [EmployeeController::class, 'destroy']);
+                    
+                    /** EMPLOYEE OVERTIME */
+                    Route::resource('employee-overtime', EmployeeOvertimeController::class);
                 });
             });
 

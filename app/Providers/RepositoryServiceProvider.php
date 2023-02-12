@@ -14,6 +14,8 @@ use App\Repositories\EmployeeAttendance\EmployeeAttendanceInterface;
 use App\Repositories\EmployeeAttendance\EmployeeAttendanceRepository;
 use App\Repositories\EmployeeNote\EmployeeNoteInterface;
 use App\Repositories\EmployeeNote\EmployeeNoteRepository;
+use App\Repositories\EmployeeOvertime\EmployeeOvertimeInterface;
+use App\Repositories\EmployeeOvertime\EmployeeOvertimeRepository;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
 use App\Repositories\RolePermissionManager\RolePermissionManagerRepository;
 use App\Repositories\UserManagement\UserManagementInterface;
@@ -41,7 +43,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(CompanyDivisionInterface::class, CompanyDivisionRepository::class);
         $this->app->bind(CompanyBranchInterface::class, CompanyBranchRepository::class);
         $this->app->bind(EmployeeInterface::class, EmployeeRepository::class);
-
+        $this->app->bind(EmployeeOvertimeInterface::class, EmployeeOvertimeRepository::class);
+        
     }
 
     /**

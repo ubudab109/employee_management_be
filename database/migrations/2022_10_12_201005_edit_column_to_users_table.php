@@ -23,7 +23,7 @@ class EditColumnToUsersTable extends Migration
             $table->string('lastname')->nullable()->after('firstname');
             $table->string('mobile_phone')->after('phone_number')->nullable();
             $table->string('pob')->after('password')->nullable()->comment('place of birth');
-            $table->date('dob')->after('pob')->comment('date of birth');
+            $table->date('dob')->after('pob')->nullable()->comment('date of birth');
             $table->string('marital_status')->after('dob')->nullable();
             $table->string('blood_type')->after('marital_status')->nullable();
             $table->string('identity_type')->after('blood_type')->nullable();

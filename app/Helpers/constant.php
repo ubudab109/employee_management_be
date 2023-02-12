@@ -69,3 +69,15 @@ const NATIONAL_ID_IDENTITY = '0';
 const PASSPORT_ID_IDENTITY = '1';
 const DRIVER_LICENSE_IDENTITY = '2';
 
+/** EMPLOYEE SALARY SETTING */
+const OVERTIME = 'overtime';
+const WARNING_LETTER = 'warning';
+
+/** LEAVE TYPE */
+const PERMIT = 'permit';
+const PAID_LEAVE = 'paid_leave';
+
+/** OVERTIME STATUS */
+const HAS_BEEN_APPLIED = '0';
+const APPROVED = '1';
+const REJECTED = '2';

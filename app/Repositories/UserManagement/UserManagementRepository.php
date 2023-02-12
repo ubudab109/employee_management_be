@@ -8,6 +8,7 @@ use App\Models\UserVerification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 
 class UserManagementRepository implements UserManagementInterface
 {
@@ -32,7 +33,7 @@ class UserManagementRepository implements UserManagementInterface
    * @param String $role
    * @return App\Models\UserManager
    */
-  public function getUserManagement($keyword, $status, $role, $branch)
+  public function getUserManagement($keyword, $status, $role, $branch = null)
   {
     return $this->model
       ->when(!$this->isSuperAdmin, function ($query) {
@@ -49,7 +50,7 @@ class UserManagementRepository implements UserManagementInterface
       })
       /* FILTER BY KEYWORD */
       ->when($keyword != '' || $keyword != null, function ($query) use ($keyword) {
-        $query->where('name', 'LIKE', '%' . $keyword . '%')->orWhere('email', 'LIKE', '%' . $keyword . '%');
+        $query->where(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', '%'. $keyword .'%');
       })
       /* FILTER BY STATUS */
       ->when($status != null, function ($query) use ($status) {
@@ -108,7 +109,7 @@ class UserManagementRepository implements UserManagementInterface
    * @param int $show
    * @return App\Models\UserManager
    */
-  public function getPaginateUserManagement($keyword, $status, $role, $show, $branch)
+  public function getPaginateUserManagement($keyword, $status, $role, $show, $branch = null)
   {
     return $this->model
       ->when(!$this->isSuperAdmin, function ($query) {
@@ -125,7 +126,7 @@ class UserManagementRepository implements UserManagementInterface
       })
       /* FILTER BY KEYWORD */
       ->when($keyword != '' || $keyword != null, function ($query) use ($keyword) {
-        $query->where('name', 'LIKE', '%' . $keyword . '%')->orWhere('email', 'LIKE', '%' . $keyword . '%');
+        $query->where(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', '%'. $keyword .'%');
       })
       /* FILTER BY STATUS */
       ->when($status != null, function ($query) use ($status) {
