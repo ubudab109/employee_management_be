@@ -29,7 +29,7 @@ class AttendanceServices
         isset($param['keyword']) ? $param['keyword'] : null,
         isset($param['workPlaces']) ? $param['workPlaces'] : null,
         isset($param['statusClock']) ? $param['statusClock'] : null,
-        isset($param['date']) ? $param['date'] :  Date::now(),
+        isset($param['date']) ? date('Y-m-d', strtotime($param['date'])) : Date::now(),
         $param['show'],
         isset($param['branch_id']) ? $param['branch_id'] : null,
       );
@@ -39,10 +39,11 @@ class AttendanceServices
         isset($param['keyword']) ? $param['keyword'] : null,
         isset($param['workPlaces']) ? $param['workPlaces'] : null,
         isset($param['statusClock']) ? $param['statusClock'] : null,
-        isset($param['date']) ? $param['date'] : Date::now(),
+        isset($param['date']) ? date('Y-m-d', strtotime($param['date'])) : Date::now(),
         isset($param['branch_id']) ? $param['branch_id'] : null,
       );
     }
+
     return [
       'status'    => true,
       'message'   => 'Employee Attendance List Fetched Successfully',

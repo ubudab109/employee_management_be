@@ -11,4 +11,5 @@ interface EmployeeOvertimeInterface
   public function createEmployeeOvertime(array $data);
   public function updateEmployeeOvertime(array $data, $id);
   public function deleteEmployeeOvertime($id);
+  
 }

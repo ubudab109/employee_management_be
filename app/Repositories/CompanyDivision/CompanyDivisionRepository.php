@@ -9,7 +9,7 @@ class CompanyDivisionRepository implements CompanyDivisionInterface
     /**
     * @var ModelName
     */
-    protected $model, $isSupaerAdmin;
+    protected $model, $isSuperAdmin;
 
     public function __construct(CompanyDivision $model)
     {

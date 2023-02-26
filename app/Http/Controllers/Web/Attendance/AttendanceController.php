@@ -30,16 +30,7 @@ class AttendanceController extends BaseController
     */
     public function index(Request $request)
     {
-        $param = [
-            $request->keyword,
-            $request->workPlaces,
-            $request->statusClock,
-            $request->has('date') && $request->date != '' ? $request->date : Date::now(),
-            $request->show,
-            $request->branch_id
-        ];
-
-        $data = $this->services->index($param);
+        $data = $this->services->index($request->all());
 
         return $this->sendResponse($data, 'Data Fetched Successfully');
     }

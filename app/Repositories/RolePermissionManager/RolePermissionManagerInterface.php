@@ -4,6 +4,7 @@ namespace App\Repositories\RolePermissionManager;
 
 interface RolePermissionManagerInterface
 {
+
   public function listRoleManager($keyword, $branch = null);
   public function detailRoleManager($roleId);
   public function listAuthAllPermissionScope();
@@ -14,4 +15,5 @@ interface RolePermissionManagerInterface
   public function createRolePermission(array $data, array $permissionData);
   public function updateRolePermission($roleId, $roleName, array $permissionData);
   public function deleteRolePermission($roleId);
+  
 }

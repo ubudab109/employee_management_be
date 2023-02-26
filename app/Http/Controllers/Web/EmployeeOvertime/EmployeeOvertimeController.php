@@ -61,6 +61,27 @@ class EmployeeOvertimeController extends BaseController
         return $this->sendResponse(array('success' => 1) ,$isUpdated['message']);
     }
 
+
+    public function updateStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id'     => 'required|array',
+            'status' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendBadRequest('Validator Errors', $validator->errors());
+        }
+
+        $data = $request->all();
+
+        $isUpdated = $this->services->updateOvertimeStatus($data);
+        if (!$isUpdated['status']) {
+            return $this->sendError($isUpdated['message']);
+        }
+        return $this->sendResponse(array('success' => 1), $isUpdated['message']);
+    }
+    
     public function destroy($id)
     {
         $isDeleted = $this->services->delete($id);

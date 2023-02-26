@@ -4,6 +4,7 @@ namespace App\Repositories\UserManagement;
 
 interface UserManagementInterface
 {
+
   public function getUserManagement($keyword, $status, $role, $branch = null);
   public function getPaginateUserManagement($keyword, $status, $role, $show, $branch = null);
   public function detailUserManagement($userId);
@@ -15,4 +16,5 @@ interface UserManagementInterface
   public function changeRole($userId, $role);
   public function deleteUserManagement($userId);
   public function moveBranch($userId, $branchId);
+  
 }

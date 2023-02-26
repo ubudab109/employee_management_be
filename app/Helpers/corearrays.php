@@ -207,12 +207,35 @@ function getStatusNameOvertime($input = null)
  * 
  * @return array of key-value pairs.
  */
-function getStatusNameOvertimeColor($input = null)
+function getStatusNameColor($input = null)
 {
   $data = [
-    HAS_BEEN_APPLIED => '#19C8FF',
+    HAS_BEEN_APPLIED => '#FCB756',
     APPROVED => '#19C8FF',
-    REJECTED => '#19C8FF',
+    REJECTED => '#FF1111',
+  ];
+
+  if ($input != null) {
+    return $data[$input];
+  }
+
+  return $data;
+}
+
+/**
+ * It returns an array of leave status names, or a single leave status name if you pass in a leave
+ * status ID
+ * 
+ * @param string input The value you want to get the name of.
+ * 
+ * @return array array of key-value pairs.
+ */
+function getLeaveStatusName($input = null)
+{
+  $data = [
+    LEAVE_PENDING  => 'Pending',
+    LEAVE_APPROVE  => 'Approved',
+    LEAVE_REJECTED => 'Rejected',
   ];
 
   if ($input != null) {

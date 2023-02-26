@@ -132,6 +132,42 @@ class EmployeeOvertimeServices
     }
 
     /**
+     * It updates the status of the overtime of the employee.
+     * @param array $data
+     * @param integer $id
+     * @return object
+     * @throws \Exception
+     */
+    public function updateOvertimeStatus(array $data)
+    {
+        DB::beginTransaction();
+        try {
+            foreach ($data['id'] as $id) {
+                // CHECK IF CURRENT OVERTIME DATA HAD BEEN APPLIED OR REJECTED
+                $overtimeData = $this->employeeOvertime->detailEmployeeOvertime($id);
+
+                // WILL SKIP THE PROCESS
+                if ($overtimeData->status == '1' || $overtimeData == '2') {
+                    continue;
+                }
+                $this->employeeOvertime->updateEmployeeOvertime(['status' => $data['status']], $id);
+            }
+            DB::commit();
+            return [
+                'status'  => true,
+                'message' => 'Employee Overtime Status Updated Successfully',
+            ];
+        } catch (\Exception $err) {
+            DB::rollBack();
+            Log::info($err->getMessage());
+            return [
+                'status'  => false,
+                'message' => 'Internal Server Error' 
+            ];
+        }
+    }
+
+    /**
      * DELETE EMPLOYEE OVERTIME BY OVERTIME ID
      * @param integer $id
      * @return object

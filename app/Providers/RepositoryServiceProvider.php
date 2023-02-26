@@ -12,12 +12,16 @@ use App\Repositories\Employee\EmployeeInterface;
 use App\Repositories\Employee\EmployeeRepository;
 use App\Repositories\EmployeeAttendance\EmployeeAttendanceInterface;
 use App\Repositories\EmployeeAttendance\EmployeeAttendanceRepository;
+use App\Repositories\EmployeeLeave\EmployeeLeaveInterface;
+use App\Repositories\EmployeeLeave\EmployeeLeaveRepository;
 use App\Repositories\EmployeeNote\EmployeeNoteInterface;
 use App\Repositories\EmployeeNote\EmployeeNoteRepository;
 use App\Repositories\EmployeeOvertime\EmployeeOvertimeInterface;
 use App\Repositories\EmployeeOvertime\EmployeeOvertimeRepository;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
 use App\Repositories\RolePermissionManager\RolePermissionManagerRepository;
+use App\Repositories\SalaryComponent\SalaryComponentInterface;
+use App\Repositories\SalaryComponent\SalaryComponentRepository;
 use App\Repositories\UserManagement\UserManagementInterface;
 use App\Repositories\UserManagement\UserManagementRepository;
 use App\Repositories\UserVerification\UserVerificationInterface;
@@ -44,7 +48,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(CompanyBranchInterface::class, CompanyBranchRepository::class);
         $this->app->bind(EmployeeInterface::class, EmployeeRepository::class);
         $this->app->bind(EmployeeOvertimeInterface::class, EmployeeOvertimeRepository::class);
-        
+        $this->app->bind(EmployeeLeaveInterface::class, EmployeeLeaveRepository::class);
+        $this->app->bind(SalaryComponentInterface::class, SalaryComponentRepository::class);
     }
 
     /**

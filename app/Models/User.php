@@ -79,7 +79,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $appends = [
         'avatar', 'division_name', 'total_salary', 'total_income', 
         'total_cuts', 'status', 'status_badge', 'status_name', 'job_status_name',
-        'date_of_birth', 'identity_type_name', 'date_human_diff',
+        'date_of_birth', 'identity_type_name', 'date_human_diff', 'current_used_pl'
     ];
 
     protected static function boot()
@@ -89,6 +89,12 @@ class User extends Authenticatable implements MustVerifyEmail
         self::creating(function ($model) {
             $model->uuid = (string)Str::uuid();
         });
+    }
+
+    public function getCurrentUsedPlAttribute()
+    {
+        $currentUsedPerYear = $this->leave()->where('type', PAID_LEAVE)->whereYear('created_at', date('Y'))->where('status', APPROVED)->count();
+        return $currentUsedPerYear;
     }
 
     public function getDateHumanDiffAttribute()
@@ -273,7 +279,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(EmployeeReimburshment::class, 'employee_id', 'id');
     }
 
-    public function paidLeave()
+    public function leave()
     {
         return $this->hasMany(EmployeeLeave::class, 'employee_id', 'id');
     }

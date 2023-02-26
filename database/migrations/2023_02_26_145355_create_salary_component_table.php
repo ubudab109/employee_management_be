@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEmployeeSalaryTable extends Migration
+class CreateSalaryComponentTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateEmployeeSalaryTable extends Migration
      */
     public function up()
     {
-        Schema::create('employee_salary', function (Blueprint $table) {
+        Schema::create('salary_component', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->enum('type',['income','cut']);
+            $table->foreignId('branch_id')->nullable()->constrained('company_branch')->nullOnDelete()->cascadeOnUpdate();
             $table->string('name');
-            $table->double('amount')->default(0);
+            $table->enum('type', ['income', 'cut']);
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateEmployeeSalaryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('employee_salary');
+        Schema::dropIfExists('salary_component');
     }
 }

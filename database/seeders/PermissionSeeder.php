@@ -100,6 +100,13 @@ class PermissionSeeder extends Seeder
                     'order' => 8,
                     'created_at' => Date::now(),
                     'updated_at' => Date::now(),
+                ],
+                [
+                    'id' => 9,
+                    'name' => 'Employee Paid Leave',
+                    'order' => 9,
+                    'created_at' => Date::now(),
+                    'updated_at' => Date::now(),
                 ]
             ];
     
@@ -442,6 +449,39 @@ class PermissionSeeder extends Seeder
                     'created_at'        => Date::now(),
                     'updated_at'        => Date::now(),
                 ],
+                [
+                    'scope_id'          => 9,
+                    'name'              => 'employee-leave-list',
+                    'display_name'      => 'Employee Leave List',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 9,
+                    'name'              => 'employee-leave-detail',
+                    'display_name'      => 'Employee Leave Detail',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 9,
+                    'name'              => 'employee-leave-update',
+                    'display_name'      => 'Employee Leave Update',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 9,
+                    'name'              => 'employee-leave-delete',
+                    'display_name'      => 'Employee Leave Delete',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+
             ];
     
             Permission::insert($dataPermissionsManager);

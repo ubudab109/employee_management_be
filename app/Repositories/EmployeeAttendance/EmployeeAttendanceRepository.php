@@ -3,6 +3,7 @@
 namespace App\Repositories\EmployeeAttendance;
 
 use App\Models\EmployeeAttendance;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class EmployeeAttendanceRepository implements EmployeeAttendanceInterface
@@ -102,8 +103,8 @@ class EmployeeAttendanceRepository implements EmployeeAttendanceInterface
       ->when($statusClock != null || $statusClock != '', function ($query) use ($statusClock) {
         $query->where('status_clock', $statusClock);
       })
-      ->when($date != null || $date != '', function ($query) use ($date) {
-        $query->whereDate('date', '=', $date);
+      ->when($date != null, function ($query) use ($date) {
+        $query->whereDate('date', $date);
       })
       ->get();
 

@@ -85,7 +85,6 @@ class EmployeeServices
 
             if (isset($data['salary'])) {
                 foreach ($data['salary'] as $salary) {
-
                     // THIS IS FOR OVERTIME
                     $salarySetting = [
                         'type'      => OVERTIME,
@@ -94,10 +93,10 @@ class EmployeeServices
                         ],
                     ];
                     $this->employee->salaryInput($employee, [
-                        'type'          => $salary['type'],
-                        'name'          => $salary['name'],
-                        'amount'        => $salary['type'] == SALARY_CUTS ? -$salary['amount'] : $salary['amount'], 
-                        'setting'       => $salary['name'] == OVERTIME || $salary['name'] == 'Overtime' ? json_encode($salarySetting) : null,             
+                        'type'                => $salary['type'],
+                        'salary_component_id' => $salary['salary_component_id'],
+                        'amount'              => $salary['type'] == SALARY_CUTS ? -$salary['amount'] : $salary['amount'], 
+                        'setting'             => $salary['name'] == OVERTIME || $salary['name'] == 'Overtime' ? json_encode($salarySetting) : null,             
                     ]);
                 }
             }

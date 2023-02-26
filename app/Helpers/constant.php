@@ -58,7 +58,7 @@ const JOB_STATUS_PROBATION = '2';
 
 /** SALARY TYPE */
 const SALARY_INCOME = 'income';
-const SALARY_CUTS = 'cuts';
+const SALARY_CUTS = 'cut';
 
 /** SALARY PAYMENT_TYPE */
 const SALARY_MONTHLY_PAYMENT = '0';
@@ -81,3 +81,8 @@ const PAID_LEAVE = 'paid_leave';
 const HAS_BEEN_APPLIED = '0';
 const APPROVED = '1';
 const REJECTED = '2';
+
+/** PAID LEAVE STATUS */
+const LEAVE_PENDING = '0';
+const LEAVE_APPROVE = '1';
+const LEAVE_REJECTED = '2';

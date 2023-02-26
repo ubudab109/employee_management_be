@@ -19,13 +19,14 @@ class EmployeeOvertime extends Model
         'out',
         'taken_hour',
         'status',
+        'description',
     ];
 
     protected $appends = ['status_name', 'status_color'];
 
     public function getStatusColorAttribute()
     {
-        return getStatusNameOvertimeColor($this->status);
+        return getStatusNameColor($this->status);
     }
 
     public function getStatusNameAttribute()
@@ -46,5 +47,10 @@ class EmployeeOvertime extends Model
     public function employee()
     {
         return $this->belongsTo(User::class, 'employee_id', 'id');
+    }
+
+    public function files()
+    {
+        return $this->morphMany(Files::class, 'source');
     }
 }

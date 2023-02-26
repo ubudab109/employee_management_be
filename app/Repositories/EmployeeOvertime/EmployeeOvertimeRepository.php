@@ -60,6 +60,10 @@ class EmployeeOvertimeRepository implements EmployeeOvertimeInterface
       ->when(!is_null($employeeId), function ($query) use ($employeeId) {
         $query->where('employee_id', $employeeId);
       })
+      /* FILTER STATUS */
+      ->when(isset($status) && $status != null, function ($query) use ($status) {
+        $query->where('status', $status);
+      })
       ->paginate($show);
 
       return $data;
@@ -107,6 +111,10 @@ class EmployeeOvertimeRepository implements EmployeeOvertimeInterface
       ->when(!is_null($employeeId), function ($query) use ($employeeId) {
         $query->where('employee_id', $employeeId);
       })
+      /* FILTER STATUS */
+      ->when(isset($status) && $status != null, function ($query) use ($status) {
+        $query->where('status', $status);
+      })
       ->get();
 
       return $data;
@@ -119,7 +127,7 @@ class EmployeeOvertimeRepository implements EmployeeOvertimeInterface
      */
     public function detailEmployeeOvertime($id)
     {
-      $data = $this->model->with('employee:id,firstname,lastname,nip','department:id,division_name','branch:id,branch_name')
+      $data = $this->model->with('employee:id,firstname,lastname,nip','department:id,division_name','branch:id,branch_name', 'files:id,files,source_id')
       ->find($id);
       return $data;
     }

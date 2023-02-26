@@ -13,8 +13,10 @@ use App\Http\Controllers\Web\Dashboard\DashboardController;
 use App\Http\Controllers\Web\Dataset\DatasetController;
 use App\Http\Controllers\Web\Employee\EmployeeController;
 use App\Http\Controllers\Web\EmployeeOvertime\EmployeeOvertimeController;
+use App\Http\Controllers\Web\EmployeePaidLeave\EmployeePaidLeaveController;
 use App\Http\Controllers\Web\Profile\ProfileController as ProfileProfileController;
 use App\Http\Controllers\Web\RolePermission\RolePermissionController;
+use App\Http\Controllers\Web\SalaryComponent\SalaryComponentController;
 use App\Http\Controllers\Web\UserManagement\UserManagementController;
 use App\Models\CompanyJobStatus;
 use Illuminate\Http\Request;
@@ -131,6 +133,18 @@ Route::group(['middleware' => 'cors'], function() {
                     
                     /** EMPLOYEE OVERTIME */
                     Route::resource('employee-overtime', EmployeeOvertimeController::class);
+                    Route::put('employee-overtime-status', [EmployeeOvertimeController::class, 'updateStatus']);
+
+                    /** EMPLOYEE PAID LEAVE */
+                    Route::resource('employee-paid-leave', EmployeePaidLeaveController::class);
+
+                    
+                });
+
+                /** SUPERADMIN ROUTE */
+                Route::group(['middleware' => ['superadmin_check']], function () {
+                    /** SALARY COMPONENT */
+                    Route::resource('salary-component', SalaryComponentController::class);
                 });
             });
 

@@ -12,8 +12,8 @@ class EmployeeSalary extends Model
     protected $table = 'employee_salary';
     protected $fillable = [
         'employee_id',
+        'salary_component_id',
         'type',
-        'name',
         'amount',
         'is_temporary',
         'setting',
@@ -22,5 +22,10 @@ class EmployeeSalary extends Model
     public function employee()
     {
         return $this->belongsTo(User::class, 'employee_id', 'id');
+    }
+
+    public function salaryComponent()
+    {
+        return $this->belongsTo(SalaryComponent::class, 'salary_component_id', 'id');
     }
 }
