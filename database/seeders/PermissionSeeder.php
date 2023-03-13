@@ -33,7 +33,7 @@ class PermissionSeeder extends Seeder
                 'address'       => 'Jalan Ampera Raya, GG Kancil RT 003/09 ',
                 'status'        => '1',
                 'latitude'      => '-6.28818289305121',
-                'langitude'     => '106.82770635966614',
+                'longitude'     => '106.82770635966614',
                 'attendance_radius' => 500,
             ]);
             $role = Role::create([
