@@ -17,11 +17,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $role = Role::find(17);
-    foreach (Permission::all() as $permission) {
-        DB::table('role_has_permissions')->insert([
-            'permission_id' => $permission->id,
-            'role_id' => $role->id
-        ]);
-    }
+    return 'EMS BACKEND';
 });
