@@ -64,6 +64,7 @@ class UserManagerSeeder extends Seeder
                 'updated_at'        => Date::now(),
             ]);
             $userManagerAssign->assignRole($role->id);
+            DB::commit();
         } catch (\Exception $err) {
             DB::rollBack();
             dd($err->getMessage());
