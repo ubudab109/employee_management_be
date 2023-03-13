@@ -22,8 +22,23 @@ class UserManagerSeeder extends Seeder
     {
         DB::beginTransaction();
         try {
+            $permissions = Permission::all();
             $branch = CompanyBranch::first();
-            $role = Role::where('branch_id', $branch->id)->where('name', 'hr')->first();
+            // $role = Role::where('branch_id', $branch->id)->where('name', 'hr')->first();
+            $role = Role::create([
+                'name' => 'Head Branch '.$branch->branch_name,
+                'guard_name' => 'sanctum:manager',
+                'is_role_manager' => 1,
+                'branch_id'       => $branch->id,
+                'departement_id'  => null,
+                'created_at'      => Date::now(),
+                'updated_at'      => Date::now(),
+            ]);
+
+            foreach ($permissions as $permission) {
+                $role->syncPermissions($permission);
+            }
+
             $userManager = UserManager::create([
                 'name' => 'HR Branch 1',
                 'email' => 'hr@mail.com',
