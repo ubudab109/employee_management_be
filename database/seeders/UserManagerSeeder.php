@@ -6,10 +6,13 @@ use App\Models\CompanyBranch;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\UserManager;
+use App\Models\UserManagerAssign;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
 
 class UserManagerSeeder extends Seeder
 {
@@ -30,7 +33,7 @@ class UserManagerSeeder extends Seeder
                 'guard_name' => 'sanctum:manager',
                 'is_role_manager' => 1,
                 'branch_id'       => $branch->id,
-                'departement_id'  => null,
+                'department_id'  => null,
                 'created_at'      => Date::now(),
                 'updated_at'      => Date::now(),
             ]);
@@ -51,7 +54,15 @@ class UserManagerSeeder extends Seeder
                 'updated_at'    => Date::now(),
                 'invited_status' => 1,
             ]);
-            $userManager->assignRole($role->id);
+            $userManagerAssign = UserManagerAssign::create([
+                'uuid'              => Str::uuid(),
+                'user_manager_id'   => $userManager->id,
+                'branch_id'         => $branch->id,
+                'status'            => 1,
+                'created_at'        => Date::now(),
+                'updated_at'        => Date::now(),
+            ]);
+            $userManagerAssign->assignRole($role->id);
         } catch (\Exception $err) {
             DB::rollBack();
             dd($err->getMessage());
