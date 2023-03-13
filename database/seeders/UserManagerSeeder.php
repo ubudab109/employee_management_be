@@ -55,6 +55,7 @@ class UserManagerSeeder extends Seeder
                 'invited_status' => 1,
             ]);
             $userManagerAssign = UserManagerAssign::create([
+                'id'                => 1,
                 'uuid'              => Str::uuid(),
                 'user_manager_id'   => $userManager->id,
                 'branch_id'         => $branch->id,
