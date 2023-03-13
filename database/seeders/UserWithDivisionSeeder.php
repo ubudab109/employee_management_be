@@ -75,6 +75,7 @@ class UserWithDivisionSeeder extends Seeder
                 'firstname' => 'HR',
                 'lastname'  => 'TDI',
                 'email' => 'hr@tdi.com',
+                'join_date' => '2022-03-03',
                 'nip'   => '23432432',
                 'gender' => MALE_GENDER,
                 'phone_number' => '08596324321',
