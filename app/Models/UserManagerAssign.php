@@ -20,6 +20,7 @@ class UserManagerAssign extends Pivot
     ];
     protected $guard_name = 'sanctum:manager';
     protected $primaryKey = 'id';
+    protected $appends = ['role'];
 
     protected static function boot()
     {
@@ -28,6 +29,11 @@ class UserManagerAssign extends Pivot
         self::creating(function ($model) {
             $model->uuid = (string)Str::uuid();
         });
+    }
+    
+    public function getRoleAttribute()
+    {
+        return $this->roles()->first();
     }
 
     public function userManager()

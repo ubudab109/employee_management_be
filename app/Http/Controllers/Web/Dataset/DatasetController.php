@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Dataset;
 
 use App\Http\Controllers\BaseController;
+use App\Models\User;
 use App\Repositories\CompanyDivision\CompanyDivisionInterface;
 use App\Repositories\CompanyJobStatus\CompanyJobStatusInterface;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
@@ -51,6 +52,30 @@ class DatasetController extends BaseController
     }
 
     /**
+     * GET EMPLOYEE DATA THAT DOESN'T HAVE A PAYSLIP IN SEPESIFIC MONTH AND YEAR
+     * @param Request $request
+     * @return Response
+     */
+    public function employeeNotInPayslip(Request $request)
+    {
+        $employees = User::whereHas('branch', function ($query) {
+            $query->where('branch_id', branchSelected('sanctum:manager')->id);
+        })->whereDoesntHave('paySlip', function ($query) use ($request) {
+            $query->where('month', $request->month)
+            ->where('years', $request->years);
+        })->get();
+        $data = [];
+        foreach ($employees as $employee) {
+            $res = [
+                'value'     => $employee->id,
+                'label'     => $employee->firstname.' '. $employee->lastname . ' | ' . $employee->nip.' | '.$employee->branch_name
+            ];
+
+            array_push($data, $res);
+        }
+        return $this->sendResponse($data, 'Data Fetched Successfully');
+    }
+    /**
      * Dataset For Get Role Manager
      * 
      * @return \Illuminate\Http\Response
@@ -89,7 +114,12 @@ class DatasetController extends BaseController
      */
     public function listDepartment(Request $request)
     {
-        $department = $this->companyDivision->getAllDivision($request->branch,$request->keyword);
+        if ($request->get('filter') == 1) {
+            $department = DB::table('company_division')->where('branch_id', branchSelected('sanctum:manager')->id)
+            ->select('id as value', 'division_name as label')->get();
+        } else {
+            $department = $this->companyDivision->getAllDivision($request->branch,$request->keyword);
+        }
         return $this->sendResponse($department, 'Data Fetched Successfully');
     }
 
@@ -145,5 +175,20 @@ class DatasetController extends BaseController
         } else {
             return $this->sendResponse(false, 'Checked Successfully');
         }
+    }
+
+    /**
+     * SALARY COMPONENT DATASET
+     * 
+     * @param Request
+     * @return Collection
+     */
+    public function salaryComponent(Request $request)
+    {
+        $salary = DB::table('salary_component')
+        ->when($request->has('type') && $request->type !== '', function ($query) use ($request) {
+            $query->where('type', $request->type);
+        })->orderBy('name', 'asc')->get();
+        return $this->sendResponse($salary, 'Data Fetched Successfully');
     }
 }

@@ -35,6 +35,16 @@ class SalaryComponentRepository implements SalaryComponentInterface
     }
 
     /**
+     * DETAIL SALARY COMPONENT
+     * @param int $id
+     * @return object
+     */
+    public function detail($id)
+    {
+      return $this->model->find($id);
+    }
+
+    /**
      * CREATE SALARY COMPONENT
      * @param array $data
      * @return object

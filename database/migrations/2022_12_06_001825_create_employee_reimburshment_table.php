@@ -19,7 +19,7 @@ class CreateEmployeeReimburshmentTable extends Migration
             $table->date('date')->nullable();
             $table->string('claim_type')->nullable();
             $table->double('amount')->default(0);
-            $table->enum('status', ['0','1', '2'])->default('0')->comment('0 pending, 1 incomplete, 2 complete');
+            $table->enum('status', ['0','1', '2'])->default('0')->comment('0 pending, 1 approved, 2 rejected');
             $table->timestamps();
         });
     }

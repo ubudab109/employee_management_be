@@ -47,4 +47,14 @@ class CompanyBranch extends Model
     {
         return $this->belongsTo(Village::class, 'villages_id', 'id');
     }
+
+    public function employeeSalary()
+    {
+        return $this->hasMany(EmployeeSalary::class, 'branch_id', 'id');
+    }
+
+    public function payslip()
+    {
+        return $this->hasMany(Payroll::class, 'branch_id', 'id');
+    }
 }

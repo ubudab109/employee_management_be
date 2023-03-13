@@ -9,6 +9,7 @@ use App\Repositories\Employee\EmployeeInterface;
 use App\Repositories\UserVerification\UserVerificationInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class EmployeeServices
 {
@@ -92,11 +93,20 @@ class EmployeeServices
                             'paid_at'   => 'hour',
                         ],
                     ];
+                    $salaryComponentType = DB::table('salary_component')->find($salary['salary_component_id']);
+                    if (!$salaryComponentType) {
+                        DB::rollBack();
+                        return [
+                            'status'    => false,
+                            'message'   => 'Salary Not Found', 
+                        ];
+                    }
                     $this->employee->salaryInput($employee, [
-                        'type'                => $salary['type'],
+                        'branch_id'           => branchSelected('sanctum:manager')->id,
+                        'type'                => $salaryComponentType->type,
                         'salary_component_id' => $salary['salary_component_id'],
-                        'amount'              => $salary['type'] == SALARY_CUTS ? -$salary['amount'] : $salary['amount'], 
-                        'setting'             => $salary['name'] == OVERTIME || $salary['name'] == 'Overtime' ? json_encode($salarySetting) : null,             
+                        'amount'              => $salaryComponentType->type == SALARY_CUTS ? -$salary['amount'] : $salary['amount'], 
+                        'setting'             => $salaryComponentType->name == OVERTIME || $salaryComponentType->name == 'Overtime' ? json_encode($salarySetting) : null,             
                     ]);
                 }
             }
@@ -226,5 +236,53 @@ class EmployeeServices
             'message'   => 'Data Fetched Successfully',
         ];
 
+    }
+
+    /**
+     * Update data employee finance
+     * @param array $data - Request data
+     * @param string $type - type of finance (payment_date, bank, salary, attendance_cut)
+     * @param int $employeeId - Id Of employee
+     * @return object
+     */
+    public function updateFinanceEmployee(array $data, $type, $employeeId)
+    {
+        DB::beginTransaction();
+        try {
+            switch ($type) {
+                case 'payment_date':
+                    $this->employee->updateFinanceEmployee($data, 'payment_date', $employeeId);
+                    break;
+                case 'bank':
+                    $this->employee->updateFinanceEmployee($data, 'bank', $employeeId);
+                    break;
+                case 'salary_income':
+                    $this->employee->updateFinanceEmployee($data['data'], 'salary_income', $employeeId);
+                    break;
+                case 'salary_cuts':
+                    $this->employee->updateFinanceEmployee($data['data'], 'salary_cuts', $employeeId);
+                    break;
+                case 'attendance_cut':
+                    $this->employee->updateFinanceEmployee($data['data'], 'attendance_cut', $employeeId);
+                    break;
+                default:
+                    return [
+                        'status'  => false,
+                        'message' => 'Please provide a type',
+                    ];
+            }
+            DB::commit();
+            return [
+                'status'  => true,
+                'message' => 'Data Employee Finance Updated Successfully',
+            ];
+        } catch (\Exception $err) {
+            DB::rollBack();
+            Log::info($err);
+            return [
+                'status'  => false,
+                'message' => 'Internal Server Error',
+            ];
+        }
     }
 }

@@ -288,4 +288,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(EmployeeWarningLetter::class, 'employee_id', 'id');
     }
+
+    public function paySlip()
+    {
+        return $this->hasMany(Payroll::class, 'employee_id', 'id');
+    }
 }

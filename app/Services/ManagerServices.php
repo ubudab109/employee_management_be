@@ -10,6 +10,7 @@ use App\Repositories\UserManagement\UserManagementInterface;
 use App\Repositories\UserVerification\UserVerificationInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class ManagerServices
 {
@@ -178,8 +179,7 @@ class ManagerServices
         try {
             $manager = $this->userManagement->updateUser($data, $managerId);
             if (isset($data['role']) && !is_null($data['role'])) {
-                $manager->roles()->detach();
-                $manager->assignRole($data['role']);
+                $this->userManagement->changeRole($managerId, $data['role']);
             }
     
             if (isset($data['branch_id']) && !is_null($data['branch_id'])) {
@@ -194,6 +194,7 @@ class ManagerServices
             ];
         } catch (\Exception $err) {
             DB::rollBack();
+        Log::info($err->getMessage());
             return [
                 'status'    => false,
                 'data'      => null,

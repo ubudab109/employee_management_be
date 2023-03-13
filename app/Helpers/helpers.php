@@ -149,12 +149,12 @@ function allCompanySetting($array = null)
 /**
  * Get One Company Setting
  * @param string $keys
- * @return Boolean or String
+ * @return string | null
  */
 function settings($keys)
 {
     $setting = CompanySetting::where('setting_key', $keys)->first();
-    return empty($setting) ? false : $setting->value;
+    return empty($setting) ? null : $setting->value;
 }
 
 /**

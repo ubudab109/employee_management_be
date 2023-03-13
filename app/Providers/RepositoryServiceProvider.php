@@ -18,6 +18,10 @@ use App\Repositories\EmployeeNote\EmployeeNoteInterface;
 use App\Repositories\EmployeeNote\EmployeeNoteRepository;
 use App\Repositories\EmployeeOvertime\EmployeeOvertimeInterface;
 use App\Repositories\EmployeeOvertime\EmployeeOvertimeRepository;
+use App\Repositories\EmployeeReimbersement\EmployeeReimbursementInterface;
+use App\Repositories\EmployeeReimbersement\EmployeeReimbursementRepository;
+use App\Repositories\Payroll\PayrollInterface;
+use App\Repositories\Payroll\PayrollRepository;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
 use App\Repositories\RolePermissionManager\RolePermissionManagerRepository;
 use App\Repositories\SalaryComponent\SalaryComponentInterface;
@@ -50,6 +54,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EmployeeOvertimeInterface::class, EmployeeOvertimeRepository::class);
         $this->app->bind(EmployeeLeaveInterface::class, EmployeeLeaveRepository::class);
         $this->app->bind(SalaryComponentInterface::class, SalaryComponentRepository::class);
+        $this->app->bind(EmployeeReimbursementInterface::class, EmployeeReimbursementRepository::class);
+        $this->app->bind(PayrollInterface::class, PayrollRepository::class);
     }
 
     /**

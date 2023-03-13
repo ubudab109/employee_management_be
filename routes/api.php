@@ -4,7 +4,7 @@ use App\Http\Controllers\Apps\Auth\AuthController;
 use App\Http\Controllers\Apps\MobileApi\HomeMain\HomeMainController;
 use App\Http\Controllers\Apps\MobileApi\Profile\ProfileController;
 use App\Http\Controllers\Apps\MobileApi\UserController;
-use App\Http\Controllers\CompanyJobStatus\CompanyJobStatusController;
+use App\Http\Controllers\Web\Payslip\PayslipController;
 use App\Http\Controllers\Web\Attendance\AttendanceController;
 use App\Http\Controllers\Web\Auth\AuthController as WebAuthController;
 use App\Http\Controllers\Web\CompanyBranch\CompanyBranchController;
@@ -14,12 +14,11 @@ use App\Http\Controllers\Web\Dataset\DatasetController;
 use App\Http\Controllers\Web\Employee\EmployeeController;
 use App\Http\Controllers\Web\EmployeeOvertime\EmployeeOvertimeController;
 use App\Http\Controllers\Web\EmployeePaidLeave\EmployeePaidLeaveController;
+use App\Http\Controllers\Web\EmployeeReimbersement\EmployeeReimbersementController;
 use App\Http\Controllers\Web\Profile\ProfileController as ProfileProfileController;
 use App\Http\Controllers\Web\RolePermission\RolePermissionController;
 use App\Http\Controllers\Web\SalaryComponent\SalaryComponentController;
 use App\Http\Controllers\Web\UserManagement\UserManagementController;
-use App\Models\CompanyJobStatus;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -103,12 +102,14 @@ Route::group(['middleware' => 'cors'], function() {
                     /* Dataset */
                     Route::group(['prefix' => 'dataset'], function () {
                         Route::get('employee', [DatasetController::class, 'employee']);
+                        Route::get('employee-notin-payslip', [DatasetController::class, 'employeeNotInPayslip']);
                         Route::get('exists-employee', [DatasetController::class, 'checkEmployee']);
                         Route::get('employee/{id}', [DatasetController::class, 'detailEmployee']);
                         Route::get('role-manager', [DatasetController::class, 'roleManager']);
                         Route::get('department', [DatasetController::class, 'listDepartment']);
                         Route::get('job-status', [DatasetController::class, 'listJobStatus']);
                         Route::get('company-branch', [DatasetController::class, 'listCompanyBranch']);
+                        Route::get('salary-component', [DatasetController::class, 'salaryComponent']);
                     });
     
                     /* Attendance */
@@ -128,6 +129,7 @@ Route::group(['middleware' => 'cors'], function() {
                     /** Employee */
                     // Route::post('employee', [EmployeeController::class, 'store']);
                     Route::resource('employee', EmployeeController::class);
+                    Route::put('employee-finance/{id}', [EmployeeController::class, 'updateFinance']);
                     // Route::get('employee/{id}',[EmployeeController::class, 'show']);
                     Route::delete('delete-employee', [EmployeeController::class, 'destroy']);
                     
@@ -138,6 +140,14 @@ Route::group(['middleware' => 'cors'], function() {
                     /** EMPLOYEE PAID LEAVE */
                     Route::resource('employee-paid-leave', EmployeePaidLeaveController::class);
 
+                    /** EMPLOYEE REIUMBERSEMENT */
+                    Route::resource('employee-reimbursement', EmployeeReimbersementController::class);
+
+                    /** PAYSLIP */
+                    Route::resource('payslip', PayslipController::class);
+                    Route::get('payslip-generate-list', [PayslipController::class, 'listPayslipGenerateProcess']);
+                    Route::post('payslip-generate', [PayslipController::class, 'generate']);
+                    Route::get('payslip-generate/{id}', [PayslipController::class, 'retryGenerate']);
                     
                 });
 

@@ -125,4 +125,14 @@ interface EmployeeInterface
    */
   public function deleteEmployee(array $id);
 
+  /**
+   * UPDATE FINANCE EMPLOYEE
+   * INCLUDE: PAYMENT DATE, BANK, SALARY, ATTENDANCE CUT
+   * @param array $data
+   * @param string $type - type of updating data
+   * @param int $id id employee
+   * @return bool
+   */
+  public function updateFinanceEmployee(array $data, $type, $id);
+
 }

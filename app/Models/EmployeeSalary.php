@@ -11,6 +11,7 @@ class EmployeeSalary extends Model
 
     protected $table = 'employee_salary';
     protected $fillable = [
+        'branch_id',
         'employee_id',
         'salary_component_id',
         'type',

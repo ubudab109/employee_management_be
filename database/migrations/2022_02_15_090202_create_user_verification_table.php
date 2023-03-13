@@ -18,7 +18,7 @@ class CreateUserVerificationTable extends Migration
             $table->morphs('model');
             $table->enum('verification_type',['email','password']);
             $table->enum('status',[0,1])->default(0)->comment('0 Active, 1 Done');
-            $table->text('code')->unique();
+            $table->string('code')->unique();
             $table->dateTime('expired_at')->nullable();
             $table->timestamps();
         });

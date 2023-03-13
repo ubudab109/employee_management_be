@@ -210,9 +210,9 @@ function getStatusNameOvertime($input = null)
 function getStatusNameColor($input = null)
 {
   $data = [
-    HAS_BEEN_APPLIED => '#FCB756',
-    APPROVED => '#19C8FF',
-    REJECTED => '#FF1111',
+    '0' => '#FCB756',
+    '1' => '#19C8FF',
+    '2' => '#FF1111',
   ];
 
   if ($input != null) {
@@ -236,6 +236,25 @@ function getLeaveStatusName($input = null)
     LEAVE_PENDING  => 'Pending',
     LEAVE_APPROVE  => 'Approved',
     LEAVE_REJECTED => 'Rejected',
+  ];
+
+  if ($input != null) {
+    return $data[$input];
+  }
+
+  return $data;
+}
+
+/**
+ * GET GLOBAL STATUS NAME ATTRIBUTE
+ * @param string $input
+ * @return array
+ */
+function getStatusNameAttribute($input = null) {
+  $data = [
+    '0' => 'Pending',
+    '1' => 'Approved',
+    '2' => 'Rejected',
   ];
 
   if ($input != null) {

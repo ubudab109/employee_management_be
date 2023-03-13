@@ -107,7 +107,21 @@ class PermissionSeeder extends Seeder
                     'order' => 9,
                     'created_at' => Date::now(),
                     'updated_at' => Date::now(),
-                ]
+                ],
+                [
+                    'id' => 10,
+                    'name' => 'Employee Reimbersement',
+                    'order' => 10,
+                    'created_at' => Date::now(),
+                    'updated_at' => Date::now(),
+                ],
+                [
+                    'id' => 11,
+                    'name' => 'Finance',
+                    'order' => 11,
+                    'created_at' => Date::now(),
+                    'updated_at' => Date::now(),
+                ],
             ];
     
             PermissionScope::insert($dataPermissionScopeManager);
@@ -481,6 +495,66 @@ class PermissionSeeder extends Seeder
                     'created_at'        => Date::now(),
                     'updated_at'        => Date::now(),
                 ],
+                // REIMBERSEMENT
+                [
+                    'scope_id'          => 10,
+                    'name'              => 'employee-reimbursement-list',
+                    'display_name'      => 'Employee Reimbersement List',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 10,
+                    'name'              => 'employee-reimbursement-detail',
+                    'display_name'      => 'Employee Reimbersement Detail',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 10,
+                    'name'              => 'employee-reimbursement-update',
+                    'display_name'      => 'Employee Reimbersement Detail',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                // PAYROLL
+                [
+                    'scope_id'          => 11,
+                    'name'              => 'payslip-detail',
+                    'display_name'      => 'Payslip Detail',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 11,
+                    'name'              => 'payslip-edit',
+                    'display_name'      => 'Payslip Edit',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 11,
+                    'name'              => 'payslip-generate',
+                    'display_name'      => 'Payslip Generate',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 11,
+                    'name'              => 'payslip-send',
+                    'display_name'      => 'Payslip Send',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                
+
 
             ];
     

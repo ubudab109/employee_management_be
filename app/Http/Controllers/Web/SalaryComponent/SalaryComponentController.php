@@ -23,6 +23,16 @@ class SalaryComponentController extends BaseController
         return $this->sendResponse($res, 'Data Fetched Successfully');
     }
 
+
+    public function show($id)
+    {
+        $res = $this->services->detail($id);
+        if (!$res['status']) {
+            return $this->sendError($res['message'], [], 404);
+        }
+        return $this->sendResponse($res['data'], $res['message']);
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -35,6 +35,28 @@ class SalaryComponentServices
     }
 
     /**
+     * DETAIL SALARY COMPONENT
+     * @param int $id
+     * @return object
+     */
+    public function detail($id)
+    {
+        $data = $this->salaryComponent->detail($id);
+        if (!$data) {
+            return [
+                'status'  => false,
+                'message' => 'Data Not Found',
+                'data'    => null,
+            ];
+        }
+
+        return [
+            'status'  => true,
+            'message' => 'Data Fetched Successfully',
+            'data'    => $data,
+        ];
+    }
+    /**
      * CREATE SALARY COMPONENT
      * @param array $data
      * @return object

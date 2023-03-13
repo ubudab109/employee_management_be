@@ -41,6 +41,7 @@ class UserManagementRepository implements UserManagementInterface
           $subQuery->where('branch_id', branchSelected('sanctum:manager')->id);
         });
       })
+      ->with('branchAssign')
       ->when($this->isSuperAdmin, function ($query) use ($branch) {
         $query->when($branch != null, function ($subQuery) use ($branch) {
           $subQuery->whereHas('branchAssign', function ($subQuery) use ($branch) {
@@ -112,6 +113,7 @@ class UserManagementRepository implements UserManagementInterface
   public function getPaginateUserManagement($keyword, $status, $role, $show, $branch = null)
   {
     return $this->model
+      ->with('branchAssign')
       ->when(!$this->isSuperAdmin, function ($query) {
         $query->whereHas('branchAssign', function ($subQuery) {
           $subQuery->where('branch_id', branchSelected('sanctum:manager')->id);
@@ -198,7 +200,7 @@ class UserManagementRepository implements UserManagementInterface
   public function changeRole($userId, $role)
   {
     $user = $this->model->findOrFail($userId);
-    $userBranch = $user->branchAssign()->first();
+    $userBranch = $user->branch()->first();
     return $userBranch->syncRoles($role);
   }
 

@@ -86,3 +86,8 @@ const REJECTED = '2';
 const LEAVE_PENDING = '0';
 const LEAVE_APPROVE = '1';
 const LEAVE_REJECTED = '2';
+
+/** PAYROLL PROCESS GENERATE */
+const GENERATING = 'generating';
+const GENERATED = 'generated';
+const FAILED = 'failed';

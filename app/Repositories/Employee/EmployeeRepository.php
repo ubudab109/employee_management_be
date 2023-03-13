@@ -6,12 +6,14 @@ use App\Models\BankAccount;
 use App\Models\EmployeeAttendance;
 use App\Models\EmployeeLeave;
 use App\Models\EmployeeOvertime;
+use App\Models\EmployeeReimburshment;
 use App\Models\User;
 use App\Models\UserDivisionAssign;
 use App\Models\UserVerification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class EmployeeRepository implements EmployeeInterface
 {
@@ -205,19 +207,24 @@ class EmployeeRepository implements EmployeeInterface
         $data = [];
         $data['payment_date'] = DB::table('users')->where('id', $id)->select('id', 'payment_date')->first();
         $data['bank'] = DB::table('bank_account')->where('source_type', User::class)->where('source_id', $id)->first();
-        $data['income'] = DB::table('employee_salary')->where('type', SALARY_INCOME)->where('employee_id', $id)->get();
-        $data['cuts'] = DB::table('employee_salary')->where('type', SALARY_CUTS)->where('employee_id', $id)->get();
+        $data['income'] = DB::table('employee_salary')->select('employee_salary.*', 'sc.name')->where('employee_salary.type', SALARY_INCOME)
+        ->join('salary_component as sc', 'sc.id', '=', 'employee_salary.salary_component_id')
+        ->where('employee_id', $id)->get();
+        $data['cuts'] = DB::table('employee_salary')->select('employee_salary.*', 'sc.name')->where('employee_salary.type', SALARY_CUTS)
+        ->join('salary_component as sc', 'sc.id', '=', 'employee_salary.salary_component_id')
+        ->where('employee_id', $id)->get();
         $data['attendance_cuts'] = DB::table('employee_attendance_cut')->where('employee_id', $id)->get();
         $data['total_salary'] = DB::table('employee_salary')->where('employee_id', $id)->sum('amount');
         return $data;
       case 'reiumbershment':
-        return DB::table('employee_reimburshment')->where('employee_id', $id)
+        return EmployeeReimburshment::where('employee_id', $id)
+          ->with('files')
           ->when(isset($request['date']) && $request['date'] != null, function ($query) use ($request) {
             $query->when(isset($request['date']['month']) && $request['date']['month'] != null, function ($subQuery) use ($request) {
-              $subQuery->whereMonth('created_at', $request['date']['month']);
+              $subQuery->whereMonth('date', $request['date']['month']);
             })
               ->when(isset($request['date']['year']) && $request['date']['year'] != null, function ($subQuery) use ($request) {
-                $subQuery->whereYear('created_at', $request['date']['year']);
+                $subQuery->whereYear('date', $request['date']['year']);
               });
           })
           ->when(isset($request['status']) && $request['status'] != null, function ($query) use ($request) {
@@ -357,5 +364,54 @@ class EmployeeRepository implements EmployeeInterface
   public function deleteEmployee(array $id)
   {
     return $this->model->whereIn('id', $id)->delete();
+  }
+
+  /**
+   * UPDATE FINANCE EMPLOYEE
+   * INCLUDE: PAYMENT DATE, BANK, SALARY, ATTENDANCE CUT
+   * @param array $data
+   * @param int $id id employee
+   * @return bool
+   */
+  public function updateFinanceEmployee($data, $type, $id)
+  {
+    switch($type) {
+      case 'payment_date':
+        $this->model->find($id)->update(['payment_date' => $data['payment_date']]);
+        break;
+      case 'bank':
+        $employee = $this->model->find($id);
+        $employee->bank()->first()->update($data);
+        break;
+      case 'salary_income':
+        $employee = $this->model->find($id);
+        foreach($data as $param) {
+          $employee->salary()->where('employee_id', $id)->where('salary_component_id', $param['salary_component_id'])->update([
+            'amount' => $param['amount']
+          ]);
+        }
+        break;
+      case 'salary_cuts':
+        $employee = $this->model->find($id);
+        foreach ($data as $param) {
+          $employee->salary()->where('employee_id', $id)->where('salary_component_id', $param['salary_component_id'])->update([
+            'amount' => -$param['amount']
+          ]);
+        }
+        break;
+      case 'attendance_cut':
+        $employee = $this->model->find($id);
+        foreach ($data as $param) {
+          $employee->attendanceCut()->where('employee_id', $id)->where('cut_type', $param['cut_type'])->update([
+            'amount' => $param['amount'],
+            'total'  => $param['total'],
+          ]);
+        }
+        break;
+      default: 
+        return null;
+    }
+
+    return true;
   }
 }

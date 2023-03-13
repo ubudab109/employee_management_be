@@ -97,10 +97,10 @@ class UserManagementController extends BaseController
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'email'     => ['required', Rule::unique('user_manager','email')->ignore($id) ],
-            'name'      => 'required',
-            'nip'       => ['required', Rule::unique('user_manager','nip')->ignore($id) ],
-            'gender'    => 'required',
+            'email'     => ['', Rule::unique('user_manager','email')->ignore($id) ],
+            'name'      => '',
+            'nip'       => ['', Rule::unique('user_manager','nip')->ignore($id) ],
+            'gender'    => '',
             'role'      => '',
             'branch_id' => '',
         ]);

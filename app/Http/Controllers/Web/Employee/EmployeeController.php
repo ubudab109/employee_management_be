@@ -60,6 +60,7 @@ class EmployeeController extends BaseController
             'join_date'                         => 'required',
             'end_date'                          => 'required_unless:job_status,0',
             'salary'                            => 'array',
+            'salary.*.amount'                   => 'required',
             'cuts'                              => 'array',
             'bank_name'                         => 'required',
             'account_holder_name'               => 'required',
@@ -123,6 +124,66 @@ class EmployeeController extends BaseController
         }
 
         return $this->sendResponse(array('success' => 1), $updated['message']);
+    }
+
+    public function updateFinance(Request $request, $id)
+    {
+        $type = $request->get('type');
+        if (empty($type)) {
+            return $this->sendBadRequest('Failed', 'Please provide type before update');
+        }
+        switch($type) {
+            case 'payment_date':
+                $validation = [
+                    'payment_date' => 'required',
+                ];
+                break;
+            case 'bank':
+                $validation = [
+                    'bank_name'           => 'required',
+                    'account_number'      => 'required',
+                    'account_holder_name' => 'required',
+                ];
+                break;
+            case 'salary_income':
+                $validation = [
+                    'data'                       => 'required|array',
+                    'data.*.salary_component_id' => 'required',
+                    'data.*.amount'              => 'required',
+                ];
+                break;
+            case 'salary_cuts':
+                $validation = [
+                    'data'                       => 'required|array',
+                    'data.*.salary_component_id' => 'required',
+                    'data.*.amount'              => 'required',
+                ];
+                break;
+            case 'attendance_cut':
+                $validation = [
+                    'data'            => 'required|array',
+                    'data.*.cut_type' => 'required',
+                    'data.*.total'    => 'required',
+                    'data.*.amount'   => 'required',
+                ];
+                break;
+            default: 
+              $validation = [];
+          }
+
+          $validator = Validator::make($request->all(), $validation);
+
+          if ($validator->fails()) {
+            return $this->sendBadRequest('Validator Error', $validator->errors());
+          }
+
+          $input = $request->all();
+          $isUpdated = $this->services->updateFinanceEmployee($input, $type, $id);
+          if (!$isUpdated['status']) {
+            return $this->sendError(array('success' => 0), $isUpdated['message']);
+          }
+
+          return $this->sendResponse(array('success' => 1), $isUpdated['message']);
     }
 
     public function show(Request $request, $id)
