@@ -29,7 +29,7 @@ class UserManagerSeeder extends Seeder
                 'email' => 'hr@mail.com',
                 'nip'   => '5443534565',
                 'gender' => MALE_GENDER,
-                'phone_number' => '',
+                'phone_number' => '0852684568',
                 'password' => Hash::make('123123123'),
                 'email_verified_at' => Date::now(),
                 'created_at'    => Date::now(),
