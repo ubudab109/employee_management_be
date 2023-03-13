@@ -36,7 +36,7 @@ class UserWithDivisionSeeder extends Seeder
                 'division_name' => 'Human Resource',
             ]);
 
-            /** USER MANAGER */
+            /** USER MANAGER SUPERADMIN */
             $superadmin = UserManager::create([
                 'name' => 'superadmin',
                 'email' => 'superadmin@admin.com',
@@ -72,7 +72,8 @@ class UserWithDivisionSeeder extends Seeder
             ]);
 
             $hr = User::create([
-                'name' => 'HR',
+                'firstname' => 'HR',
+                'lastname'  => 'TDI',
                 'email' => 'hr@tdi.com',
                 'nip'   => '23432432',
                 'gender' => MALE_GENDER,
