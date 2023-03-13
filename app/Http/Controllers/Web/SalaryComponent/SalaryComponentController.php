@@ -17,13 +17,22 @@ class SalaryComponentController extends BaseController
         $this->services = $services;
     }
 
+    /**
+     * LIST SALARY COMPONENT
+     * @param Request $request 
+     * @return Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         $res = $this->services->list($request->all());
         return $this->sendResponse($res, 'Data Fetched Successfully');
     }
 
-
+    /**
+     * DETAIL SALARY COMPONENT
+     * @param integer $id - ID OF SALARY COMPONENT
+     * @return Illuminate\Http\Response
+     */
     public function show($id)
     {
         $res = $this->services->detail($id);
@@ -33,6 +42,11 @@ class SalaryComponentController extends BaseController
         return $this->sendResponse($res['data'], $res['message']);
     }
 
+    /**
+     * STORE NEW SALARY COMPONENT
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -53,6 +67,12 @@ class SalaryComponentController extends BaseController
         return $this->sendResponse(array('success' => $isCreated['status']), $isCreated['message']);
     }
 
+    /**
+     * UPDATE SALARY COMPONENT
+     * @param Request $request
+     * @param integer $id - ID OF SALARY COMPONENT
+     * @return Illuminate\Http\Response
+     */
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [

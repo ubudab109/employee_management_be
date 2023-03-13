@@ -15,6 +15,12 @@ class EmployeeController extends BaseController
 {
     public $services;
 
+    /**
+     * The above function is a constructor function that is used to call the middleware function
+     * 
+     * @param EmployeeServices services The service class that will be used to perform the CRUD
+     * operations.
+     */
     public function __construct(EmployeeServices $services)
     {
         $this->services = $services;
@@ -25,12 +31,22 @@ class EmployeeController extends BaseController
         $this->middleware('userpermissionmanager:employee-management-update',['only' => 'update']);
     }
 
+    /**
+     * LIST EMPLOYEE
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         $employees = $this->services->list($request->all());
         return $this->sendResponse($employees, $employees['message']);
     }
 
+    /**
+     * STORE NEW EMPLOYEE
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -84,6 +100,12 @@ class EmployeeController extends BaseController
         return $this->sendResponse(array('success' => 1), 'Employee Invited Successfully');
     }
 
+    /**
+     * UPDATE GENERAL DATA EMPLOYEE 
+     * @param Request $request
+     * @param integer $id - ID of Employee
+     * @return Illuminate\Http\Response
+     */
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -126,6 +148,12 @@ class EmployeeController extends BaseController
         return $this->sendResponse(array('success' => 1), $updated['message']);
     }
 
+    /**
+     * UPDATE DATA FINANCE EMPLOYEE
+     * @param Request $request
+     * @param integer $id -ID of Employee
+     * @return Illuminate\Http\Response
+     */
     public function updateFinance(Request $request, $id)
     {
         $type = $request->get('type');
@@ -186,12 +214,24 @@ class EmployeeController extends BaseController
           return $this->sendResponse(array('success' => 1), $isUpdated['message']);
     }
 
+    /**
+     * DETAIL DATA EMPLOYEE WITH SEPESIC TYPE
+     * TYPE: GENERAL, ATTENDANCE, TIME MANAGEMENT, FINANCE, WARNING LETTER
+     * @param Request $request
+     * @param integer $id - ID OF EMPLOYEE
+     * @return Illuminate\Http\Response 
+     */
     public function show(Request $request, $id)
     {
         $dataRequest = $request->except(['type']);
         return $this->services->detail($id, $request->type, $dataRequest);
     }
 
+    /**
+     * DELETE SELECTED EMPLOYEE BY ID
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
     public function destroy(Request $request)
     {
         $delete = $this->services->delete(json_decode($request->data));

@@ -11,6 +11,12 @@ class EmployeeReimbersementController extends BaseController
 {
     public $services;
 
+    /**
+     * A constructor function. It is used to initialize the services variable.
+     * 
+     * @param EmployeeReimbersementServices services The service class that will be used to get the
+     * data from the database.
+     */
     public function __construct(EmployeeReimbersementServices $services)
     {
         $this->services = $services;
@@ -19,12 +25,22 @@ class EmployeeReimbersementController extends BaseController
         $this->middleware('userpermissionmanager:employee-reimbursement-update',['only' => 'update']);
     }
 
+    /**
+     * LIST REIMBERSEMENT EMPLOYEE
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         $employeeReimbersement = $this->services->list($request->all());
         return $this->sendResponse($employeeReimbersement, $employeeReimbersement['message']);
     }
 
+    /**
+     * SHOW DETAIL REIMBERSEMENT EMPLOYEE
+     * @param integer $id - ID OF REIMBERSEMENT EMPLOYEE
+     * @return Illuminate\Http\Response
+     */
     public function show($id)
     {
         $data = $this->services->detail($id);
@@ -34,6 +50,12 @@ class EmployeeReimbersementController extends BaseController
         return $this->sendResponse($data['data'], $data['message']);
     }
 
+    /**
+     * UPDATE REIMBERSEMENT DATA EMPLOYEE
+     * @param Request $request
+     * @param integer $id - ID OF REIMBERSEMENT EMPLOYEE
+     * @return Illuminate\Http\Response
+     */
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [

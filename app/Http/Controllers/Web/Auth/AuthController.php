@@ -20,6 +20,7 @@ class AuthController extends BaseController
     {
         $this->rolePermission = $rolePermission;
     }
+    
     /**
      * Login Process
      * 
@@ -38,7 +39,6 @@ class AuthController extends BaseController
         }
 
         $user = UserManager::where('email', $request->credential)->orWhere('phone_number', $request->credential)->first();
-        // dd($user);
         if ($user != null) {
             $userBranch = $user->branch()->with('branch')->first();
             if (Hash::check($request->password, $user->password)) {
@@ -61,6 +61,7 @@ class AuthController extends BaseController
                     $rolesName = ucfirst($user->roles()->first()->name);
                     $branch = null;
                 }
+
                 return $this->sendResponse([
                     'token'         => $token,
                     'user_data'     => $user->makeHidden(['roles']),

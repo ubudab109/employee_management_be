@@ -14,12 +14,12 @@ class RolePermissionController extends BaseController
     public function __construct(RoleServices $services)
     {
         $this->services = $services;
-        // $this->middleware('userpermissionmanager:role-permission-list',['only' => 'listRole']);
-        // $this->middleware('userpermissionmanager:role-permission-detail',['only' => 'detailRoleWithPermissions']);
-        // $this->middleware('userpermissionmanager:role-permission-create',['only' => 'createRolePermissions']);
-        // $this->middleware('userpermissionmanager:role-permission-update',['only' => 'updateRolePermissions']);
-        // $this->middleware('userpermissionmanager:role-permission-delete',['only' => 'deleteRole']);
-        // $this->middleware('userpermissionmanager:role-permission-delete',['only' => 'deleteRole']);
+        $this->middleware('userpermissionmanager:role-permission-list',['only' => 'listRole']);
+        $this->middleware('userpermissionmanager:role-permission-detail',['only' => 'detailRoleWithPermissions']);
+        $this->middleware('userpermissionmanager:role-permission-create',['only' => 'createRolePermissions']);
+        $this->middleware('userpermissionmanager:role-permission-update',['only' => 'updateRolePermissions']);
+        $this->middleware('userpermissionmanager:role-permission-delete',['only' => 'deleteRole']);
+        $this->middleware('userpermissionmanager:role-permission-delete',['only' => 'deleteRole']);
     }
 
     /**

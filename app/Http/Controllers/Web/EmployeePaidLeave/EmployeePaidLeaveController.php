@@ -11,6 +11,11 @@ class EmployeePaidLeaveController extends BaseController
 {
     public $services;
 
+    /**
+     * A constructor function. It is called when the class is instantiated.
+     * 
+     * @param EmployeeLeaveServices services The service class that contains the business logic.
+     */
     public function __construct(EmployeeLeaveServices $services)
     {
         $this->services = $services;
@@ -20,12 +25,22 @@ class EmployeePaidLeaveController extends BaseController
         $this->middleware('userpermissionmanager:employee-leave-update',['only' => 'update']);
     }
 
+    /**
+     * LIST DATA PAID LEAVE EMPLOYEE
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         $employeeLeave = $this->services->list($request->all());
         return $this->sendResponse($employeeLeave, $employeeLeave['message']);
     }
 
+    /**
+     * DETAIL DATA PAID LEAVE EMPLOYEE
+     * @param integer $id - ID OF PAID LEAVE EMPLOYEE
+     * @return Illuminate\Http\Response
+     */
     public function show($id)
     {
         $data = $this->services->detail($id);
@@ -35,6 +50,12 @@ class EmployeePaidLeaveController extends BaseController
         return $this->sendResponse($data, $data['message']);
     }
 
+    /**
+     * UPDATE DATA EMPLOYEE PAID LEAVE
+     * @param Request $request
+     * @param integer $id - ID OF PAID LEAVE EMPLOYEE
+     * @return Illuminate\Http\Response
+     */
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -57,6 +78,11 @@ class EmployeePaidLeaveController extends BaseController
         return $this->sendResponse(array('success' => 1), $isUpdated['message']);
     }
 
+    /**
+     * DELETE OVERTIME EMPLOYEE
+     * @param integer $id - ID OF OVERTIME EMPLOYEE
+     * @return Illuminate\Http\Response
+     */
     public function destroy($id)
     {
         $isDeleted = $this->services->delete($id);

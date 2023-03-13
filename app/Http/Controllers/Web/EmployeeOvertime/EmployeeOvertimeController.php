@@ -12,6 +12,13 @@ class EmployeeOvertimeController extends BaseController
 {
     public $services;
 
+    /**
+     * The above function is a constructor function that is used to call the services class and the
+     * middleware
+     * 
+     * @param EmployeeOvertimeServices services The service class that will be used to perform the CRUD
+     * operations.
+     */
     public function __construct(EmployeeOvertimeServices $services)
     {
         $this->services = $services;
@@ -22,12 +29,22 @@ class EmployeeOvertimeController extends BaseController
         $this->middleware('userpermissionmanager:employee-overtime-assign',['only' => 'assignPayroll']);
     }
 
+    /**
+     * LIST EMPLOYEE OVERTIME
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         $employeeOvertime = $this->services->list($request->all());
         return $this->sendResponse($employeeOvertime, $employeeOvertime['message']);
     }
 
+    /**
+     * DETAIL OVERTIME EMPLOYEE
+     * @param integer $id - ID OF EMPLOYEE
+     * @return Illuminate\Http\Response
+     */
     public function show($id)
     {
         $data = $this->services->detail($id);
@@ -37,6 +54,12 @@ class EmployeeOvertimeController extends BaseController
         return $this->sendResponse($data['data'], $data['message']);
     }
 
+    /**
+     * UPDATE DATA OVERTIME EMPLOYEE
+     * @param Request $request
+     * @param integer $id - ID OF OVERTIME EMPLOYEE
+     * @return Illuminate\Http\Response
+     */
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -61,7 +84,11 @@ class EmployeeOvertimeController extends BaseController
         return $this->sendResponse(array('success' => 1) ,$isUpdated['message']);
     }
 
-
+    /**
+     * UPDATE ONLY STATUS OVERTIME EMPLOYEE
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
     public function updateStatus(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -82,6 +109,11 @@ class EmployeeOvertimeController extends BaseController
         return $this->sendResponse(array('success' => 1), $isUpdated['message']);
     }
     
+    /**
+     * DELETE DATA OVERTIME EMPLOYEE
+     * @param integer $id - ID OF OVERTIME EMPLOYEE
+     * @return Illuminate\Http\Response
+     */
     public function destroy($id)
     {
         $isDeleted = $this->services->delete($id);

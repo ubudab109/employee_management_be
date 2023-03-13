@@ -15,6 +15,11 @@ class PayslipController extends BaseController
 {
     public $services;
 
+    /**
+     * A constructor function that is called when the class is instantiated.
+     * 
+     * @param PayrollServices services The service class that will be used to perform the actions.
+     */
     public function __construct(PayrollServices $services)
     {
         $this->services = $services;
@@ -25,6 +30,11 @@ class PayslipController extends BaseController
         $this->middleware('userpermissionmanager:payslip-send',['only' => 'send']);
     }
 
+    /**
+     * LIST PAYSLIP EMPLOYEE IN SPESIFIC MONTH AND YEARS
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         if (empty($request->get('date'))) {
@@ -42,6 +52,12 @@ class PayslipController extends BaseController
         return $this->sendResponse($paySlip, $paySlip['message']);
     }
 
+    /**
+     * SHOW DETAIL PAYSLIP EMPLOYEE
+     * @param Request $request 
+     * @param integer $id - ID OF PAYSLIP EMPLOYEE
+     * @return Illuminate\Http\Response
+     */
     public function show(Request $request, $id)
     {
         $paySlip = $this->services->show($id. $request->all());
@@ -51,6 +67,12 @@ class PayslipController extends BaseController
         return $this->sendResponse($paySlip, $paySlip['message']);
     }
 
+    /**
+     * UPDATE DATA PAYSLIP EMPLOYEE BY ID PAYSLIP EMPLOYEE
+     * @param Request $request
+     * @param integer $id - ID OF PAYSLIP EMPLOYEE
+     * @return Illuminate\Http\Response
+     */
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -68,6 +90,11 @@ class PayslipController extends BaseController
         return $this->sendResponse(array('success' => 1), $isUpdated['message']);
     }
 
+    /**
+     * LIST GENERATED PAYSLIP IN SPESIFIC MONTH AND YEAR
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
     public function listPayslipGenerateProcess(Request $request)
     {
         $data = DB::table('payroll_generate_process')
@@ -82,6 +109,12 @@ class PayslipController extends BaseController
         return $this->sendResponse($data, 'Data Fetched Successfully');
     }
 
+    /**
+     * GENERATE PAYSLIP WITH SPESIFIC MONTH AND YEAR
+     * WILL DISPACTHING A GENERATEPAYSLIP JOB
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
     public function generate(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -126,6 +159,13 @@ class PayslipController extends BaseController
         return $this->sendResponse(array('success' => 1), 'Payslip Successfully Generating in Queue');
     }
 
+    /**
+     * RE-GENERATE A PAYSLIP
+     * USE THIS IF GENERATING PAYSLIP IS FAILED
+     * WILL DISPATCHING A GENERATEPAYSLIP JOB
+     * @param integer $id - ID OF GENERATED PAYSLIP
+     * @return Illuminate\Http\Response
+     */
     public function retryGenerate($id)
     {
         $payrollProcess = PayrollGenerateProcess::find($id);
