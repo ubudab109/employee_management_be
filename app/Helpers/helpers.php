@@ -210,3 +210,44 @@ function generate_email_verification_key()
 
     return substr(str_shuffle(str_repeat($pool, 5)), 0, 30);
 }
+
+/**
+ * It returns the number of working days between two dates, excluding holidays.
+ * 
+ * @param string $from - The start date of the period.
+ * @param string $to - The date you want to calculate the difference to.
+ * @param array $holidays - array of dates to exclude from the count
+ * 
+ * @return integer The number of working days between two dates.
+ */
+function workingDays($from, $to, $holidays)
+{
+    // DAYS OF WORKING (MONDAY TO FRIDAY)
+    $workingDays = [1, 2, 3, 4, 5]; 
+
+    $from = new DateTime($from);
+    $to = new DateTime($to);
+    $to->modify('+1 day');
+    $interval = new DateInterval('P1D');
+    $periods = new DatePeriod($from, $interval, $to);
+
+    $days = 0;
+    foreach ($periods as $period) {
+        if (!in_array($period->format('N'), $workingDays)) continue;
+        if (in_array($period->format('Y-m-d'), $holidays)) continue;
+        if (in_array($period->format('*-m-d'), $holidays)) continue;
+        $days++;
+    }
+    return $days;
+}
+
+/**
+ * GENERATING RUPIAH FORMAT
+ * @param integer $number
+ * @return string
+ */
+function rupiah($number)
+{
+	$result = "Rp " . number_format($number,0,',',',');
+	return $result;
+}

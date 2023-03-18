@@ -91,3 +91,12 @@ const LEAVE_REJECTED = '2';
 const GENERATING = 'generating';
 const GENERATED = 'generated';
 const FAILED = 'failed';
+
+/** PAYROLL STATUS */
+const GENERATED_PAYROLL = '0';
+const PARTIALLY_SENDED = '1';
+const ALL_SENDED = '3';
+
+/** PAYSLIP EMPLOYEE STATUS */
+const GENERATED_PAYSLIP = 'generated';
+const SENDED = 'sended';

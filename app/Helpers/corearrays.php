@@ -263,3 +263,35 @@ function getStatusNameAttribute($input = null) {
 
   return $data;
 }
+
+/**
+ * It returns an array of month names, with the key being the month number and the value being the
+ * month name.
+ * 
+ * @param integer input The month number you want to get the name of.
+ * 
+ * @return array array of months.
+ */
+function getMonthName($input = null)
+{
+  $month = [
+    1  => 'JANUARY',
+    2  => 'FEBRUARY',
+    3  => 'MARCH',
+    4  => 'APRIL',
+    5  => 'MAY',
+    6  => 'JUNE',
+    7  => 'JULY',
+    8  => 'AUGUST',
+    9  => 'SEPTEMBER',
+    10 => 'OCTOBER',
+    11 => 'NOVEMBER',
+    12 => 'DECEMBER',
+  ];
+
+  if ($input != null) {
+    return $month[$input];
+  }
+
+  return $month;
+}

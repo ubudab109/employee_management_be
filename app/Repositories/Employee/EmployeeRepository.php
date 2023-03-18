@@ -140,10 +140,10 @@ class EmployeeRepository implements EmployeeInterface
         return EmployeeAttendance::where('employee_id', $id)
           ->when(isset($request['date']) && $request['date'] != null, function ($query) use ($request) {
             $query->when(isset($request['date']['month']) && $request['date']['month'] != null, function ($subQuery) use ($request) {
-              $subQuery->whereMonth('created_at', $request['date']['month']);
+              $subQuery->whereMonth('date', $request['date']['month']);
             })
               ->when(isset($request['date']['year']) && $request['date']['year'] != null, function ($subQuery) use ($request) {
-                $subQuery->whereYear('created_at', $request['date']['year']);
+                $subQuery->whereYear('date', $request['date']['year']);
               });
           })
           ->when(isset($request['status']) && $request['status'] != '', function ($query) use ($request) {
@@ -177,10 +177,10 @@ class EmployeeRepository implements EmployeeInterface
             ->where('type', PAID_LEAVE)
             ->when(isset($request['date']) && $request['date'] != null, function ($query) use ($request) {
               $query->when(isset($request['date']['month']) && $request['date']['month'] != null, function ($subQuery) use ($request) {
-                $subQuery->whereMonth('created_at', $request['date']['month']);
+                $subQuery->whereMonth('start_date', $request['date']['month']);
               })
                 ->when(isset($request['date']['year']) && $request['date']['year'] != null, function ($subQuery) use ($request) {
-                  $subQuery->whereYear('created_at', $request['date']['year']);
+                  $subQuery->whereYear('start_date', $request['date']['year']);
                 });
             })
             ->when(isset($request['status']) && $request['status'] != '', function ($query) use ($request) {

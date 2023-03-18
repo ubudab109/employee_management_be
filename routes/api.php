@@ -110,6 +110,7 @@ Route::group(['middleware' => 'cors'], function() {
                         Route::get('job-status', [DatasetController::class, 'listJobStatus']);
                         Route::get('company-branch', [DatasetController::class, 'listCompanyBranch']);
                         Route::get('salary-component', [DatasetController::class, 'salaryComponent']);
+                        Route::get('total-working', [DatasetController::class, 'getWorkinDays']);
                     });
     
                     /* Attendance */
@@ -147,7 +148,8 @@ Route::group(['middleware' => 'cors'], function() {
                     Route::resource('payslip', PayslipController::class);
                     Route::get('payslip-generate-list', [PayslipController::class, 'listPayslipGenerateProcess']);
                     Route::post('payslip-generate', [PayslipController::class, 'generate']);
-                    Route::get('payslip-generate/{id}', [PayslipController::class, 'retryGenerate']);
+                    Route::post('payslip-generate/{id}', [PayslipController::class, 'retryGenerate']);
+                    Route::post('send-payslip', [PayslipController::class, 'sendPayslip']);
                     
                 });
 

@@ -23,7 +23,23 @@ class Payroll extends Model
         'generate_date',
         'status',
     ];
+    protected $appends = ['currencyAmount', 'isDisabled', 'currentAmount'];
 
+    public function getCurrencyAmountAttribute()
+    {
+        return rupiah($this->amount);
+    }
+
+    public function getIsDisabledAttribute()
+    {
+        return true;
+    }
+
+    public function getCurrentAmountAttribute()
+    {
+        return $this->amount;
+    }
+    
     public function branch()
     {
         return $this->belongsTo(CompanyBranch::class, 'branch_id', 'id');

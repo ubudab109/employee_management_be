@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Web\Dataset;
 use App\Http\Controllers\BaseController;
 use App\Models\User;
 use App\Repositories\CompanyDivision\CompanyDivisionInterface;
-use App\Repositories\CompanyJobStatus\CompanyJobStatusInterface;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -190,5 +189,36 @@ class DatasetController extends BaseController
             $query->where('type', $request->type);
         })->orderBy('name', 'asc')->get();
         return $this->sendResponse($salary, 'Data Fetched Successfully');
+    }
+
+    /**
+     * It takes the first and last day of the month, and then subtracts the number of holidays from the
+     * total number of days in the month
+     * 
+     * @param Request $request The request object.
+     * 
+     * @return Response.
+     */
+    public function getWorkinDays(Request $request)
+    {
+        $holidays = DB::table('holidays')
+        ->where('years', $request->get('years'))
+        ->where('month', $request->get('month'))
+        ->whereNotNull('data')
+        ->get();
+
+        $holidayDate = [];
+        foreach ($holidays as $holiday) {
+            foreach (json_decode($holiday->data, true) as $date) {
+                $holidayDate[] = $date['date'];
+            }
+        }
+        $timeStamp = strtotime(
+            "".ucwords(getMonthName($request->get('month'))." $request->years"
+        ));
+        $firstDateMonth = date('Y-m-01', $timeStamp);
+        $endDateMonth = date('Y-m-t', $timeStamp);
+        $totalDays = workingDays($firstDateMonth, $endDateMonth, $holidayDate);
+        return $this->sendResponse($totalDays, 'Total Days Fetched');
     }
 }

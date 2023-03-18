@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Payslip;
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Jobs\GeneratePayrollJob;
+use App\Jobs\SendPayslipEmailJob;
 use App\Models\PayrollGenerateProcess;
 use App\Services\PayrollServices;
 use Illuminate\Http\Request;
@@ -55,12 +56,12 @@ class PayslipController extends BaseController
     /**
      * SHOW DETAIL PAYSLIP EMPLOYEE
      * @param Request $request 
-     * @param integer $id - ID OF PAYSLIP EMPLOYEE
+     * @param integer $employeeId - employeeId OF EMPLOYEE
      * @return Illuminate\Http\Response
      */
-    public function show(Request $request, $id)
+    public function show(Request $request, $employeeId)
     {
-        $paySlip = $this->services->show($id. $request->all());
+        $paySlip = $this->services->show($employeeId, $request->all());
         if (!$paySlip['status']) {
             return $this->sendError($paySlip['message']);
         }
@@ -77,13 +78,26 @@ class PayslipController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'amount'  => 'required',
+            'type'    => 'required',
         ]);
 
         if ($validator->fails()) {
             return $this->sendBadRequest('Validator Errors', $validator->errors());
         }
 
-        $isUpdated = $this->services->update($request->input('amount'), $id);
+        if ($request->input('type') == 'income') {
+            $amount = $request->input('amount');
+        } else if ($request->input('type') == 'cut') {
+            $amount = -$request->input('amount');
+        } else {
+            return $this->sendBadRequest('Failed', 'Type is invalid');
+        }
+
+        $input = [
+            'amount' => $amount
+        ];
+        
+        $isUpdated = $this->services->update($input, $id);
         if (!$isUpdated['status']) {
             return $this->sendError(array('success' => 0), $isUpdated['message']);
         }
@@ -151,7 +165,15 @@ class PayslipController extends BaseController
                 'branch_id' => branchSelected('sanctum:manager')->id,
             ]);
         } else if ($request->get('type') == 'selected') {
-            $payrollProcess = $checkPayrollGenerate->first();
+            if ($checkPayrollGenerate->exists()) {
+                $payrollProcess = $checkPayrollGenerate->first();
+            } else {
+                $payrollProcess = PayrollGenerateProcess::create([
+                    'month'     => $request->get('month'),
+                    'years'     => $request->get('years'),
+                    'branch_id' => branchSelected('sanctum:manager')->id,
+                ]);
+            }
         }
 
         GeneratePayrollJob::dispatch($this->services, $payrollProcess->fresh(), $dataParam);
@@ -172,8 +194,28 @@ class PayslipController extends BaseController
         $dataParam = [
             'month' => $payrollProcess->month,
             'years' => $payrollProcess->years,
+            'type'  => 'all',
         ];
         GeneratePayrollJob::dispatch($this->services, $payrollProcess->fresh(), $dataParam);
         return $this->sendResponse(array('success' => 1), 'Payslip Successfully Generating in Queue');
+    }
+
+    public function sendPayslip(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'month'      => 'required',
+            'year'       => 'required',
+            'type'       => 'required',
+            'employeeId' => 'required_if:type,selected',
+        ]);
+        if ($validator->fails()) {
+            return $this->sendBadRequest('Validator Errors', $validator->errors());
+        }
+        $month = $request->input('month');
+        $year = $request->input('year');
+        $type = $request->input('type');
+        $employeeId = $request->input('employeeId');
+        SendPayslipEmailJob::dispatch($month, $year, branchSelected('sanctum:manager')->id, $type, json_decode($employeeId, true));
+        return $this->sendResponse(array('success' => 1), 'Payslip successfully sending to employee');
     }
 }

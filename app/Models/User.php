@@ -293,4 +293,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Payroll::class, 'employee_id', 'id');
     }
+
+    public function payslipStatus()
+    {
+        return $this->hasOne(EmployeePayslipStatus::class, 'employee_id', 'id');
+    }
 }

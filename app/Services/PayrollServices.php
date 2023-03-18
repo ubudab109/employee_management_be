@@ -28,16 +28,21 @@ class PayrollServices
             isset($param['departement']) ? $param['departement'] : null,
         );
 
+        $payrollStatus = PayrollStatusService::getPayrollStatus(branchSelected('sanctum:manager')->id, $param['date']['month'], $param['date']['years']);
+
         return [
             'status'  => true,
             'message' => 'List Payroll Fetched Successully',
-            'data'    => $data,
+            'data'    => [
+                'payslip_status' => $payrollStatus,
+                'list'           => $data,
+            ],
         ];
     }
 
     /**
      * DETAIL PAYROLL SERVICES
-     * @param integer $id
+     * @param integer $id - EMPLOYEE ID
      * @param array $param
      * @return object
      */
@@ -55,7 +60,7 @@ class PayrollServices
         return [
             'status'  => true,
             'message' => 'Payroll Fetched Successfully',
-            'data'    => null,
+            'data'    => $detail,
         ];
     }
 

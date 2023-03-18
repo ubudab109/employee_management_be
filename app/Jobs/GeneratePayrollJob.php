@@ -5,7 +5,9 @@ namespace App\Jobs;
 use App\Models\CompanyBranch;
 use App\Models\PayrollGenerateProcess;
 use App\Models\User;
+use App\Services\EmployeePayslipService;
 use App\Services\PayrollServices;
+use App\Services\PayrollStatusService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -44,6 +46,7 @@ class GeneratePayrollJob implements ShouldQueue
         $this->process->message = null;
         $this->process->save();
         try {
+            sleep(2);
             $this->generatingPayroll();
             $this->process->status = GENERATED;
             $this->process->message = "Payslip Generated Successfully";
@@ -96,11 +99,16 @@ class GeneratePayrollJob implements ShouldQueue
             ];
             $dataNew = array_merge($param, $data);
             $isGenerated = $this->payrollServices->storeOrUpdate($param, $dataNew);
-            if (!$isGenerated['status']) {
+            $employeePayslipStatus = EmployeePayslipService::updateOrStore($this->branchSelected->id, $employee->id, $this->requestData['month'], $this->requestData['years'], GENERATED);
+            if (!$isGenerated['status'] && !$employeePayslipStatus) {
                 throw new \Exception('Unable to generate the payslip. Please re-generate this payslip');
             }
         }
 
+        $payrollStatus = PayrollStatusService::updateOrStore($this->branchSelected->id, $this->requestData['month'], $this->requestData['years'], GENERATED_PAYROLL);
+        if (!$payrollStatus) {
+            throw new \Exception('Unable to generate the payslip. Please re-generate this payslip');
+        }
         return true;
     }
 }
