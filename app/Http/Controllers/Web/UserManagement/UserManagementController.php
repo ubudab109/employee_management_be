@@ -17,12 +17,14 @@ class UserManagementController extends BaseController
     public function __construct(ManagerServices $services) 
     {
         $this->services = $services;
-        $this->middleware('userpermissionmanager:user-management-permission-list', ['only' => 'index']);
-        $this->middleware('userpermissionmanager:user-management-permission-detail', ['only' => 'detail']);
-        $this->middleware('userpermissionmanager:user-management-permission-create', ['only' => 'create']);
-        $this->middleware('userpermissionmanager:user-management-permission-update', ['only' => 'update']);
-        $this->middleware('userpermissionmanager:user-management-permission-delete', ['only' => 'delete']);
-        $this->middleware('userpermissionmanager:user-management-permission-resend', ['only' => 'resendInvitation']);
+        if (config('app.env') != 'development') { 
+            $this->middleware('userpermissionmanager:user-management-permission-list', ['only' => 'index']);
+            $this->middleware('userpermissionmanager:user-management-permission-detail', ['only' => 'detail']);
+            $this->middleware('userpermissionmanager:user-management-permission-create', ['only' => 'create']);
+            $this->middleware('userpermissionmanager:user-management-permission-update', ['only' => 'update']);
+            $this->middleware('userpermissionmanager:user-management-permission-delete', ['only' => 'delete']);
+            $this->middleware('userpermissionmanager:user-management-permission-resend', ['only' => 'resendInvitation']);
+        }
     }
 
     /**

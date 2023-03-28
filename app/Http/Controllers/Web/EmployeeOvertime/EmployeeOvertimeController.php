@@ -22,11 +22,13 @@ class EmployeeOvertimeController extends BaseController
     public function __construct(EmployeeOvertimeServices $services)
     {
         $this->services = $services;
-        $this->middleware('userpermissionmanager:employee-overtime-list',['only' => 'index']);
-        $this->middleware('userpermissionmanager:employee-overtime-detail',['only' => 'detail']);
-        $this->middleware('userpermissionmanager:employee-overtime-delete',['only' => 'delete']);
-        $this->middleware('userpermissionmanager:employee-overtime-update',['only' => 'update']);
-        $this->middleware('userpermissionmanager:employee-overtime-assign',['only' => 'assignPayroll']);
+        if (config('app.env') != 'development') { 
+            $this->middleware('userpermissionmanager:employee-overtime-list',['only' => 'index']);
+            $this->middleware('userpermissionmanager:employee-overtime-detail',['only' => 'detail']);
+            $this->middleware('userpermissionmanager:employee-overtime-delete',['only' => 'delete']);
+            $this->middleware('userpermissionmanager:employee-overtime-update',['only' => 'update']);
+            $this->middleware('userpermissionmanager:employee-overtime-assign',['only' => 'assignPayroll']);
+        }
     }
 
     /**

@@ -24,11 +24,13 @@ class PayslipController extends BaseController
     public function __construct(PayrollServices $services)
     {
         $this->services = $services;
-        $this->middleware('userpermissionmanager:payroll-management-list',['only' => 'index']);
-        $this->middleware('userpermissionmanager:payslip-detail',['only' => 'show']);
-        $this->middleware('userpermissionmanager:payslip-edit',['only' => 'update']);
-        $this->middleware('userpermissionmanager:payslip-generate',['only' => 'generate']);
-        $this->middleware('userpermissionmanager:payslip-send',['only' => 'send']);
+        if (config('app.env') != 'development') {
+            $this->middleware('userpermissionmanager:payroll-management-list',['only' => 'index']);
+            $this->middleware('userpermissionmanager:payslip-detail',['only' => 'show']);
+            $this->middleware('userpermissionmanager:payslip-edit',['only' => 'update']);
+            $this->middleware('userpermissionmanager:payslip-generate',['only' => 'generate']);
+            $this->middleware('userpermissionmanager:payslip-send',['only' => 'send']);
+        }
     }
 
     /**

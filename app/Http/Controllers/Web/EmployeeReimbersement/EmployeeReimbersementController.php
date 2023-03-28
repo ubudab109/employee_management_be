@@ -20,9 +20,11 @@ class EmployeeReimbersementController extends BaseController
     public function __construct(EmployeeReimbersementServices $services)
     {
         $this->services = $services;
-        $this->middleware('userpermissionmanager:employee-reimbursement-list',['only' => 'index']);
-        $this->middleware('userpermissionmanager:employee-reimbursement-detail',['only' => 'detail']);
-        $this->middleware('userpermissionmanager:employee-reimbursement-update',['only' => 'update']);
+        if (config('app.env') != 'development') { 
+            $this->middleware('userpermissionmanager:employee-reimbursement-list',['only' => 'index']);
+            $this->middleware('userpermissionmanager:employee-reimbursement-detail',['only' => 'detail']);
+            $this->middleware('userpermissionmanager:employee-reimbursement-update',['only' => 'update']);
+        }
     }
 
     /**

@@ -15,10 +15,12 @@ class CompanyScheduleController extends BaseController
 
     public function __construct(CompanyScheduleServices $services)
     {
-        $this->middleware('userpermissionmanager:schedule-list',['only' => 'index']);
-        $this->middleware('userpermissionmanager:schedule-create',['only' => 'store']);
-        $this->middleware('userpermissionmanager:schedule-update',['only' => 'update|updateDefaultSchedule|show']);
-        $this->middleware('userpermissionmanager:schedule-delete',['only' => 'delete']);
+        if (config('app.env') != 'development') { 
+            $this->middleware('userpermissionmanager:schedule-list',['only' => 'index']);
+            $this->middleware('userpermissionmanager:schedule-create',['only' => 'store']);
+            $this->middleware('userpermissionmanager:schedule-update',['only' => 'update|updateDefaultSchedule|show']);
+            $this->middleware('userpermissionmanager:schedule-delete',['only' => 'delete']);
+        }
         $this->services = $services;
     }
 

@@ -19,10 +19,12 @@ class EmployeePaidLeaveController extends BaseController
     public function __construct(EmployeeLeaveServices $services)
     {
         $this->services = $services;
-        $this->middleware('userpermissionmanager:employee-leave-list',['only' => 'index']);
-        $this->middleware('userpermissionmanager:employee-leave-detail',['only' => 'detail']);
-        $this->middleware('userpermissionmanager:employee-leave-delete',['only' => 'delete']);
-        $this->middleware('userpermissionmanager:employee-leave-update',['only' => 'update']);
+        if (config('app.env') != 'development') { 
+            $this->middleware('userpermissionmanager:employee-leave-list',['only' => 'index']);
+            $this->middleware('userpermissionmanager:employee-leave-detail',['only' => 'detail']);
+            $this->middleware('userpermissionmanager:employee-leave-delete',['only' => 'delete']);
+            $this->middleware('userpermissionmanager:employee-leave-update',['only' => 'update']);
+        }
     }
 
     /**

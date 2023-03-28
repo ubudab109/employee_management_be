@@ -24,11 +24,13 @@ class EmployeeController extends BaseController
     public function __construct(EmployeeServices $services)
     {
         $this->services = $services;
-        $this->middleware('userpermissionmanager:employee-management-list',['only' => 'index']);
-        $this->middleware('userpermissionmanager:employee-management-detail',['only' => 'detail']);
-        $this->middleware('userpermissionmanager:employee-management-create',['only' => 'store']);
-        $this->middleware('userpermissionmanager:employee-management-delete',['only' => 'delete']);
-        $this->middleware('userpermissionmanager:employee-management-update',['only' => 'update']);
+        if (config('app.env') != 'development') { 
+            $this->middleware('userpermissionmanager:employee-management-list',['only' => 'index']);
+            $this->middleware('userpermissionmanager:employee-management-detail',['only' => 'detail']);
+            $this->middleware('userpermissionmanager:employee-management-create',['only' => 'store']);
+            $this->middleware('userpermissionmanager:employee-management-delete',['only' => 'delete']);
+            $this->middleware('userpermissionmanager:employee-management-update',['only' => 'update']);
+        }
     }
 
     /**

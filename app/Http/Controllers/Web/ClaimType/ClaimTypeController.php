@@ -13,11 +13,13 @@ class ClaimTypeController extends BaseController
 
     public function __construct(ClaimTypeService $services)
     {
-        $this->middleware('userpermissionmanager:claim-type-list',['only' => 'index']);
-        $this->middleware('userpermissionmanager:claim-type-create',['only' => 'store']);
-        $this->middleware('userpermissionmanager:claim-type-update',['only' => 'update']);
-        $this->middleware('userpermissionmanager:claim-type-detail',['only' => 'detail']);
-        $this->middleware('userpermissionmanager:claim-type-delete',['only' => 'delete']);
+        if (config('app.env') != 'development') {
+            $this->middleware('userpermissionmanager:claim-type-list',['only' => 'index']);
+            $this->middleware('userpermissionmanager:claim-type-create',['only' => 'store']);
+            $this->middleware('userpermissionmanager:claim-type-update',['only' => 'update']);
+            $this->middleware('userpermissionmanager:claim-type-detail',['only' => 'detail']);
+            $this->middleware('userpermissionmanager:claim-type-delete',['only' => 'delete']);
+        }
         $this->services = $services;
     }
 

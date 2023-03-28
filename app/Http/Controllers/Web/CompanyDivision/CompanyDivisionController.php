@@ -16,11 +16,13 @@ class CompanyDivisionController extends BaseController
 
     public function __construct(CompanyDivisionServices $services)
     {
-        $this->middleware('userpermissionmanager:department-list',['only' => 'index']);
-        $this->middleware('userpermissionmanager:department-create',['only' => 'store']);
-        $this->middleware('userpermissionmanager:department-update',['only' => 'update']);
-        $this->middleware('userpermissionmanager:department-detail',['only' => 'detail']);
-        $this->middleware('userpermissionmanager:department-delete',['only' => 'delete']);
+        if (config('app.env') != 'development') {
+            $this->middleware('userpermissionmanager:department-list',['only' => 'index']);
+            $this->middleware('userpermissionmanager:department-create',['only' => 'store']);
+            $this->middleware('userpermissionmanager:department-update',['only' => 'update']);
+            $this->middleware('userpermissionmanager:department-detail',['only' => 'detail']);
+            $this->middleware('userpermissionmanager:department-delete',['only' => 'delete']);
+        }
         $this->services = $services;
     }
     /**
