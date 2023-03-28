@@ -32,7 +32,7 @@ class EmployeeOvertimeServices
                 isset($param['keyword']) ? $param['keyword'] : null,
                 isset($param['department']) ? $param['department'] : null,
                 isset($param['date']) ? $param['date'] : null,
-                isset($param['status']) ? $param['status'] : null,
+                isset($param['status']) && $param['status'] != '' ? $param['status'] : '',
                 $param['show'],
                 isset($param['employee_id']) ? $param['employee_id'] : null,
                 isset($param['branch_id']) ? $param['branch_id'] : null,

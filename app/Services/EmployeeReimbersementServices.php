@@ -26,6 +26,7 @@ class EmployeeReimbersementServices
             isset($param['keyword']) && $param['keyword'] != '' ? $param['keyword'] : null,
             isset($param['date']) && $param['date'] != '' ? $param['date'] : null,
             isset($param['employee_id']) && $param['employee_id'] != null ? $param['employee_id'] : null,
+            isset($param['claim_type_id']) && $param['claim_type_id'] != '' ? $param['claim_type_id'] : null,
             isset($param['status']) && $param['status'] != '' ? $param['status'] : 'All',
         );
 

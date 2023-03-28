@@ -40,7 +40,6 @@ class PermissionSeeder extends Seeder
                 'name' => 'superadmin',
                 'guard_name' => 'sanctum:manager',
                 'is_role_manager' => true,
-                'branch_id'       => $branch->id,
                 'created_at'    => Date::now(),
                 'updated_at'    => Date::now(),
             ]);
@@ -122,8 +121,15 @@ class PermissionSeeder extends Seeder
                     'created_at' => Date::now(),
                     'updated_at' => Date::now(),
                 ],
+                [
+                    'id' => 12,
+                    'name' => 'Schedule',
+                    'order' => 12,
+                    'created_at' => Date::now(),
+                    'updated_at' => Date::now(),
+                ]
             ];
-    
+            
             PermissionScope::insert($dataPermissionScopeManager);
     
             $dataPermissionsManager = [
@@ -553,9 +559,78 @@ class PermissionSeeder extends Seeder
                     'created_at'        => Date::now(),
                     'updated_at'        => Date::now(),
                 ],
-                
-
-
+                [
+                    'scope_id'          => 10,
+                    'name'              => 'claim-type-list',
+                    'display_name'      => 'List Claim Type',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 10,
+                    'name'              => 'claim-type-detail',
+                    'display_name'      => 'Detail Claim Type',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 10,
+                    'name'              => 'claim-type-create',
+                    'display_name'      => 'Create Claim Type',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 10,
+                    'name'              => 'claim-type-update',
+                    'display_name'      => 'Update Claim Type',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 10,
+                    'name'              => 'claim-type-delete',
+                    'display_name'      => 'Delete Claim Type',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 4,
+                    'name'              => 'schedule-detail',
+                    'display_name'      => 'Detail Schedule',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 4,
+                    'name'              => 'schedule-create',
+                    'display_name'      => 'Create Schedule',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 4,
+                    'name'              => 'schedule-update',
+                    'display_name'      => 'Update Schedule',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
+                [
+                    'scope_id'          => 4,
+                    'name'              => 'schedule-delete',
+                    'display_name'      => 'Delete Schedule',
+                    'guard_name'        => 'sanctum:manager',
+                    'created_at'        => Date::now(),
+                    'updated_at'        => Date::now(),
+                ],
             ];
     
             Permission::insert($dataPermissionsManager);

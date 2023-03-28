@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Repositories\ClaimType\ClaimTypeInterface;
+use App\Repositories\ClaimType\ClaimTypeRepository;
 use App\Repositories\CompanyBranch\CompanyBranchInterface;
 use App\Repositories\CompanyBranch\CompanyBranchRepository;
 use App\Repositories\CompanyDivision\CompanyDivisionInterface;
 use App\Repositories\CompanyDivision\CompanyDivisionRepository;
+use App\Repositories\CompanySchedule\CompanyScheduleInterface;
+use App\Repositories\CompanySchedule\CompanyScheduleRepository;
 use App\Repositories\CompanySetting\CompanySettingInterface;
 use App\Repositories\CompanySetting\CompanySettingRepository;
 use App\Repositories\Employee\EmployeeInterface;
@@ -56,6 +60,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(SalaryComponentInterface::class, SalaryComponentRepository::class);
         $this->app->bind(EmployeeReimbursementInterface::class, EmployeeReimbursementRepository::class);
         $this->app->bind(PayrollInterface::class, PayrollRepository::class);
+        $this->app->bind(ClaimTypeInterface::class, ClaimTypeRepository::class);
+        $this->app->bind(CompanyScheduleInterface::class, CompanyScheduleRepository::class);
     }
 
     /**

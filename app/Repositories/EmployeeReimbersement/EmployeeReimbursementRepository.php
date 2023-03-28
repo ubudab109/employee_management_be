@@ -23,13 +23,14 @@ class EmployeeReimbursementRepository implements EmployeeReimbursementInterface
    * @param string $keyword
    * @param object $date
    * @param integer $employeeId
+   * @param integer $claimTypeId
    * @param string $status
    * @return Collection
    */
-  public function listReimbersement($keyword, $date, $employeeId, $status)
+  public function listReimbersement($keyword, $date, $employeeId, $claimTypeId, $status)
   {
     return $this->model
-      ->with('employee:id,firstname,lastname,nip', 'files')
+      ->with('employee', 'files')
       ->when(!$this->isSuperAdmin, function ($query) {
         $query->where('branch_id', branchSelected('sanctum:manager')->id);
       })
@@ -43,11 +44,15 @@ class EmployeeReimbursementRepository implements EmployeeReimbursementInterface
       })
       /* FILTER DATE */
       ->when($date != null || $date != '', function ($query) use ($date) {
-        $query->whereDate('date ', '=', $date);
+        $query->whereDate('date', '=', $date);
       })
       /* FILTER BY EMPLOYEE ID */
       ->when(!is_null($employeeId), function ($query) use ($employeeId) {
         $query->where('employee_id', $employeeId);
+      })
+      /* FILTER CLAIM TYPE */
+      ->when(!is_null($claimTypeId), function ($query) use ($claimTypeId) {
+        $query->where('claim_type_id', $claimTypeId);
       })
       /* FILTER STATUS */
       ->when(isset($status) && $status != 'All', function ($query) use ($status) {
@@ -63,7 +68,7 @@ class EmployeeReimbursementRepository implements EmployeeReimbursementInterface
    */
   public function detailReimbersement($id)
   {
-    return $this->model->with('employee:id,firstname,lastname,nip', 'files')->find($id);
+    return $this->model->with('employee', 'files', 'claimType:id,name')->find($id);
   }
 
   /**

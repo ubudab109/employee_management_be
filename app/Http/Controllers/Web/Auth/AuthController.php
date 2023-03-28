@@ -20,7 +20,7 @@ class AuthController extends BaseController
     {
         $this->rolePermission = $rolePermission;
     }
-    
+
     /**
      * Login Process
      * 
@@ -248,8 +248,40 @@ class AuthController extends BaseController
                 "permissions" => [
                     [
                         "id" => 145,
-                        "name" => "schedule-request-list",
-                        "display_name" => "Schedule Request List",
+                        "name" => "schedule-list",
+                        "display_name" => "Menu Schedule",
+                        "guard_name" => "sanctum:manager",
+                        "order" => null,
+                        "is_assigned" => true
+                    ],
+                    [
+                        "id" => 187,
+                        "name" => "schedule-create",
+                        "display_name" => "Create Schedule",
+                        "guard_name" => "sanctum:manager",
+                        "order" => null,
+                        "is_assigned" => true
+                    ],
+                    [
+                        "id" => 188,
+                        "name" => "schedule-update",
+                        "display_name" => "Update Schedule",
+                        "guard_name" => "sanctum:manager",
+                        "order" => null,
+                        "is_assigned" => true
+                    ],
+                    [
+                        "id" => 189,
+                        "name" => "schedule-delete",
+                        "display_name" => "Delete Schedule",
+                        "guard_name" => "sanctum:manager",
+                        "order" => null,
+                        "is_assigned" => true
+                    ],
+                    [
+                        "id" => 190,
+                        "name" => "schedule-detail",
+                        "display_name" => "Detail Schedule",
                         "guard_name" => "sanctum:manager",
                         "order" => null,
                         "is_assigned" => true
@@ -685,6 +717,46 @@ class AuthController extends BaseController
                         "guard_name" => "sanctum:manager",
                         "order" => null,
                         "is_assigned" => true
+                    ],
+                    [
+                        "id" => 182,
+                        "name" => "claim-type-list",
+                        "display_name" => "List Claim Type",
+                        "guard_name" => "sanctum:manager",
+                        "order" => null,
+                        "is_assigned" => true
+                    ],
+                    [
+                        "id" => 183,
+                        "name" => "claim-type-detail",
+                        "display_name" => "Detail Claim Type",
+                        "guard_name" => "sanctum:manager",
+                        "order" => null,
+                        "is_assigned" => true
+                    ],
+                    [
+                        "id" => 184,
+                        "name" => "claim-type-create",
+                        "display_name" => "Create Claim Type",
+                        "guard_name" => "sanctum:manager",
+                        "order" => null,
+                        "is_assigned" => true
+                    ],
+                    [
+                        "id" => 185,
+                        "name" => "claim-type-update",
+                        "display_name" => "Update Claim Type",
+                        "guard_name" => "sanctum:manager",
+                        "order" => null,
+                        "is_assigned" => true
+                    ],
+                    [
+                        "id" => 186,
+                        "name" => "claim-type-delete",
+                        "display_name" => "Delete Claim Type",
+                        "guard_name" => "sanctum:manager",
+                        "order" => null,
+                        "is_assigned" => true
                     ]
                 ],
                 "is_scope_access" => true
@@ -729,6 +801,6 @@ class AuthController extends BaseController
                 ],
                 "is_scope_access" => true
             ]
-        ];
+        ];;
     }
 }

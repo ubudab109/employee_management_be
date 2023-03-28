@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Dataset;
 
 use App\Http\Controllers\BaseController;
+use App\Models\Holiday;
 use App\Models\User;
 use App\Repositories\CompanyDivision\CompanyDivisionInterface;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
@@ -220,5 +221,40 @@ class DatasetController extends BaseController
         $endDateMonth = date('Y-m-t', $timeStamp);
         $totalDays = workingDays($firstDateMonth, $endDateMonth, $holidayDate);
         return $this->sendResponse($totalDays, 'Total Days Fetched');
+    }
+
+    /**
+     * DATASET CLAIM TYPE
+     * @param Request $request
+     * @return Response
+     */
+    public function listClaimType(Request $request)
+    {
+        if ($request->has('type') && $request->type == 'filter') {
+            $data = DB::table('claim_type')->select('id as value', 'name as label')
+            ->where('branch_id', branchSelected('sanctum:manager')->id)->get();
+        } else {
+            $data = DB::table('claim_type')
+            ->where('branch_id', branchSelected('sanctum:manager')->id)->get();
+        }
+
+        return $this->sendResponse($data, 'Claim Type Dataset Fetched Successfully');
+    }
+
+    /**
+     * GET HOLIDAYS IN SPESIFIC YEARS OR MONTH
+     * @param Request $request
+     * @return Response
+     */
+    public function getHolidays(Request $request)
+    {
+        $data = Holiday::when($request->has('years') && !is_null($request->years), function ($query) use ($request) {
+            $query->where('years', $request->years);
+        })
+        ->when($request->has('month') && !is_null($request->month), function ($query) use ($request) {
+            $query->where('month', $request->month);
+        })->get();
+
+        return $this->sendResponse($data, 'Holidays Fetched Successfully');
     }
 }

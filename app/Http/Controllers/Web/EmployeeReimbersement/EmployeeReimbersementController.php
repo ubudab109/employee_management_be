@@ -65,12 +65,9 @@ class EmployeeReimbersementController extends BaseController
             'amount'     => 'required_if:onlyStatus,0',
             'status'     => 'required_if:onlyStatus,1',
         ]);
-
         if ($validator->fails()) {
             return $this->sendBadRequest('Validator Errors', $validator->errors());
         }
-
-
         $isUpdated = $this->services->updateReimbersement($request->all(), $id);
         if (!$isUpdated['status']) {
             return $this->sendError($isUpdated['message']);

@@ -11,5 +11,7 @@ class Holiday extends Model
 
     protected $table = 'holidays';
     protected $fillable = ['years', 'month', 'month_name', 'data', 'type'];
-    
+    protected $casts = [
+        'data' => 'json',
+    ];
 }

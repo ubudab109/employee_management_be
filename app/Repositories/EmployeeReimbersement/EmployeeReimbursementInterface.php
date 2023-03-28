@@ -9,10 +9,11 @@ interface EmployeeReimbursementInterface
 	 * @param string $keyword
 	 * @param object $date
 	 * @param integer $employeeId
+	 * @param integer $claimTypeId
 	 * @param string $status
 	 * @return Collection
 	 */
-	public function listReimbersement($keyword, $date, $employeeId, $status);
+	public function listReimbersement($keyword, $date, $employeeId, $claimTypeId, $status);
 
 	/**
 	 * DETAIL EMPLOYEE REIMBERSEMENT

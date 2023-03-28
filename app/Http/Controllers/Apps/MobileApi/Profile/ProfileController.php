@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,7 +28,7 @@ class ProfileController extends BaseController
             return $this->sendBadRequest('Validator Error', $validator->errors());
         }
 
-        $user = User::find(Auth::user()->id);
+        $user = DB::table('users')->find(Auth::user()->id);
 
         $file = $request->file('file');
         $imageName = storeImages('public/images/profile-pictures/' . $user->id . '/', $file);

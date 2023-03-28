@@ -51,7 +51,7 @@ class UserManagementRepository implements UserManagementInterface
       })
       /* FILTER BY KEYWORD */
       ->when($keyword != '' || $keyword != null, function ($query) use ($keyword) {
-        $query->where(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', '%'. $keyword .'%');
+        $query->where("name", 'LIKE', '%'. $keyword .'%');
       })
       /* FILTER BY STATUS */
       ->when($status != null, function ($query) use ($status) {
@@ -128,7 +128,7 @@ class UserManagementRepository implements UserManagementInterface
       })
       /* FILTER BY KEYWORD */
       ->when($keyword != '' || $keyword != null, function ($query) use ($keyword) {
-        $query->where(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', '%'. $keyword .'%');
+        $query->where("name", 'LIKE', '%'. $keyword .'%');
       })
       /* FILTER BY STATUS */
       ->when($status != null, function ($query) use ($status) {

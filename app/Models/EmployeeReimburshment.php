@@ -11,6 +11,7 @@ class EmployeeReimburshment extends Model
 
     protected $table = 'employee_reimburshment';
     protected $fillable = [
+        'claim_type_id',
         'branch_id',
         'employee_id',
         'department_id',
@@ -31,6 +32,11 @@ class EmployeeReimburshment extends Model
         return getStatusNameColor($this->status);
     }
 
+    public function claimType()
+    {
+        return $this->belongsTo(ClaimType::class, 'claim_type_id', 'id');
+    }
+    
     public function employee()
     {
         return $this->belongsTo(User::class, 'employee_id', 'id');

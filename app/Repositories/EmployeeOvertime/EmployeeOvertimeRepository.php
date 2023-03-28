@@ -61,7 +61,7 @@ class EmployeeOvertimeRepository implements EmployeeOvertimeInterface
         $query->where('employee_id', $employeeId);
       })
       /* FILTER STATUS */
-      ->when(isset($status) && $status != null, function ($query) use ($status) {
+      ->when(isset($status) && $status != '', function ($query) use ($status) {
         $query->where('status', $status);
       })
       ->paginate($show);

@@ -7,8 +7,10 @@ use App\Http\Controllers\Apps\MobileApi\UserController;
 use App\Http\Controllers\Web\Payslip\PayslipController;
 use App\Http\Controllers\Web\Attendance\AttendanceController;
 use App\Http\Controllers\Web\Auth\AuthController as WebAuthController;
+use App\Http\Controllers\Web\ClaimType\ClaimTypeController;
 use App\Http\Controllers\Web\CompanyBranch\CompanyBranchController;
 use App\Http\Controllers\Web\CompanyDivision\CompanyDivisionController;
+use App\Http\Controllers\Web\CompanySchedule\CompanyScheduleController;
 use App\Http\Controllers\Web\Dashboard\DashboardController;
 use App\Http\Controllers\Web\Dataset\DatasetController;
 use App\Http\Controllers\Web\Employee\EmployeeController;
@@ -111,6 +113,8 @@ Route::group(['middleware' => 'cors'], function() {
                         Route::get('company-branch', [DatasetController::class, 'listCompanyBranch']);
                         Route::get('salary-component', [DatasetController::class, 'salaryComponent']);
                         Route::get('total-working', [DatasetController::class, 'getWorkinDays']);
+                        Route::get('claim-type', [DatasetController::class, 'listClaimType']);
+                        Route::get('holidays', [DatasetController::class, 'getHolidays']);
                     });
     
                     /* Attendance */
@@ -151,6 +155,12 @@ Route::group(['middleware' => 'cors'], function() {
                     Route::post('payslip-generate/{id}', [PayslipController::class, 'retryGenerate']);
                     Route::post('send-payslip', [PayslipController::class, 'sendPayslip']);
                     
+                    /** CLAIM TYPE */
+                    Route::resource('claim-type', ClaimTypeController::class);
+
+                    /** COMPANY SCHEDULE */
+                    Route::resource('company-schedule', CompanyScheduleController::class);
+                    Route::put('change-default-schedule', [CompanyScheduleController::class, 'updateDefaultSchedule']);
                 });
 
                 /** SUPERADMIN ROUTE */
