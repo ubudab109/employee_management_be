@@ -88,4 +88,14 @@ class EmployeeAttendance extends Model
     {
         return $this->belongsTo(CompanyBranch::class, 'branch_id', 'id');
     }
+
+    public function notificationManagers()
+    {
+        return $this->morphMany(NotificationManager::class, 'model');
+    }
+
+    public function notificationEmployees()
+    {
+        return $this->morphMany(NotificationEmployee::class, 'model');
+    }
 }

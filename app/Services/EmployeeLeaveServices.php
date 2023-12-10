@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\EmployeeLeave;
 use App\Repositories\EmployeeLeave\EmployeeLeaveInterface;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Traits\NotificationTrait;
 
 class EmployeeLeaveServices
 {
@@ -57,7 +60,7 @@ class EmployeeLeaveServices
      * 
      * @param integer id The id of the employee paid leave
      * 
-     * @return array An array with three keys: status, message, and data.
+     * @return Collection An array with three keys: status, message, and data.
      */
     public function detail($id)
     {
@@ -116,6 +119,11 @@ class EmployeeLeaveServices
         DB::beginTransaction();
         try {
             $this->employeeLeave->updateEmployeePaidLeave($data, $id);
+            if (Auth::guard('sanctum:manager')->check()) {
+                $paidLeaveData = $this->employeeLeave->detailEmployeePaidLeave($id);
+                $date = date("j F Y", strtotime($paidLeaveData->start_date));
+                NotificationTrait::dispatchNotificationToEmployee($paidLeaveData->employee, 'Paid Leave Status', 'Your Paid Leave request at '.$date.' had been '.getLeaveStatusName($data['status']), EmployeeLeave::class, $id, PAID_LEAVE);
+            }
             DB::commit();
             return [
                 'status'  => true,

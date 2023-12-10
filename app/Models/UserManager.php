@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 use Laravolt\Avatar\Avatar;
@@ -30,7 +31,8 @@ class UserManager extends Authenticatable implements MustVerifyEmail
         'email_verified_at',
         'phone_number',
         'password',
-        'invited_status'
+        'invited_status',
+        'is_online',
     ];
 
     /**
@@ -91,7 +93,11 @@ class UserManager extends Authenticatable implements MustVerifyEmail
     public function getRoleAttribute()
     {   
         if ($this->branch()->exists()) {
-            return ucfirst($this->branchAssign()->first()->pivot->roles()->first()->name);
+            if ($this->branchAssign()->first()->pivot->roles()->first()) {
+                return ucfirst($this->branchAssign()->first()->pivot->roles()->first()->name);
+            } else {
+                return null;
+            }
         } else {
             return ucfirst($this->roles()->first()->name);
         }
@@ -112,6 +118,11 @@ class UserManager extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(CompanyBranch::class, 'user_manager_assign', 'user_manager_id', 'branch_id')->using(UserManagerAssign::class)
         ->withPivot('id', 'user_manager_id', 'branch_id','status',);
+    }
+
+    public function excel()
+    {
+        return $this->hasMany(ExcelTask::class, 'manager_id', 'id');
     }
 
 }

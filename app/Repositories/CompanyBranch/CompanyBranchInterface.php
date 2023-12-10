@@ -72,4 +72,14 @@ interface CompanyBranchInterface
    * @param array $condition - array of condition
    */
   public function getFirstBranchByCondition(array $condition);
+
+  /**
+   * Assign or change headbranch based on branch
+   * @param string $type - type of assign (assign or change)
+   * @param int $branchId - branchID
+   * @param int $nextHeadBranch - User manager who want to be a head branch
+   * @param int $currentHeadBranch - Current head branch
+   * @return bool
+   */
+  public function assignOrChangeHeadBranch(string $type, int $branchId, int $nextHeadBreanch, int $currentHeadbranch = null);
 }

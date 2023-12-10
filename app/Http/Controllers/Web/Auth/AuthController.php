@@ -48,19 +48,22 @@ class AuthController extends BaseController
                         : $this->sendResponse(array("success" => false), 'Email not verified');
                 }
                 $token = $user->createToken('admin_token')->plainTextToken;
-                if (config('app.env') == 'development') {
-                    $permission = $this->dummyPermissions();
-                } else {
-                    $permission = $this->dataPermissions($user, $userBranch);
-                }
-
                 if ($userBranch != null) {
                     $rolesName = ucfirst($userBranch->roles()->first()->name);
                     $branch = $userBranch;
                 } else {
-                    $rolesName = ucfirst($user->roles()->first()->name);
+                    $rolesName = 'Superadmin';
                     $branch = null;
                 }
+
+                if (config('app.env') == 'development') {
+                    $permission = $this->dummyPermissions();
+                } else {
+                    $permission = $this->dataPermissions($user, $branch);
+                }
+
+                
+                $user->update(['is_online' => 1]);
 
                 return $this->sendResponse([
                     'token'         => $token,
@@ -104,6 +107,8 @@ class AuthController extends BaseController
      */
     public function logout(Request $request)
     {
+        $user = UserManager::find(Auth::guard('sanctum:manager')->user()->id);
+        $user->update(['is_online' => 0]);
         $request->user()->currentAccessToken()->delete();
         return $this->sendResponse(null, 'Successfully Logout');
     }

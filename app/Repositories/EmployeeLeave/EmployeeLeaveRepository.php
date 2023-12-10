@@ -130,7 +130,7 @@ class EmployeeLeaveRepository implements EmployeeLeaveInterface
   public function detailEmployeePaidLeave($id)
   {
     $data = $this->model
-      ->with('employee:id,firstname,lastname,nip', 'department:id,division_name', 'branch:id,branch_name', 'files:id,files,source_id')->find($id);
+      ->with('employee', 'department:id,division_name', 'branch:id,branch_name', 'files:id,files,source_id')->find($id);
     return $data;
   }
 

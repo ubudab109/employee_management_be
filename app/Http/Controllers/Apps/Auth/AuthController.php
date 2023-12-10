@@ -41,6 +41,8 @@ class AuthController extends BaseController
                 $token = $user->createToken('auth_token')->plainTextToken;
                 return $this->sendResponse([
                     'token'         => $token,
+                    'user'          => $user,
+                    'assign'        => $user->branch()->with('branch')->first(),
                     'expired_token' => Date::now()->addDay(150),
                 ],'Login Successfully');
             }

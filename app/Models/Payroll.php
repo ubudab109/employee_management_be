@@ -54,4 +54,14 @@ class Payroll extends Model
     {
         return $this->belongsTo(CompanyDivision::class, 'department_id', 'id');
     }
+
+    public function notificationManagers()
+    {
+        return $this->morphMany(NotificationManager::class, 'model');
+    }
+
+    public function notificationEmployees()
+    {
+        return $this->morphMany(NotificationEmployee::class, 'model');
+    }
 }

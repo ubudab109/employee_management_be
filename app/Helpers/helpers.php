@@ -8,13 +8,17 @@
     MODIFY WITH YOUR OWN RISK
     YOU CAN ADD MORE HELPERS FUNCTION IN HERE
  !!!
-*/
+ */
 
 use App\Models\CompanyBranch;
 use App\Models\CompanySetting;
+use App\Models\UserManager;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
-
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Style\Color;
 
 /**
  * Branch ID for creating any data that related to company branch
@@ -187,8 +191,8 @@ function storeImages($path, $file)
 /**
  * Count Data From Array
  * @param array $array
- * @param Any $key from array
- * @param Any $value from array
+ * @param mixed $key from array
+ * @param mixed $value from array
  * @return int
  */
 function arrFilterCount(array $array, $key, $value)
@@ -202,7 +206,7 @@ function arrFilterCount(array $array, $key, $value)
 
 /**
  * Generate Verification Key
- * @return String
+ * @return string
  */
 function generate_email_verification_key()
 {
@@ -223,7 +227,7 @@ function generate_email_verification_key()
 function workingDays($from, $to, $holidays)
 {
     // DAYS OF WORKING (MONDAY TO FRIDAY)
-    $workingDays = [1, 2, 3, 4, 5]; 
+    $workingDays = [1, 2, 3, 4, 5];
 
     $from = new DateTime($from);
     $to = new DateTime($to);
@@ -248,6 +252,134 @@ function workingDays($from, $to, $holidays)
  */
 function rupiah($number)
 {
-	$result = "Rp " . number_format($number,0,',',',');
-	return $result;
+    $result = "Rp " . number_format($number, 0, ',', ',');
+    return $result;
+}
+
+/**
+ * It checks if the user has at least one permission assigned to the scope
+ * 
+ * @param UserManager $user The user manager object
+ * @param string $scopeName The name of the scope you want to check.
+ */
+function isScopeAccess(UserManager $user, $scopeName)
+{
+    $scope = DB::table('permission_scope')->where('name', $scopeName)->first();
+    $permissions = DB::table('permissions')->where('scope_id', $scope->id)->get();
+    $userBranch = $user->branch()->with('branch')->first();
+    if ($userBranch) {
+        // check if current scope have permission, if not, then is_scope_access is false
+        if (count($permissions) < 1) {
+            return false;
+        }
+        $dataScope['permissions'] = array();
+        /* GET PERMISSIONS FROM PERMISSION SCOPE */
+        foreach ($permissions as $permission) {
+            if ($userBranch->roles()->first()) {
+                $prm['is_assigned']     = $userBranch->roles()->first()->hasPermissionTo($permission->name) ? true : false;
+            } else {
+                $prm['is_assigned']     = false;
+            }
+            $dataScope['permissions'][] = $prm;
+        }
+        // Count how many permission in current scope was assigned. If at least have one, then key 'is_scope_access' was true and if not then false
+        return arrFilterCount($dataScope['permissions'], 'is_assigned', true) > 0;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * The function calculates the total amount of overtime pay based on the gross salary and number of
+ * hours worked.
+ * 
+ * @param double $grossSalary The gross salary of an employee.
+ * @param double $takenHour The number of hours worked overtime.
+ * 
+ * @return integer total amount of overtime pay for a given gross salary and number of hours worked. The
+ * overtime pay is calculated based on a constant formula and a temporary formula for the first and
+ * subsequent hours of overtime. The function returns the sum of all the overtime pay amounts.
+ */
+function getTotalAmountOvertime($grossSalary, $takenHour)
+{
+    $constantFormula = 1 / 173;
+    $overtimePay = $grossSalary * $constantFormula;
+    /**
+     !!!
+      - TEMPORARY TO SAVE A OVERTIME WAGE PER HOUR
+      - IF IN FIRST HOUR THEN THE FORMULA IS LIKE THIS (1.5 * $overtimePay)
+      - THEN IN THE NEXT HOUR IS (2.5 * $overtimePay)
+      - THIS CALCULATION IS REFERENCE BY DEPNAKER
+     !!!
+     */
+    $totalAmountOvertime = [];
+    for ($i = 1; $i <= $takenHour; $i++) {
+        if ($i == 1) {
+            $totalAmountOvertime[] = 1.5 * $overtimePay;
+        } else {
+            $totalAmountOvertime[] = 2 * $overtimePay;
+        }
+    }
+    $total = array_sum($totalAmountOvertime);
+    return floor($total);
+}
+
+/**
+ * The function "handle" takes a closure as a parameter and executes it.
+ * 
+ * @param Closure closure The parameter `` is a closure, which is a type of anonymous function
+ * in PHP. It can be assigned to a variable and passed around as a parameter to other functions. In
+ * this case, the `handle` function takes a closure as its parameter and then immediately calls it
+ * using the `()`
+ */
+function handle(Closure $closure) 
+{
+    $closure();
+}
+
+/**
+ * Default response error for spesific environment
+ * @param string|null $text - text error
+ * @return string
+ */
+function defaultResponseError($text = null) 
+{
+    if (config('app.env') !== 'development') {
+        Log::info($text);
+        return 'Internal Server Error';
+    }
+
+    return $text ?? 'Internal Server Error';
+}
+
+/**
+ * Format Excel Cell's Value
+ *
+ * @param string|RichText $text
+ * @param string $formattedText
+ * @param array $format
+ * @return RichText
+ * @throws Exception
+ */
+function formatValue($text, $formattedText, $format = [])
+{
+    if ($text instanceof RichText) {
+        $value = $text;
+    } else {
+        // if $text not RichText, change it to RichText
+        $value = new RichText();
+        $value->createText($text);
+    }
+
+    // add formatted text behind the original text
+    $objPayable = $value->createTextRun($formattedText);
+
+    if (array_key_exists('bold', $format) && $format['bold']) {
+        $objPayable->getFont()->setBold(true);
+    }
+    if (array_key_exists('color', $format) && !empty($format['color'])) {
+        $objPayable->getFont()->setColor(new Color($format['color']));
+    }
+
+    return $value;
 }

@@ -9,6 +9,13 @@
  * YOU CAN ADD MORE CORE ARRAYS FUNCTION IN HERE
 */
 
+use App\Models\EmployeeAttendance;
+use App\Models\EmployeeLeave;
+use App\Models\EmployeeOvertime;
+use App\Models\EmployeeReimburshment;
+use App\Models\EmployeeWarningLetter;
+use App\Models\Payroll;
+use Illuminate\Support\Facades\Log;
 
 /**
  * It returns an array of key-value pairs, where the key is the input and the value is the output.
@@ -230,6 +237,29 @@ function getStatusNameColor($input = null)
  * 
  * @return array array of key-value pairs.
  */
+function getGlobalStatusEnum($input = null)
+{
+  $data = [
+    '0'  => 'Pending',
+    '1'  => 'Approved',
+    '2' => 'Rejected',
+  ];
+
+  if ($input != null) {
+    return $data[$input];
+  }
+
+  return $data;
+}
+
+/**
+ * It returns an array of leave status names, or a single leave status name if you pass in a leave
+ * status ID
+ * 
+ * @param string input The value you want to get the name of.
+ * 
+ * @return array array of key-value pairs.
+ */
 function getLeaveStatusName($input = null)
 {
   $data = [
@@ -294,4 +324,84 @@ function getMonthName($input = null)
   }
 
   return $month;
+}
+
+/**
+ * It returns the icon path based on the class name and type
+ * 
+ * @param string $class The class name of the notification
+ * @param string $type The type of notification.
+ * 
+ * @return array
+ */
+function getNotifIcon($class = null, $type = null)
+{
+  $icons = [
+    Payroll::class => asset('notif_icon/Paper.png'),
+    EmployeeReimburshment::class => asset('notif_icon/File.png'),
+    EmployeeOvertime::class => asset('notif_icon/Tumer.png'),
+    EmployeeLeave::class => [
+      PAID_LEAVE => asset('notif_icon/Calendar.png'),
+      PERMIT => asset('notif_icon/Date.png')
+    ],
+    EmployeeWarningLetter::class => asset('notif_icon/Warning.png')
+  ];
+
+  if (!is_null($class)) {
+    $iconClass = $icons[$class];
+    if (!is_null($type)) {
+      $icon = $iconClass[$type];
+    } else {
+      $icon = $iconClass;
+    }
+
+    return $icon;
+  }
+  return $icons;
+}
+
+
+/**
+ * It returns a URL based on the class name
+ * 
+ * @param string $class The class name of the model
+ * @param integer $idEmployee the id of the employee
+ */
+function getFeEndpointNotification($class = null, $idEmployee = null)
+{
+  $url = [
+    Payroll::class => '/finance',
+    EmployeeReimburshment::class => '/finance',
+    EmployeeOvertime::class => '/time-management',
+    EmployeeAttendance::class => '/attendance-management',
+    EmployeeLeave::class => '/employee/detail/'.$idEmployee,
+    EmployeeWarningLetter::class => '/employee/detail/'.$idEmployee
+  ];
+
+  if (!is_null($class)) {
+    return $url[$class];
+  }
+
+  return $url;
+}
+
+/**
+ * It returns the value of the key that matches the value of the parameter passed to the function
+ * Get the permission scope based on class
+ * 
+ * @param string $class The class name of the model you want to check.
+ * 
+ * @return string The value of the key in the array.
+ */
+function getScopePermissionClass($class)
+{
+  $permissionScope = [
+    EmployeeAttendance::class => 'Attendance',
+    Payroll::class => 'Payroll',
+    EmployeeOvertime::class => 'Employee Overtime',
+    EmployeeLeave::class => 'Employee Paid Leave',
+    EmployeeReimburshment::class => 'Employee Reimbursement',
+  ];
+
+  return $permissionScope[$class];
 }

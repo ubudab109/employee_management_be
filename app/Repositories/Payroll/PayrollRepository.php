@@ -29,6 +29,9 @@ class PayrollRepository implements PayrollInterface
   public function listPayroll($keyword, $date, $department)
   {
     $data = $this->employee
+    ->whereHas('branch', function ($query) {
+      $query->where('branch_id', branchSelected('sanctum:manager')->id);
+    })
     ->when($department !== null, function ($query) use ($department) {
       $query->whereHas('division', function ($subQuery) use ($department) {
         $subQuery->where('division_id', $department);

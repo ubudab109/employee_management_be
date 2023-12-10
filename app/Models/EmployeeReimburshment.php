@@ -56,4 +56,14 @@ class EmployeeReimburshment extends Model
     {
         return $this->morphMany(Files::class, 'source');
     }
+
+    public function notificationManagers()
+    {
+        return $this->morphMany(NotificationManager::class, 'model');
+    }
+
+    public function notificationEmployees()
+    {
+        return $this->morphMany(NotificationEmployee::class, 'model');
+    }
 }

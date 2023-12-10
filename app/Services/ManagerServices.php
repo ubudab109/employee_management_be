@@ -8,6 +8,7 @@ use App\Models\UserManager;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
 use App\Repositories\UserManagement\UserManagementInterface;
 use App\Repositories\UserVerification\UserVerificationInterface;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -49,12 +50,10 @@ class ManagerServices
                 isset($param['keyword']) && $param['keyword'] != null ? $param['keyword'] : null,
                 isset($param['status']) && $param['status'] != null ? $param['status'] : null,
                 isset($param['role']) && $param['role'] != null ? $param['role'] : null,
-                $param['show'] == null ? 10 : $param['show'],
                 isset($param['branch_id']) && $param['branch_id'] != null ? $param['branch_id'] : null,
             );
             $type = 'list';
         }
-
         return [
             'status'    => true,
             'type'      => $type,
@@ -136,15 +135,35 @@ class ManagerServices
             }
 
             $branch = branchIdForCreateData(isSuperAdmin(), $data['branch_id'] ? $data['branch_id'] : null);
+            /**
+             * CHECKING ROLE IN CURRENT SELECTED BRANCH (ONLY FOR SUPERADMIN)
+             * IF CURRENT ROLE NOT EXISTS THEN WILL CREATE A NEW ROLE WHICH MEAN A HEAD BRANCH
+             * ELSE, WILL GET THE ROLE BY ID
+             */
+            $roleBranch = DB::table('roles')->where('branch_id', $data['branch_id'])->exists();
+            if (!$roleBranch) {
+                $branchName = DB::table('company_branch')->where('id', $data['branch_id'])->first()->branch_name;
+                $role = DB::table('roles')->insertGetId([
+                    'name'            => 'Head Branch - '. $branchName,
+                    'guard_name'      => 'sanctum:manager',
+                    'is_role_manager' => true,
+                    'is_headbranch'   => true,
+                    'branch_id'       => $branch,
+                    'created_at'      => Date::now(),
+                    'updated_at'      => Date::now(),  
+                ]);
+            } else {
+                $role = $data['role'];
+            }
 
             $mailKey = generate_email_verification_key();
 
-            $userManager = $this->userManagement->inviteUser($dataUserManager, $branch, $data['role'], $mailKey);
+            $userManager = $this->userManagement->inviteUser($dataUserManager, $branch, $role, $mailKey);
             $dataEmail = [
                 'name'      => $dataUserManager['name'],
                 'email'     => $dataUserManager['email'],
                 'password'  => $password,
-                'role'      => $this->roles->detailRoleManager($data['role'])->name,
+                'role'      => $this->roles->detailRoleManager($role)->name,
                 'key'       => $mailKey,
             ];
             dispatch(new SendEmailJob($dataEmail, USER_MANAGER_TYPE));
@@ -155,6 +174,7 @@ class ManagerServices
                 'res'      => 200,
             ];
         } catch (\Exception $err) {
+            Log::info($err);
             DB::rollBack();
             return [
                 'status' => false,

@@ -8,6 +8,7 @@ use App\Repositories\CompanyBranch\CompanyBranchInterface;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class CompanyBranchController extends BaseController
@@ -69,9 +70,9 @@ class CompanyBranchController extends BaseController
             'district_id'           => 'required',
             'villages_id'           => 'required',
             'is_radius_active'      => 'required',
-            'address'               => '',
-            'latitude'              => 'required_if:is_radius_active,1',
-            'longitude'             => 'required_if:is_radius_active,1',
+            'address'               => 'required',
+            'latitude'              => 'required',
+            'longitude'             => 'required',
             'attendance_radius'     => 'required_if:is_radius_active,1',
             'work_type'             => 'required',
         ]);
@@ -106,6 +107,7 @@ class CompanyBranchController extends BaseController
                 'guard_name'        => 'sanctum:manager',
                 'branch_id'         => $branch->id,
                 'is_role_manager'   => true,
+                'is_headbranch'     => true,
             ];
             $dataPermission = [];
             foreach ($permissions as $permission) {
@@ -116,7 +118,7 @@ class CompanyBranchController extends BaseController
             return $this->sendResponse(array('success' => true), 'Company Branch Created Successfully');
         } catch (\Exception $err) {
             DB::rollBack();
-            return $this->sendError(array('success' => false, 'message' => $err->getMessage()), 'Internal Server Error');
+            return $this->sendError(array('success' => false, 'message' => $err->getMessage()), defaultResponseError($err->getMessage()));
         }
     }
 
@@ -149,8 +151,8 @@ class CompanyBranchController extends BaseController
             'villages_id'           => 'required',
             'is_radius_active'      => 'required',
             'address'               => '',
-            'latitude'              => 'required_if:is_radius_active,1',
-            'longitude'             => 'required_if:is_radius_active,1',
+            'latitude'              => 'required',
+            'longitude'             => 'required',
             'attendance_radius'     => 'required_if:is_radius_active,1',
             'work_type'             => 'required',
         ]);
@@ -171,13 +173,12 @@ class CompanyBranchController extends BaseController
                 ]);
 
                 $input['is_centered'] = 1;
-            } else {
-                $input['is_centered'] = 0;
             }
             $this->companyBranch->updateBranch($id, $input);
             DB::commit();
             return $this->sendResponse(array('success' => true), 'Company Branch Updated Successfully');
         } catch (\Exception $err) {
+            Log::info($err->getMessage());
             DB::rollBack();
             return $this->sendError(array('success' => false), 'Internal Server Error');
         }
@@ -186,7 +187,7 @@ class CompanyBranchController extends BaseController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -204,5 +205,36 @@ class CompanyBranchController extends BaseController
     public function validateBranchCode($branch_code)
     {
         return $this->sendResponse($this->companyBranch->validateBranchCode($branch_code), 'Checked Successfully');
+    }
+
+    /**
+     * Change or Assign head branch in current branch
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int $branchId
+     * @return \Illuminate\Http\Response
+     * @throws \Exception
+     */
+    public function assignOrChangeHeadBranch(Request $request, $branchId)
+    {
+        $validator = Validator::make($request->all(), [
+            'type'            => 'required|in:assign,change',
+            'current_manager' => 'required_if:type,==,change',
+            'next_manager'    => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendBadRequest('Validator errors', $validator->errors());
+        }
+
+        DB::beginTransaction();
+        try {
+            $input = $request->only('type', 'current_manager', 'next_manager');
+            $this->companyBranch->assignOrChangeHeadBranch($input['type'], $branchId, $input['next_manager'], $input['current_manager'] ?? null);
+            DB::commit();
+            return $this->sendResponse(array('success' => true, 'message' => null), 'Success change or assign head branch');
+        } catch (\Exception $err) {
+            DB::rollBack();
+            return $this->sendError(array('success' => false, 'message' => $err->getMessage()), defaultResponseError($err->getMessage()));
+        }
     }
 }

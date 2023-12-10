@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Web\EmployeeOvertime;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Controllers\Controller;
+use App\Models\EmployeeOvertime;
+use App\Traits\NotificationTrait;
 use App\Services\EmployeeOvertimeServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -65,11 +66,12 @@ class EmployeeOvertimeController extends BaseController
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'onlyStatus' => 'required',
-            'date'       => 'required_if:onlyStatus,0',
-            'in'         => 'required_if:onlyStatus,0',
-            'out'        => 'required_if:onlyStatus,0',
-            'status'     => 'required_if:onlyStatus,1',
+            'onlyStatus'  => 'required',
+            'date'        => 'required_if:onlyStatus,0',
+            'in'          => 'required_if:onlyStatus,0',
+            'out'         => 'required_if:onlyStatus,0',
+            'status'      => 'required_if:onlyStatus,1',
+            'employee_id' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -80,7 +82,11 @@ class EmployeeOvertimeController extends BaseController
 
         $isUpdated = $this->services->updateOvertime($data, $id);
         if (!$isUpdated['status']) {
-            return $this->sendError($isUpdated['message']);
+            return $this->sendError($isUpdated['message'], [], $isUpdated['code']);
+        }
+
+        if($request->onlyStatus == 1) {
+            NotificationTrait::dispatchNotificationToEmployee($request->input('employee_id'), 'Overtime Status', 'Update for Your Overtime request', EmployeeOvertime::class, $id, OVERTIME);
         }
         
         return $this->sendResponse(array('success' => 1) ,$isUpdated['message']);

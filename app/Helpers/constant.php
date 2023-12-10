@@ -100,3 +100,21 @@ const ALL_SENDED = '3';
 /** PAYSLIP EMPLOYEE STATUS */
 const GENERATED_PAYSLIP = 'generated';
 const SENDED = 'sended';
+
+/** NOTIFICATION TYPE */
+const NOTIF_EMPLOYEE = 'employee';
+const NOTIF_MANAGER = 'manager';
+
+/** EXCEL TASK STATUS */
+const EXCEL_PENDING = 'pending';
+const EXCEL_PROCESS = 'processing';
+const EXCEL_FINISH = 'finished';
+const EXCEL_FAILED = 'failed';
+
+/** EXCEL TASK TYPE */
+const EXCEL_EXPORT = 'export';
+const EXCEL_IMPORt = 'import';
+
+/** HEADBRANCH CHANGE TYPE */
+const ASSIGN_HEADBRANCH = 'assign';
+const CHANGE_HEADBRANCH = 'change';

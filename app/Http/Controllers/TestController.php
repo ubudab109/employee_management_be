@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\PayslipExportJob;
+use App\Models\EmployeeLeave;
+use App\Models\ExcelTask;
+use App\Models\Payroll;
+use App\Repositories\Payroll\PayrollInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -12,12 +18,8 @@ class TestController extends Controller
 {
     public function test()
     {
-        $data = DB::table('payroll')
-        ->where('month', 3)
-        ->where('years', 2023)
-        ->where('branch_id', 7)
-        ->get()->groupBy('employee_id');
-        return count($data->toArray());
-        // return $path;
+        $task = ExcelTask::create(['branch_id' => 7, 'manager_id' => 36, 'source_type' => Payroll::class, 'type' => EXCEL_EXPORT]);
+        PayslipExportJob::dispatch($task->fresh(), 4, 2023);
+        return response()->json(true);
     }
 }

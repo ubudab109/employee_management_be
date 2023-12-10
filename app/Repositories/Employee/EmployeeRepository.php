@@ -135,7 +135,7 @@ class EmployeeRepository implements EmployeeInterface
   {
     switch ($param) {
       case 'employee':
-        return $this->model->with('branch')->find($id);
+        return $this->model->with('branch', 'ptkp')->find($id);
       case 'absent':
         return EmployeeAttendance::where('employee_id', $id)
           ->when(isset($request['date']) && $request['date'] != null, function ($query) use ($request) {
@@ -190,13 +190,14 @@ class EmployeeRepository implements EmployeeInterface
         ];
       case 'permit':
         return EmployeeLeave::where('employee_id', $id)
+          ->with('files:id,files,source_id')
           ->where('type', PERMIT)
           ->when(isset($request['date']) && $request['date'] != null, function ($query) use ($request) {
             $query->when(isset($request['date']['month']) && $request['date']['month'] != null, function ($subQuery) use ($request) {
-              $subQuery->whereMonth('created_at', $request['date']['month']);
+              $subQuery->whereMonth('start_date', $request['date']['month']);
             })
               ->when(isset($request['date']['year']) && $request['date']['year'] != null, function ($subQuery) use ($request) {
-                $subQuery->whereYear('created_at', $request['date']['year']);
+                $subQuery->whereYear('start_date', $request['date']['year']);
               });
           })
           ->when(isset($request['status']) && $request['status'] != null, function ($query) use ($request) {

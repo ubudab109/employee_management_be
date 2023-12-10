@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             CompanySettingSeeder::class,
             PermissionSeeder::class,
             UserWithDivisionSeeder::class,
+            PTKPSeeder::class,
         ]);
     }
 }

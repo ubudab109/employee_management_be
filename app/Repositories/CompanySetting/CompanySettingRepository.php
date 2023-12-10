@@ -48,7 +48,7 @@ class CompanySettingRepository implements CompanySettingInterface
      */
     public function getCompanySetting($key)
     {
-      return $this->model->where('setting_key',$key)->first();  
+      return $this->model->where('setting_key', $key)->first();  
     }
 
     /**
@@ -73,9 +73,10 @@ class CompanySettingRepository implements CompanySettingInterface
      */
     public function updateCompanySetting($key, $value)
     {
-      return $this->model->updateOrCreate(
-        ['setting_key' => $key],
-        ['value' => $value],
-      );
+      $companySetting = $this->model->where('setting_key', $key)->first();
+      if (!$companySetting) {
+        return false;
+      }
+      return $companySetting->update(['value' => $value]);
     }
 }

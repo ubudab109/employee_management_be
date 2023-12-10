@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\Web\Dataset;
 
 use App\Http\Controllers\BaseController;
+use App\Models\EmployeeAttendance;
+use App\Models\EmployeeOvertime;
+use App\Models\EmployeeReimburshment;
 use App\Models\Holiday;
+use App\Models\Payroll;
 use App\Models\User;
+use App\Models\UserManagerAssign;
 use App\Repositories\CompanyDivision\CompanyDivisionInterface;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
 use Illuminate\Http\Request;
@@ -75,6 +80,35 @@ class DatasetController extends BaseController
         }
         return $this->sendResponse($data, 'Data Fetched Successfully');
     }
+
+    /**
+     * GET ROLE DATA BY BRANCH ID
+     * @param Request $request
+     * @return Response
+     */
+    public function getRoleByBranch(Request $request)
+    {
+        $roles = DB::table('roles');
+
+        if (!empty($request->branch_id)) {
+            $roles->where('branch_id', $request->branch_id);
+        }
+
+        if ($request->has('filter') && $request->filter == 1) {
+            $data = [];
+            foreach ($roles->get() as $role) {
+                $data[] = [
+                    'label' => $role->name,
+                    'value' => $role->id,
+                ];
+            }
+        } else {
+            $data = $roles;
+        }
+
+        return $this->sendResponse($data, 'Data Fetched Successfully');
+    }
+
     /**
      * Dataset For Get Role Manager
      * 
@@ -256,5 +290,145 @@ class DatasetController extends BaseController
         })->get();
 
         return $this->sendResponse($data, 'Holidays Fetched Successfully');
+    }
+
+    /**
+     * GET LIST PTKP
+     * @param Request $request
+     * @return Illuminate\Htpp\Response
+     */
+    public function getPtkpData(Request $request)
+    {
+        if ($request->has('select') && $request->select) {
+            $data = DB::table('ptkp')->select('id as value', 'status as label')->get();
+        } else {
+            $data = DB::table('ptkp')->get();
+        }
+
+        return $this->sendResponse($data, 'Data Fetched Successfully');
+    }
+
+    /**
+     * GET EXCEL MODEL TYPE
+     * THIS TYPE WHICH CAN BE EXPORTED OR IMPORTED
+     * @return Illuminate\Htpp\Response
+     */
+    public function getExportModelType()
+    {
+        $sumFiles = function ($model) {
+            return DB::table('excel_tasks')->where('branch_id', branchSelected('sanctum:manager')->id)
+            ->where('source_type', $model)
+            ->whereNotNull('download')
+            ->count();
+        };
+        $data = [
+            [
+                'name'        => 'Payslip',
+                'value'       => Payroll::class,
+                'total_files' => $sumFiles(Payroll::class),
+            ],
+            [
+                'name'        => 'Reimbursement',
+                'value'       => EmployeeReimburshment::class,
+                'total_files' => $sumFiles(EmployeeReimburshment::class),
+            ],
+            [
+                'name'        => 'Employee',
+                'value'       => User::class,
+                'total_files' => $sumFiles(User::class),
+
+            ],
+            [
+                'name'        => 'Employee Attendance',
+                'value'       => EmployeeAttendance::class,
+                'total_files' => $sumFiles(EmployeeAttendance::class),
+
+            ],
+            [
+                'name'        => 'Employee Overtime',
+                'value'       => EmployeeOvertime::class,
+                'total_files' => $sumFiles(EmployeeOvertime::class),
+
+            ],
+        ];
+
+        return $this->sendResponse($data, 'Data Fetched Successfully');
+    }
+
+    /**
+     * GET PROVINCES DATASET
+     * @return Illuminate\Htpp\Response
+     */
+    public function getProvinces()
+    {
+        $data = DB::table('provinces')->select('id as value', 'name as label')->get();
+        return $this->sendResponse($data, 'Data Fetched Successfully');   
+    }
+
+    /**
+     * GET REGENCIES DATASET
+     * @param Request $request
+     * @return Illuminate\Htpp\Response
+     */
+    public function getRegencies(Request $request)
+    {
+        $data = DB::table('regencies')
+        ->select('id as value', 'name as label')
+        ->when($request->has('province_id') && $request->province_id != null, function ($query) use ($request) {
+            $query->where('province_id', $request->province_id);
+        })->get();
+
+        return $this->sendResponse($data, 'Data Fetched Successfully');
+    }
+
+    /**
+     * GET DISTRICTS DATASET
+     * @param Request $request
+     * @return Illuminate\Htpp\Response
+     */
+    public function getDistricts(Request $request)
+    {
+        $data = DB::table('districts')
+        ->select('id as value', 'name as label', 'regency_id')
+        ->when($request->has('regency_id') && $request->regency_id != null, function ($query) use ($request) {
+            $query->where('regency_id', $request->regency_id);
+        })->get();
+        
+        return $this->sendResponse($data, 'Data Fetched Successfully');
+    }
+
+    /**
+     * GET VILLAGES DATASET
+     * @param Request $request
+     * @return Illuminate\Htpp\Response
+     */
+    public function getVillages(Request $request)
+    {
+        $data = DB::table('villages')
+        ->select('id as value', 'name as label', 'district_id')
+        ->when($request->has('district_id') && $request->district_id != null, function ($query) use ($request) {
+            $query->where('district_id', $request->district_id);
+        })->get();
+
+        return $this->sendResponse($data, 'Data Fetched Successfully');
+    }
+
+    /**
+     * GET DATA MANAGER IN CURRENT BRANCH
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
+    public function getDataManagerCurrentBranch(Request $request)
+    {
+        if (!$request->has('branch_id') && $request->branch_id == null) {
+            return $this->sendBadRequest('Bad Request', 'Branch ID is required');
+        }
+        
+        $managers = DB::table('user_manager_assign as manager')
+        ->select('user_manager.id', 'user_manager.name', 'user_manager.email', 'user_manager.profile_picture')
+        ->join('user_manager', 'user_manager.id', 'manager.user_manager_id')
+        ->where('manager.branch_id', $request->branch_id);
+
+        return $this->sendResponse($managers->get(), 'Data Fetched Successfully');
     }
 }

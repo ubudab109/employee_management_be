@@ -22,6 +22,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
+        'ptkp_id',
         'firstname',
         'lastname',
         'email',
@@ -77,9 +78,9 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     protected $appends = [
-        'avatar', 'division_name', 'total_salary', 'total_income', 
+        'avatar', 'fullname', 'division_name', 'total_salary', 'total_income', 
         'total_cuts', 'status', 'status_badge', 'status_name', 'job_status_name',
-        'date_of_birth', 'identity_type_name', 'date_human_diff', 'current_used_pl'
+        'date_of_birth', 'identity_type_name', 'date_human_diff', 'current_used_pl', 'gross_salary'
     ];
 
     protected static function boot()
@@ -95,6 +96,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $currentUsedPerYear = $this->leave()->where('type', PAID_LEAVE)->whereYear('created_at', date('Y'))->where('status', APPROVED)->count();
         return $currentUsedPerYear;
+    }
+
+    public function getFullnameAttribute()
+    {
+        return $this->firstname.' '.$this->lastname;
     }
 
     public function getDateHumanDiffAttribute()
@@ -174,6 +180,11 @@ class User extends Authenticatable implements MustVerifyEmail
             }
         }
         return array_sum($total);
+    }
+
+    public function getGrossSalaryAttribute()
+    {
+        return $this->salary()->where('type', SALARY_INCOME)->sum('amount');    
     }
 
     public function getTotalIncomeAttribute()
@@ -297,5 +308,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function payslipStatus()
     {
         return $this->hasOne(EmployeePayslipStatus::class, 'employee_id', 'id');
+    }
+
+    public function ptkp()
+    {
+        return $this->belongsTo(PTKP::class, 'ptkp_id', 'id');
     }
 }

@@ -24,6 +24,8 @@ use App\Repositories\EmployeeOvertime\EmployeeOvertimeInterface;
 use App\Repositories\EmployeeOvertime\EmployeeOvertimeRepository;
 use App\Repositories\EmployeeReimbersement\EmployeeReimbursementInterface;
 use App\Repositories\EmployeeReimbersement\EmployeeReimbursementRepository;
+use App\Repositories\ExcelTask\ExcelTaskInterface;
+use App\Repositories\ExcelTask\ExcelTaskRepository;
 use App\Repositories\Payroll\PayrollInterface;
 use App\Repositories\Payroll\PayrollRepository;
 use App\Repositories\RolePermissionManager\RolePermissionManagerInterface;
@@ -62,6 +64,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(PayrollInterface::class, PayrollRepository::class);
         $this->app->bind(ClaimTypeInterface::class, ClaimTypeRepository::class);
         $this->app->bind(CompanyScheduleInterface::class, CompanyScheduleRepository::class);
+        $this->app->bind(ExcelTaskInterface::class, ExcelTaskRepository::class);
     }
 
     /**

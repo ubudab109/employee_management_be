@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Role;
 
 class CompanyBranch extends Model
 {
@@ -56,5 +57,20 @@ class CompanyBranch extends Model
     public function payslip()
     {
         return $this->hasMany(Payroll::class, 'branch_id', 'id');
+    }
+
+    public function managerAssign()
+    {
+        return $this->hasMany(UserManagerAssign::class, 'branch_id', 'id');
+    }
+
+    public function employeeAssign()
+    {
+        return $this->hasMany(UserDivisionAssign::class, 'branch_id', 'id');
+    }
+
+    public function roles()
+    {
+        return $this->hasMany(Role::class, 'branch_id', 'id');
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserManagementRepository implements UserManagementInterface
 {
@@ -33,22 +34,25 @@ class UserManagementRepository implements UserManagementInterface
    * @param String $role
    * @return App\Models\UserManager
    */
-  public function getUserManagement($keyword, $status, $role, $branch = null)
+  public function getUserManagement($keyword, $status, $role, $branch)
   {
-    return $this->model
-      ->when(!$this->isSuperAdmin, function ($query) {
-        $query->whereHas('branchAssign', function ($subQuery) {
-          $subQuery->where('branch_id', branchSelected('sanctum:manager')->id);
+    if (!$this->isSuperAdmin) {
+      $data = $this->model
+      ->whereHas('branchAssign', function ($subQuery) {
+        $subQuery->where('branch_id', branchSelected('sanctum:manager')->id);
+      })
+      ->with('branchAssign');
+    } else {
+      $data = $this->model
+      ->where('id', '!=', Auth::guard('sanctum:manager')->user()->id)
+      ->when($branch != null, function ($query) use ($branch) {
+        $query->whereHas('branchAssign', function ($subQuery) use ($branch) {
+          $subQuery->where('branch_id', $branch);
         });
       })
-      ->with('branchAssign')
-      ->when($this->isSuperAdmin, function ($query) use ($branch) {
-        $query->when($branch != null, function ($subQuery) use ($branch) {
-          $subQuery->whereHas('branchAssign', function ($subQuery) use ($branch) {
-            $subQuery->where('branch_id', $branch);
-          });
-        });
-      })
+      ->with('branchAssign');
+    }
+    return $data
       /* FILTER BY KEYWORD */
       ->when($keyword != '' || $keyword != null, function ($query) use ($keyword) {
         $query->where("name", 'LIKE', '%'. $keyword .'%');

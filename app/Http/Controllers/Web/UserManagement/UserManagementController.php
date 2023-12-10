@@ -68,14 +68,14 @@ class UserManagementController extends BaseController
             'user_id'              => 'required_without:email',
             'email'                => 'required_without:user_id',
             'name'                 => 'required_without:user_id',
-            'nip'                  => 'required_without:user_id',
-            'gender'               => 'required_without:user_id',
-            'role'                 => 'required',
+            'nip'                  => 'required_without:email',
+            'gender'               => '',
+            'role'                 => '',
             'branch_id'            => '',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendBadRequest('Validation Error', 'Please Select User');
+            return $this->sendBadRequest('Validation Error', $validator->errors());
         }
 
         $createUserManager = $this->services->store($request);

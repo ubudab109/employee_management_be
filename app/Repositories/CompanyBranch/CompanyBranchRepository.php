@@ -3,6 +3,9 @@
 namespace App\Repositories\CompanyBranch;
 
 use App\Models\CompanyBranch;
+use App\Models\UserManagerAssign;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CompanyBranchRepository implements CompanyBranchInterface
 {
@@ -31,6 +34,7 @@ class CompanyBranchRepository implements CompanyBranchInterface
         return $this->model
             ->when($keyword != null && $keyword != '', function ($query) use ($keyword) {
                 $query->where('branch_name', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('branch_code', 'LIKE', '%'. $keyword. '%')
                     ->orWhere('address', 'LIKE', '%' . $keyword . '%');
             })
             ->when($province != null, function ($query) use ($province) {
@@ -92,11 +96,29 @@ class CompanyBranchRepository implements CompanyBranchInterface
     /**
      * Get Detail Branch By ID
      * @param int $id - ID Company Branch
-     * @return \App\Models\CompanyBranch
+     * @return array
      */
     public function detailBranch($id)
     {
-        return $this->model->findOrFail($id);
+        $headBranch = DB::table('user_manager_assign as manager')
+        ->select('user_manager.id', 'user_manager.name', 'user_manager.email', 'user_manager.profile_picture')
+        ->join('model_has_roles as mr', 'mr.model_id', 'manager.id')
+        ->join('roles', 'roles.id', 'mr.role_id')
+        ->join('user_manager', 'user_manager.id', 'manager.user_manager_id')
+        ->where('roles.is_headbranch', 1)
+        ->where('mr.model_type', UserManagerAssign::class)
+        ->where('manager.branch_id', $id)
+        ->first();
+
+        $branch = $this->model
+        ->with(['provincies:id,name', 'regencies:id,name', 'district:id,name', 'villages:id,name'])
+        ->findOrFail($id);
+
+        return [
+            'head_branch' => $headBranch,
+            'branch'      => $branch,
+        ];
+
     }
 
     /**
@@ -171,5 +193,34 @@ class CompanyBranchRepository implements CompanyBranchInterface
     public function getFirstBranchByCondition(array $condition)
     {
         return $this->model->where($condition)->first();
+    }
+
+    /**
+     * Assign or change headbranch based on branch
+     * @param string $type - type of assign (assign or change)
+     * @param int $branchId - branchID
+     * @param int $nextHeadBranch - User manager who want to be a head branch
+     * @param int $currentHeadBranch - Current head branch
+     * @return bool
+     */
+    public function assignOrChangeHeadBranch(string $type, int $branchId, int $nextHeadBreanch, int $currentHeadbranch = null)
+    {
+        $branch = $this->model->find($branchId);
+        $headBranchRole = $branch->roles()->where('is_headbranch', true)->first();
+        if ($type == ASSIGN_HEADBRANCH) {
+            $assign = $branch->managerAssign()->where('user_manager_id', $nextHeadBreanch)->first();
+            if (!$assign) {
+                return false;
+            }
+            $assign->assignRole($headBranchRole);
+        } else if ($type == CHANGE_HEADBRANCH) {
+            $currentManager = $this->model->managerAssign()->where('user_manager_id', $currentHeadbranch)->first();
+            $nextManager = $this->model->managerAssign()->where('user_manager_id', $nextHeadBreanch)->first();
+            $currentRoleManager = $currentManager->roles()->first();
+            $nextRoleManager = $nextManager->roles()->first();
+            $currentManager->assignRole($nextRoleManager->id);
+            $nextManager->assignRole($currentRoleManager->id);
+        }
+        return true;
     }
 }

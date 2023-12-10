@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Str;
-use App\Traits\CurrentBranch;
 
 class UserManagerAssign extends Pivot
 {
@@ -20,7 +19,7 @@ class UserManagerAssign extends Pivot
     ];
     protected $guard_name = 'sanctum:manager';
     protected $primaryKey = 'id';
-    protected $appends = ['role'];
+    protected $appends = ['role', 'company_name'];
 
     protected static function boot()
     {
@@ -34,6 +33,11 @@ class UserManagerAssign extends Pivot
     public function getRoleAttribute()
     {
         return $this->roles()->first();
+    }
+
+    public function getCompanyNameAttribute()
+    {
+        return settings('company_name');
     }
 
     public function userManager()

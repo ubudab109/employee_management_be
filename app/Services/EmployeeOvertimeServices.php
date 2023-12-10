@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Jobs\InsertOvertimeToPayrollJob;
+use App\Models\EmployeeOvertime;
 use App\Repositories\EmployeeOvertime\EmployeeOvertimeInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Traits\NotificationTrait;
 
 class EmployeeOvertimeServices
 {
@@ -147,9 +150,44 @@ class EmployeeOvertimeServices
                 $overtimeData = $this->employeeOvertime->detailEmployeeOvertime($id);
 
                 // WILL SKIP THE PROCESS
-                if ($overtimeData->status == '1' || $overtimeData == '2') {
+                if ($overtimeData->status == APPROVED || $overtimeData == REJECTED) {
                     continue;
                 }
+
+                /** PROCESS TO INPUT THE OVERTIME TO PAYROLL EMPLOYEE */
+                $checkPayslip = DB::table('employee_payslip_status')->where('branch_id', $overtimeData->branch_id)
+                ->where('month', date('j', strtotime($overtimeData->date)))
+                ->where('years', date('Y', strtotime($overtimeData->date)))
+                ->first();
+                
+                if ($checkPayslip && $checkPayslip->status !== SENDED) {
+                    $payroll = DB::table('payroll')->where('employee_id', $overtimeData->employee_id)
+                    ->where('month', date('j', strtotime($overtimeData->date)))
+                    ->where('years', date('Y', strtotime($overtimeData->date)))
+                    ->first();
+                    $dataJob = [
+                        'branch_id'     => $overtimeData->branch_id,
+                        'employee_id'   => $overtimeData->employee_id,
+                        'department_id' => $overtimeData->department_id,
+                        'payroll_code'  => $payroll->payroll_code,
+                        'employee'      => $overtimeData->employee,
+                        'gross_salary'  => $overtimeData->employee->gross_salary,
+                        'taken_hour'    => $overtimeData->taken_hour,
+                        'month'         => $payroll->month,
+                        'years'         => $payroll->years,
+                        'generate_date' => $payroll->generate_date,
+                        'status'        => $payroll->status,
+                        'type'          => SALARY_INCOME,
+                    ];
+                    InsertOvertimeToPayrollJob::dispatch($dataJob);
+                } else {
+                    return [
+                        'status'  => false,
+                        'message' => 'Payslip in current month and year is not generated or had been send to employee email. Please make sure You had been generate the payslip before apply the overtime to employee payroll' 
+                    ];
+                }
+                
+                NotificationTrait::dispatchNotificationToEmployee($overtimeData->employee, 'Overtime Status', 'Update for Your Overtime request', EmployeeOvertime::class, $id);
                 $this->employeeOvertime->updateEmployeeOvertime(['status' => $data['status']], $id);
             }
             DB::commit();
@@ -159,7 +197,7 @@ class EmployeeOvertimeServices
             ];
         } catch (\Exception $err) {
             DB::rollBack();
-            Log::info($err->getMessage());
+            Log::info($err->getMessage().' '. $err->getLine());
             return [
                 'status'  => false,
                 'message' => 'Internal Server Error' 

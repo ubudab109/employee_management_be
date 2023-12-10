@@ -5,25 +5,31 @@ namespace App\Http\Controllers\Web\Payslip;
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Jobs\GeneratePayrollJob;
+use App\Jobs\PayslipExportJob;
 use App\Jobs\SendPayslipEmailJob;
+use App\Models\Payroll;
 use App\Models\PayrollGenerateProcess;
+use App\Services\ExcelTaskServices;
 use App\Services\PayrollServices;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class PayslipController extends BaseController
 {
-    public $services;
+    public $services, $excelServices;
 
     /**
      * A constructor function that is called when the class is instantiated.
      * 
      * @param PayrollServices services The service class that will be used to perform the actions.
      */
-    public function __construct(PayrollServices $services)
+    public function __construct(PayrollServices $services, ExcelTaskServices $excelServices)
     {
         $this->services = $services;
+        $this->excelServices = $excelServices;
         if (config('app.env') != 'development') {
             $this->middleware('userpermissionmanager:payroll-management-list',['only' => 'index']);
             $this->middleware('userpermissionmanager:payslip-detail',['only' => 'show']);
@@ -202,6 +208,11 @@ class PayslipController extends BaseController
         return $this->sendResponse(array('success' => 1), 'Payslip Successfully Generating in Queue');
     }
 
+    /**
+     * SEND PAYSLIP TO EMPLOYEE EMAIL USING JOB
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
     public function sendPayslip(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -219,5 +230,71 @@ class PayslipController extends BaseController
         $employeeId = $request->input('employeeId');
         SendPayslipEmailJob::dispatch($month, $year, branchSelected('sanctum:manager')->id, $type, json_decode($employeeId, true));
         return $this->sendResponse(array('success' => 1), 'Payslip successfully sending to employee');
+    }
+
+    /**
+     * EXPORT PAYSLIP DATA
+     * @param Request $request
+     * @return Illuminate\Http\Response
+     */
+    public function export(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'type'        => 'required',
+            'month'       => 'required',
+            'year'        => 'required',
+            'employee_id' => 'required_if:type,selected|array'  
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendBadRequest('Validator Errors', $validator->errors());
+        }
+
+        $data = [
+            'branch_id'   => branchSelected('sanctum:manager')->id,
+            'manager_id'  => Auth::guard('sanctum:manager')->user()->id,
+            'source_type' => Payroll::class,
+            'type'        => EXCEL_EXPORT,
+            'month'       => $request->month,
+            'year'        => $request->year,
+        ];
+
+        if ($request->type == 'selected') {
+            $data['employee_id'] = $request->employee_id;
+        } else {
+            $data['employee_id'] = [];
+        }
+
+        $isCreated = $this->excelServices->create($data);
+
+        if (!$isCreated['status']) {
+            return $this->sendError(array('success' => 0), $isCreated['message']);
+        }
+
+        PayslipExportJob::dispatch(
+            $isCreated['data']->fresh(),
+            $request->month,
+            $request->year,
+            $request->employee_id,
+        );
+
+        return $this->sendResponse(array('success' => 1), $isCreated['message']);
+    }
+
+    /**
+     * RETRY FAILED TASK
+     * @param int $taskId
+     * @return Illuminate\Http\Response
+     */
+    public function retryExport($taskId)
+    {
+        $excelTask = $this->excelServices->detail($taskId);
+        if (!$excelTask['status']) {
+            return $this->sendError('Error', 'Data not found', 404);
+        }
+        $data = $excelTask['data'];
+        $setting = json_decode($data->settings, true);
+        PayslipExportJob::dispatch($data->fresh(), $setting['month'], $setting['year'], $setting['employee_id']);
+        return $this->sendResponse(array('success' => 1), 'Task retried successfully');
     }
 }

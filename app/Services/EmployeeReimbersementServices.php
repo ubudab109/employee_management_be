@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\EmployeeReimburshment;
 use App\Repositories\EmployeeReimbersement\EmployeeReimbursementInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Traits\NotificationTrait;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeReimbersementServices
 {
@@ -27,7 +30,7 @@ class EmployeeReimbersementServices
             isset($param['date']) && $param['date'] != '' ? $param['date'] : null,
             isset($param['employee_id']) && $param['employee_id'] != null ? $param['employee_id'] : null,
             isset($param['claim_type_id']) && $param['claim_type_id'] != '' ? $param['claim_type_id'] : null,
-            isset($param['status']) && $param['status'] != '' ? $param['status'] : 'All',
+            isset($param['status']) && $param['status'] != null ? $param['status'] : 'All',
         );
 
         return [
@@ -97,6 +100,11 @@ class EmployeeReimbersementServices
         DB::beginTransaction();
         try {
             $this->reimbersement->updateReimbersement($data, $id);
+            if (Auth::guard('sanctum:manager')->check()) {
+                $reimbersementData = $this->reimbersement->detailReimbersement($id);
+                $date = date("j F Y", strtotime($reimbersementData->date));
+                NotificationTrait::dispatchNotificationToEmployee($reimbersementData->employee, 'Reimbursement Status', 'Your Reimbursement request at '.$date.' had been '.getGlobalStatusEnum($data['status']), EmployeeReimburshment::class, $id, null);
+            }
             DB::commit();
             return [
                 'status'  => true,

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Apps\Attendance\AttendanceController as AttendanceAttendanceController;
 use App\Http\Controllers\Apps\Auth\AuthController;
 use App\Http\Controllers\Apps\MobileApi\HomeMain\HomeMainController;
 use App\Http\Controllers\Apps\MobileApi\Profile\ProfileController;
@@ -11,17 +12,20 @@ use App\Http\Controllers\Web\ClaimType\ClaimTypeController;
 use App\Http\Controllers\Web\CompanyBranch\CompanyBranchController;
 use App\Http\Controllers\Web\CompanyDivision\CompanyDivisionController;
 use App\Http\Controllers\Web\CompanySchedule\CompanyScheduleController;
+use App\Http\Controllers\Web\CompanySetting\CompanySettingController;
 use App\Http\Controllers\Web\Dashboard\DashboardController;
 use App\Http\Controllers\Web\Dataset\DatasetController;
 use App\Http\Controllers\Web\Employee\EmployeeController;
 use App\Http\Controllers\Web\EmployeeOvertime\EmployeeOvertimeController;
 use App\Http\Controllers\Web\EmployeePaidLeave\EmployeePaidLeaveController;
 use App\Http\Controllers\Web\EmployeeReimbersement\EmployeeReimbersementController;
+use App\Http\Controllers\Web\ExcelTask\ExcelTaskController;
 use App\Http\Controllers\Web\Profile\ProfileController as ProfileProfileController;
 use App\Http\Controllers\Web\RolePermission\RolePermissionController;
 use App\Http\Controllers\Web\SalaryComponent\SalaryComponentController;
 use App\Http\Controllers\Web\UserManagement\UserManagementController;
 use Illuminate\Support\Facades\Route;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +43,7 @@ Route::group(['middleware' => 'cors'], function() {
     Route::group(['prefix' => 'v1'], function () {
         /** FOR MOBILE */
         Route::post('login', [AuthController::class, 'login']);
-        Route::group(['middleware' => 'auth:sanctum:employee'], function () {
+        Route::group(['middleware' => ['auth:sanctum:employee', 'branch_check']], function () {
             Route::get('user', [UserController::class, 'index']);
     
             Route::group(['prefix' => 'home'], function () {
@@ -50,12 +54,14 @@ Route::group(['middleware' => 'cors'], function() {
                     Route::post('', [HomeMainController::class, 'createNote']);
                     Route::delete('{id}', [HomeMainController::class, 'deleteEmployeeNote']);
                 });
+                Route::post('clock-in', [AttendanceAttendanceController::class, 'clockInScan']);
             });
     
             Route::group(['prefix' => 'profile'], function () {
                 Route::post('picture', [ProfileController::class, 'uploadImage']);
             });
             Route::post('logout', [AuthController::class, 'logout']);
+
         });
     
         /** FOR APPS */
@@ -73,6 +79,11 @@ Route::group(['middleware' => 'cors'], function() {
                         Route::get('activities', [DashboardController::class , 'logActivities']);
                         Route::get('chart-employee', [DashboardController::class, 'getChartEmployee']);
                         Route::get('chart-workplaces', [DashboardController::class, 'getChartWorkplacesEmployee']);
+                        Route::get('notification', [DashboardController::class, 'getNotification']);
+                        Route::post('read-all', [DashboardController::class, 'readAllNotification']);
+                        Route::get('head-branch', [DashboardController::class, 'getHeadBranch']);
+                        Route::get('attendance', [DashboardController::class, 'getAttendance']);
+                        Route::get('manager', [DashboardController::class, 'getUserManager']);
                     });
                     
                     /* Role */
@@ -115,6 +126,14 @@ Route::group(['middleware' => 'cors'], function() {
                         Route::get('total-working', [DatasetController::class, 'getWorkinDays']);
                         Route::get('claim-type', [DatasetController::class, 'listClaimType']);
                         Route::get('holidays', [DatasetController::class, 'getHolidays']);
+                        Route::get('ptkp', [DatasetController::class, 'getPtkpData']);
+                        Route::get('excel-model', [DatasetController::class, 'getExportModelType']);
+                        Route::get('provinces', [DatasetController::class, 'getProvinces']);
+                        Route::get('regencies', [DatasetController::class, 'getRegencies']);
+                        Route::get('districts', [DatasetController::class, 'getDistricts']);
+                        Route::get('villages', [DatasetController::class, 'getVillages']);
+                        Route::get('manager', [DatasetController::class, 'getDataManagerCurrentBranch']);
+                        Route::get('role-branch', [DatasetController::class, 'getRoleByBranch']);
                     });
     
                     /* Attendance */
@@ -130,6 +149,7 @@ Route::group(['middleware' => 'cors'], function() {
                     /* Company Branch */
                     Route::resource('company-branch', CompanyBranchController::class);
                     Route::get('company-branch/branch/{branch_code}', [CompanyBranchController::class, 'validateBranchCode']);
+                    Route::put('change-head-branch/{branchId}', [CompanyBranchController::class, 'assignOrChangeHeadBranch']);
 
                     /** Employee */
                     // Route::post('employee', [EmployeeController::class, 'store']);
@@ -147,6 +167,8 @@ Route::group(['middleware' => 'cors'], function() {
 
                     /** EMPLOYEE REIUMBERSEMENT */
                     Route::resource('employee-reimbursement', EmployeeReimbersementController::class);
+                    Route::post('export-reimbursement', [EmployeeReimbersementController::class, 'export']);
+                    Route::post('retry-export-reimbursement/{taskId}', [EmployeeReimbersementController::class, 'retry']);
 
                     /** PAYSLIP */
                     Route::resource('payslip', PayslipController::class);
@@ -154,6 +176,9 @@ Route::group(['middleware' => 'cors'], function() {
                     Route::post('payslip-generate', [PayslipController::class, 'generate']);
                     Route::post('payslip-generate/{id}', [PayslipController::class, 'retryGenerate']);
                     Route::post('send-payslip', [PayslipController::class, 'sendPayslip']);
+                    Route::post('export-payslip', [PayslipController::class, 'export']);
+                    Route::post('retry-export-payslip/{taskId}', [PayslipController::class, 'retryExport']);
+                    
                     
                     /** CLAIM TYPE */
                     Route::resource('claim-type', ClaimTypeController::class);
@@ -161,12 +186,21 @@ Route::group(['middleware' => 'cors'], function() {
                     /** COMPANY SCHEDULE */
                     Route::resource('company-schedule', CompanyScheduleController::class);
                     Route::put('change-default-schedule', [CompanyScheduleController::class, 'updateDefaultSchedule']);
+
+                    /** EXCEL TASK */
+                    Route::resource('excel', ExcelTaskController::class);
                 });
 
                 /** SUPERADMIN ROUTE */
                 Route::group(['middleware' => ['superadmin_check']], function () {
                     /** SALARY COMPONENT */
                     Route::resource('salary-component', SalaryComponentController::class);
+
+                    /** COMPANY SETTINGS */
+                    Route::group(['prefix' => 'company-setting'], function () {
+                        Route::get('', [CompanySettingController::class, 'index']);
+                        Route::post('', [CompanySettingController::class, 'update']);
+                    });
                 });
             });
 

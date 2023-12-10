@@ -31,5 +31,8 @@ class CompanyDivision extends Model
         return $this->belongsToMany(User::class, 'user_division_assign', 'division_id', 'user_id')->using(UserDivisionAssign::class)->withPivot('id', 'user_id', 'division_id', 'status');
     }
 
-
+    public function excel()
+    {
+        return $this->hasMany(ExcelTask::class, 'manager_id', 'id');
+    }
 }
