@@ -1,0 +1,979 @@
+{
+  "success": 1,
+  "data": {
+    "type": 0,
+    "year": 2024,
+    "name": "masehi",
+    "initial": "M",
+    "holiday": {
+      "1": {
+        "count": 1,
+        "data": [
+          {
+            "week": 1,
+            "type": "christ_0001",
+            "date": "2024-01-01",
+            "day": 1,
+            "name": "Tahun Baru Masehi",
+            "info": 2024,
+            "mode": 0,
+            "rel": "Masehi"
+          }
+        ]
+      },
+      "2": {
+        "count": 2,
+        "data": [
+          {
+            "week": 4,
+            "type": "hijri_0004",
+            "date": "2024-02-08",
+            "day": 8,
+            "name": "Isra' Mi'raj Nabi Muhammad SAW",
+            "info": "1445 Hijriyah",
+            "mode": 0,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 6,
+            "type": "chinese_0001",
+            "date": "2024-02-10",
+            "day": 10,
+            "name": "Tahun Baru Imlek",
+            "info": "2575 (Naga Kayu)",
+            "mode": 0,
+            "rel": "China"
+          }
+        ]
+      },
+      "3": {
+        "count": 2,
+        "data": [
+          {
+            "week": 1,
+            "type": "hindu_0001",
+            "date": "2024-03-11",
+            "day": 11,
+            "name": "Hari Raya Nyepi (Tahun Baru Saka)",
+            "info": "1946 Saka",
+            "mode": 0,
+            "rel": "Hindu"
+          },
+          {
+            "week": 5,
+            "type": "christ_0003",
+            "date": "2024-03-29",
+            "day": 29,
+            "name": "Wafat Yesus Kristus",
+            "info": 2024,
+            "mode": 0,
+            "rel": "Masehi"
+          }
+        ]
+      },
+      "4": {
+        "count": 2,
+        "data": [
+          {
+            "week": 3,
+            "type": "hijri_0009",
+            "date": "2024-04-10",
+            "day": 10,
+            "name": "Hari Raya Idul Fitri",
+            "info": "1445 Hijriyah",
+            "mode": 0,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 4,
+            "type": "hijri_0009",
+            "date": "2024-04-11",
+            "day": 11,
+            "name": "Hari Raya Idul Fitri",
+            "info": "1445 Hijriyah",
+            "mode": 0,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "5": {
+        "count": 3,
+        "data": [
+          {
+            "week": 3,
+            "type": "inter_0001",
+            "date": "2024-05-01",
+            "day": 1,
+            "name": "Hari Buruh Sedunia",
+            "info": 2024,
+            "mode": 0,
+            "rel": "Masehi"
+          },
+          {
+            "week": 4,
+            "type": "christ_0006",
+            "date": "2024-05-09",
+            "day": 9,
+            "name": "Kenaikan Yesus Kristus",
+            "info": 2024,
+            "mode": 0,
+            "rel": "Masehi"
+          },
+          {
+            "week": 4,
+            "type": "buddha_0001",
+            "date": "2024-05-23",
+            "day": 23,
+            "name": "Hari Raya Waisak",
+            "info": 2568,
+            "mode": 0,
+            "rel": "Buddha"
+          }
+        ]
+      },
+      "6": {
+        "count": 2,
+        "data": [
+          {
+            "week": 6,
+            "type": "indo_0002",
+            "date": "2024-06-01",
+            "day": 1,
+            "name": "Hari Lahir Pancasila",
+            "info": 2024,
+            "mode": 0,
+            "rel": "Masehi"
+          },
+          {
+            "week": 1,
+            "type": "hijri_0012",
+            "date": "2024-06-17",
+            "day": 17,
+            "name": "Hari Raya Idul Adha",
+            "info": "1445 Hijriyah",
+            "mode": 0,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "7": {
+        "count": 1,
+        "data": [
+          {
+            "week": 0,
+            "type": "hijri_0001",
+            "date": "2024-07-07",
+            "day": 7,
+            "name": "Tahun Baru Hijriyah",
+            "info": "1446 Hijriyah",
+            "mode": 0,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "8": {
+        "count": 1,
+        "data": [
+          {
+            "week": 6,
+            "type": "indo_0001",
+            "date": "2024-08-17",
+            "day": 17,
+            "name": "Hari Proklamasi Kemerdekaan RI",
+            "info": " Ke-79",
+            "mode": 0,
+            "rel": "Masehi"
+          }
+        ]
+      },
+      "9": {
+        "count": 1,
+        "data": [
+          {
+            "week": 0,
+            "type": "hijri_0003",
+            "date": "2024-09-15",
+            "day": 15,
+            "name": "Maulid Nabi Muhammad SAW",
+            "info": "1446 Hijriyah",
+            "mode": 0,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "10": { "count": 0, "data": null },
+      "11": { "count": 0, "data": null },
+      "12": {
+        "count": 1,
+        "data": [
+          {
+            "week": 3,
+            "type": "christ_0008",
+            "date": "2024-12-25",
+            "day": 25,
+            "name": "Hari Raya Natal",
+            "info": 2024,
+            "mode": 0,
+            "rel": "Masehi"
+          }
+        ]
+      }
+    },
+    "leave": {
+      "1": { "count": 0, "data": null },
+      "2": { "count": 0, "data": null },
+      "3": { "count": 0, "data": null },
+      "4": {
+        "count": 3,
+        "data": [
+          {
+            "week": 1,
+            "type": "hijri_0009a",
+            "date": "2024-04-08",
+            "day": 8,
+            "name": "Cuti Bersama Hari Raya Idul Fitri",
+            "info": "1445 Hijriyah",
+            "mode": 1,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 2,
+            "type": "hijri_0009a",
+            "date": "2024-04-09",
+            "day": 9,
+            "name": "Cuti Bersama Hari Raya Idul Fitri",
+            "info": "1445 Hijriyah",
+            "mode": 1,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 5,
+            "type": "hijri_0009b",
+            "date": "2024-04-12",
+            "day": 12,
+            "name": "Cuti Bersama Hari Raya Idul Fitri",
+            "info": "1445 Hijriyah",
+            "mode": 1,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "5": { "count": 0, "data": null },
+      "6": { "count": 0, "data": null },
+      "7": { "count": 0, "data": null },
+      "8": { "count": 0, "data": null },
+      "9": { "count": 0, "data": null },
+      "10": { "count": 0, "data": null },
+      "11": { "count": 0, "data": null },
+      "12": {
+        "count": 1,
+        "data": [
+          {
+            "week": 2,
+            "type": "christ_0008a",
+            "date": "2024-12-24",
+            "day": 24,
+            "name": "Cuti Bersama Hari Raya Natal",
+            "info": 2024,
+            "mode": 1,
+            "rel": "Masehi"
+          }
+        ]
+      }
+    },
+    "islamic": {
+      "1": {
+        "count": 3,
+        "data": [
+          {
+            "week": 4,
+            "type": "hijri_0014",
+            "date": "2024-01-25",
+            "day": 25,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 5,
+            "type": "hijri_0014",
+            "date": "2024-01-26",
+            "day": 26,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 6,
+            "type": "hijri_0014",
+            "date": "2024-01-27",
+            "day": 27,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "2": {
+        "count": 5,
+        "data": [
+          {
+            "week": 4,
+            "type": "hijri_0004",
+            "date": "2024-02-08",
+            "day": 8,
+            "name": "Isra' Mi'raj Nabi Muhammad SAW",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 5,
+            "type": "hijri_0014",
+            "date": "2024-02-23",
+            "day": 23,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 6,
+            "type": "hijri_0014",
+            "date": "2024-02-24",
+            "day": 24,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 0,
+            "type": "hijri_0005",
+            "date": "2024-02-25",
+            "day": 25,
+            "name": "Nisfu Sya'ban",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 0,
+            "type": "hijri_0014",
+            "date": "2024-02-25",
+            "day": 25,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "3": {
+        "count": 2,
+        "data": [
+          {
+            "week": 2,
+            "type": "hijri_0006",
+            "date": "2024-03-12",
+            "day": 12,
+            "name": "Awal Ramadhan",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 4,
+            "type": "hijri_0007",
+            "date": "2024-03-28",
+            "day": 28,
+            "name": "Nuzulul Quran",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "4": {
+        "count": 8,
+        "data": [
+          {
+            "week": 1,
+            "type": "hijri_0008",
+            "date": "2024-04-01",
+            "day": 1,
+            "name": "Lailatul Qadr",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 3,
+            "type": "hijri_0008",
+            "date": "2024-04-03",
+            "day": 3,
+            "name": "Lailatul Qadr",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 5,
+            "type": "hijri_0008",
+            "date": "2024-04-05",
+            "day": 5,
+            "name": "Lailatul Qadr",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 0,
+            "type": "hijri_0008",
+            "date": "2024-04-07",
+            "day": 7,
+            "name": "Lailatul Qadr",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 3,
+            "type": "hijri_0009",
+            "date": "2024-04-10",
+            "day": 10,
+            "name": "Hari Raya Idul Fitri",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 1,
+            "type": "hijri_0014",
+            "date": "2024-04-22",
+            "day": 22,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 2,
+            "type": "hijri_0014",
+            "date": "2024-04-23",
+            "day": 23,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 3,
+            "type": "hijri_0014",
+            "date": "2024-04-24",
+            "day": 24,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "5": {
+        "count": 3,
+        "data": [
+          {
+            "week": 3,
+            "type": "hijri_0014",
+            "date": "2024-05-22",
+            "day": 22,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 4,
+            "type": "hijri_0014",
+            "date": "2024-05-23",
+            "day": 23,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 5,
+            "type": "hijri_0014",
+            "date": "2024-05-24",
+            "day": 24,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "6": {
+        "count": 8,
+        "data": [
+          {
+            "week": 6,
+            "type": "hijri_0010",
+            "date": "2024-06-15",
+            "day": 15,
+            "name": "Hari Tarwiyah",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 0,
+            "type": "hijri_0011",
+            "date": "2024-06-16",
+            "day": 16,
+            "name": "Hari Wukuf",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 1,
+            "type": "hijri_0012",
+            "date": "2024-06-17",
+            "day": 17,
+            "name": "Hari Raya Idul Adha",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 2,
+            "type": "hijri_0013",
+            "date": "2024-06-18",
+            "day": 18,
+            "name": "Hari Tasyriq",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 3,
+            "type": "hijri_0013",
+            "date": "2024-06-19",
+            "day": 19,
+            "name": "Hari Tasyriq",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 4,
+            "type": "hijri_0013",
+            "date": "2024-06-20",
+            "day": 20,
+            "name": "Hari Tasyriq",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 5,
+            "type": "hijri_0014",
+            "date": "2024-06-21",
+            "day": 21,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 6,
+            "type": "hijri_0014",
+            "date": "2024-06-22",
+            "day": 22,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1445 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "7": {
+        "count": 5,
+        "data": [
+          {
+            "week": 0,
+            "type": "hijri_0001",
+            "date": "2024-07-07",
+            "day": 7,
+            "name": "Tahun Baru Hijriyah",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 2,
+            "type": "hijri_0002",
+            "date": "2024-07-16",
+            "day": 16,
+            "name": "Hari Asyura",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 5,
+            "type": "hijri_0014",
+            "date": "2024-07-19",
+            "day": 19,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 6,
+            "type": "hijri_0014",
+            "date": "2024-07-20",
+            "day": 20,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 0,
+            "type": "hijri_0014",
+            "date": "2024-07-21",
+            "day": 21,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "8": {
+        "count": 3,
+        "data": [
+          {
+            "week": 0,
+            "type": "hijri_0014",
+            "date": "2024-08-18",
+            "day": 18,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 1,
+            "type": "hijri_0014",
+            "date": "2024-08-19",
+            "day": 19,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 2,
+            "type": "hijri_0014",
+            "date": "2024-08-20",
+            "day": 20,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "9": {
+        "count": 4,
+        "data": [
+          {
+            "week": 0,
+            "type": "hijri_0003",
+            "date": "2024-09-15",
+            "day": 15,
+            "name": "Maulid Nabi Muhammad SAW",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 1,
+            "type": "hijri_0014",
+            "date": "2024-09-16",
+            "day": 16,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 2,
+            "type": "hijri_0014",
+            "date": "2024-09-17",
+            "day": 17,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 3,
+            "type": "hijri_0014",
+            "date": "2024-09-18",
+            "day": 18,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "10": {
+        "count": 3,
+        "data": [
+          {
+            "week": 3,
+            "type": "hijri_0014",
+            "date": "2024-10-16",
+            "day": 16,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 4,
+            "type": "hijri_0014",
+            "date": "2024-10-17",
+            "day": 17,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 5,
+            "type": "hijri_0014",
+            "date": "2024-10-18",
+            "day": 18,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "11": {
+        "count": 3,
+        "data": [
+          {
+            "week": 5,
+            "type": "hijri_0014",
+            "date": "2024-11-15",
+            "day": 15,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 6,
+            "type": "hijri_0014",
+            "date": "2024-11-16",
+            "day": 16,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 0,
+            "type": "hijri_0014",
+            "date": "2024-11-17",
+            "day": 17,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "12": {
+        "count": 3,
+        "data": [
+          {
+            "week": 0,
+            "type": "hijri_0014",
+            "date": "2024-12-15",
+            "day": 15,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 1,
+            "type": "hijri_0014",
+            "date": "2024-12-16",
+            "day": 16,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          },
+          {
+            "week": 2,
+            "type": "hijri_0014",
+            "date": "2024-12-17",
+            "day": 17,
+            "name": "Puasa Ayyamul Baidl",
+            "info": "1446 Hijriyah",
+            "mode": 2,
+            "rel": "Hijriyah"
+          }
+        ]
+      }
+    },
+    "longWeekend": {
+      "1": {
+        "count": 1,
+        "data": [
+          {
+            "week": 1,
+            "type": "christ_0001",
+            "date": "2024-01-01",
+            "day": 1,
+            "name": "Tahun Baru Masehi",
+            "info": 2024,
+            "mode": 0,
+            "rel": "Masehi"
+          }
+        ]
+      },
+      "2": { "count": 0, "data": null },
+      "3": {
+        "count": 2,
+        "data": [
+          {
+            "week": 1,
+            "type": "hindu_0001",
+            "date": "2024-03-11",
+            "day": 11,
+            "name": "Hari Raya Nyepi (Tahun Baru Saka)",
+            "info": "1946 Saka",
+            "mode": 0,
+            "rel": "Hindu"
+          },
+          {
+            "week": 5,
+            "type": "christ_0003",
+            "date": "2024-03-29",
+            "day": 29,
+            "name": "Wafat Yesus Kristus",
+            "info": 2024,
+            "mode": 0,
+            "rel": "Masehi"
+          }
+        ]
+      },
+      "4": { "count": 0, "data": null },
+      "5": { "count": 0, "data": null },
+      "6": {
+        "count": 1,
+        "data": [
+          {
+            "week": 1,
+            "type": "hijri_0012",
+            "date": "2024-06-17",
+            "day": 17,
+            "name": "Hari Raya Idul Adha",
+            "info": "1445 Hijriyah",
+            "mode": 0,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "7": { "count": 0, "data": null },
+      "8": { "count": 0, "data": null },
+      "9": { "count": 0, "data": null },
+      "10": { "count": 0, "data": null },
+      "11": { "count": 0, "data": null },
+      "12": { "count": 0, "data": null }
+    },
+    "harpitnas": {
+      "1": { "count": 0, "data": null },
+      "2": {
+        "count": 1,
+        "data": [
+          {
+            "week": 4,
+            "type": "hijri_0004",
+            "date": "2024-02-08",
+            "day": 8,
+            "name": "Isra' Mi'raj Nabi Muhammad SAW",
+            "info": "1445 Hijriyah",
+            "mode": 0,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "3": { "count": 0, "data": null },
+      "4": {
+        "count": 1,
+        "data": [
+          {
+            "week": 4,
+            "type": "hijri_0009",
+            "date": "2024-04-11",
+            "day": 11,
+            "name": "Hari Raya Idul Fitri",
+            "info": "1445 Hijriyah",
+            "mode": 0,
+            "rel": "Hijriyah"
+          }
+        ]
+      },
+      "5": {
+        "count": 2,
+        "data": [
+          {
+            "week": 4,
+            "type": "christ_0006",
+            "date": "2024-05-09",
+            "day": 9,
+            "name": "Kenaikan Yesus Kristus",
+            "info": 2024,
+            "mode": 0,
+            "rel": "Masehi"
+          },
+          {
+            "week": 4,
+            "type": "buddha_0001",
+            "date": "2024-05-23",
+            "day": 23,
+            "name": "Hari Raya Waisak",
+            "info": 2568,
+            "mode": 0,
+            "rel": "Buddha"
+          }
+        ]
+      },
+      "6": { "count": 0, "data": null },
+      "7": { "count": 0, "data": null },
+      "8": { "count": 0, "data": null },
+      "9": { "count": 0, "data": null },
+      "10": { "count": 0, "data": null },
+      "11": { "count": 0, "data": null },
+      "12": { "count": 0, "data": null }
+    }
+  }
+}

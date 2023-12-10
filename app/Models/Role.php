@@ -189,4 +189,9 @@ class Role extends Model implements RoleContract
 
         return $this->permissions->contains('id', $permission->id);
     }
+
+    public function branch()
+    {
+        return $this->belongsTo(CompanyBranch::class, 'branch_id', 'id');
+    }
 }

@@ -40,6 +40,16 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'sanctum:employee' => [
+            'driver'        => 'sanctum',
+            'provider'      => 'users',
+        ],
+        'sanctum:manager' => [
+            'driver'        => 'sanctum',
+            'provider'      => 'user_manager',
+        ]
+
     ],
 
     /*
@@ -65,10 +75,10 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'user_manager' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\UserManager::class,
+        ],
     ],
 
     /*

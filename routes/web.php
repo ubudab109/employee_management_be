@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\TestController;
+use App\Models\Permission;
+use App\Models\Role;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return 'EMS BACKEND';
 });
+
+Route::get('/test', [TestController::class, 'test']);

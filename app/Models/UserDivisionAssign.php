@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Str;
@@ -13,9 +12,9 @@ class UserDivisionAssign extends Pivot
     use HasFactory, HasRoles;
 
     protected $table = 'user_division_assign';
-    protected $fillable = ['uuid','user_id','division_id','status','employment_type'];
-    protected $guard_name ='auth:sanctum';
-
+    protected $fillable = ['uuid', 'user_id', 'division_id', 'status', 'employment_type','branch_id'];
+    protected $guard_name = 'auth:sanctum';
+    protected $primaryKey = 'id';
 
     protected static function boot()
     {
@@ -35,5 +34,9 @@ class UserDivisionAssign extends Pivot
     {
         return $this->belongsTo(CompanyDivision::class, 'division_id', 'id');
     }
-    
+
+    public function branch()
+    {
+        return $this->belongsTo(CompanyBranch::class, 'branch_id', 'id');
+    }
 }

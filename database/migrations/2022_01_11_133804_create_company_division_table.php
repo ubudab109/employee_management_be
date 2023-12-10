@@ -16,6 +16,7 @@ class CreateCompanyDivisionTable extends Migration
         Schema::create('company_division', function (Blueprint $table) {
             $table->id();
             $table->string('division_code')->nullable()->unique();
+            $table->foreignId('branch_id')->constrained('company_branch')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('division_name');
             $table->timestamps();
         });

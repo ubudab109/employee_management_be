@@ -1,9 +1,8 @@
 <?php
 
 namespace DummyNamespace;
-use App\Repositories\BaseRepository;
 
-class DummyClass extends BaseRepository
+class DummyClass
 {
     /**
     * @var ModelName
